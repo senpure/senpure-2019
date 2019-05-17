@@ -1,19 +1,24 @@
-
 import jk/jk../jkdf.io;
 import ../../jkjkdf2.io;
 javaPack com.jkl.io;
 namespace test;
 namespace model;
-
-
-message  CS sortMessage77 01231000{
-    int   mess2age ;//comment
-    int  age  ;//age
-}
-
-message   CS  Hi 1001 {
+//77
+//88
+message   CS  Clazz 1001 {
     int   na ;//汉子
     int age  ;//age
+    Sexy sexy;
+    Student[] students;
+}
+bean Student{
+ int age  ;//age
+ String name;
+ Sexy X;
+}
+enum Sexy{
+    X;
+    Y;
 }
 event   Hi 1001 {
     int   dk ;//comment

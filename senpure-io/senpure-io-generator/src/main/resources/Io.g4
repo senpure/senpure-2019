@@ -5,7 +5,7 @@ protocol
     entity*EOF
     ;
 headContent:importIo|javaPack|namespace;
-entity:message|event|bean;
+entity:message|event|bean|enumSymbol;
 importIo:'import'importValue';';
 importValue: filePath'.io';
 
@@ -20,15 +20,17 @@ namespaceValue:javaPackageValue;
 fileName:Number* Identifier*;
 filePath:fileName|filePath ('../'|'/'|'\\') fileName;
 
+
 message
-    : messageHead messageType messageName messageId '{'
+    :entityComment*
+    messageHead messageType messageName messageId '{'
      field*
     '}';
 messageHead:'message';
 messageType:'cs'|'CS'|'sc'|'SC';
 messageName:Identifier;
 messageId:Number;
-
+entityComment:LINE_COMMENT;
 event
     :eventHead  eventName eventId '{'
      field*
@@ -40,14 +42,16 @@ event
 
 bean
     :beanHead beanName'{'
-     field*
+     field+//至少需要一个字段才有必要定义bean
     '}'
     ;
 beanHead:'bean';
 beanName:Identifier;
 field
-    :fieldType fieldName ';'fieldComment?
+    :fieldType fieldList? fieldName ('='fieldIndex)?';'fieldComment?
     ;
+fieldList:'['']';
+fieldIndex:Number;
 fieldType
     :'int'
     |'long'
@@ -59,9 +63,21 @@ fieldType
     |'double'
     |'boolean'
     |'String'
+    |'string'
+    |Identifier
     ;
 fieldName:Identifier;
 fieldComment:LINE_COMMENT;
+enumSymbol  //至少需要两个状态才有必要定义枚举,强制第一个位默认值
+    :enumHead enumName'{'
+     enumDefaultField
+     enumField+
+    '}'
+    ;
+enumDefaultField:fieldName('=' '1')?';'fieldComment?;
+enumField:fieldName('='fieldIndex)?';'fieldComment?;
+enumHead:'enum';
+enumName:Identifier;
 //↓↓java keywords↓↓
 ABSTRACT : 'abstract';
 ASSERT : 'assert';

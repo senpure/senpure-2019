@@ -2,9 +2,10 @@ package com.senpure.io.generator.model;
 
 public class Field {
 
+
     private boolean hasExplain;
     private String explain;
-   // private String originalClassType;
+    //协议文件中的类型
     private String classType;
 
     private String name;
@@ -18,10 +19,11 @@ public class Field {
     private Bean bean;
 
     private String javaType;
-    private int index;
+    private int index=0;
     private int writeType;
     private int tag;
-
+    private Location typeLocation=new Location();
+    private Location nameLocation = new Location();
     public String getExplain() {
         return explain;
     }
@@ -94,6 +96,25 @@ public class Field {
     }
 
 
+    public Location getTypeLocation() {
+        return typeLocation;
+    }
+
+    public void setTypeLocation(Location typeLocation) {
+        this.typeLocation = typeLocation;
+    }
+
+    public Location getNameLocation() {
+        return nameLocation;
+    }
+
+    public void setNameLocation(Location nameLocation) {
+        this.nameLocation = nameLocation;
+    }
+
+    public void setHasExplain(boolean hasExplain) {
+        this.hasExplain = hasExplain;
+    }
 
     public int getIndex() {
         return index;

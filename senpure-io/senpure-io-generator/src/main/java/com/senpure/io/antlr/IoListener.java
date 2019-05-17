@@ -168,6 +168,16 @@ public interface IoListener extends ParseTreeListener {
 	 */
 	void exitMessageId(IoParser.MessageIdContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IoParser#entityComment}.
+	 * @param ctx the parse tree
+	 */
+	void enterEntityComment(IoParser.EntityCommentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#entityComment}.
+	 * @param ctx the parse tree
+	 */
+	void exitEntityComment(IoParser.EntityCommentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link IoParser#event}.
 	 * @param ctx the parse tree
 	 */
@@ -248,6 +258,26 @@ public interface IoListener extends ParseTreeListener {
 	 */
 	void exitField(IoParser.FieldContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IoParser#fieldList}.
+	 * @param ctx the parse tree
+	 */
+	void enterFieldList(IoParser.FieldListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#fieldList}.
+	 * @param ctx the parse tree
+	 */
+	void exitFieldList(IoParser.FieldListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#fieldIndex}.
+	 * @param ctx the parse tree
+	 */
+	void enterFieldIndex(IoParser.FieldIndexContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#fieldIndex}.
+	 * @param ctx the parse tree
+	 */
+	void exitFieldIndex(IoParser.FieldIndexContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link IoParser#fieldType}.
 	 * @param ctx the parse tree
 	 */
@@ -277,4 +307,54 @@ public interface IoListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFieldComment(IoParser.FieldCommentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#enumSymbol}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumSymbol(IoParser.EnumSymbolContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#enumSymbol}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumSymbol(IoParser.EnumSymbolContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#enumDefaultField}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumDefaultField(IoParser.EnumDefaultFieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#enumDefaultField}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#enumField}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumField(IoParser.EnumFieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#enumField}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumField(IoParser.EnumFieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#enumHead}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumHead(IoParser.EnumHeadContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#enumHead}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumHead(IoParser.EnumHeadContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#enumName}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumName(IoParser.EnumNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#enumName}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumName(IoParser.EnumNameContext ctx);
 }

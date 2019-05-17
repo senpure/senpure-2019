@@ -107,6 +107,12 @@ public interface IoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMessageId(IoParser.MessageIdContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link IoParser#entityComment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEntityComment(IoParser.EntityCommentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link IoParser#event}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -155,6 +161,18 @@ public interface IoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitField(IoParser.FieldContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link IoParser#fieldList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldList(IoParser.FieldListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#fieldIndex}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldIndex(IoParser.FieldIndexContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link IoParser#fieldType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -172,4 +190,34 @@ public interface IoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFieldComment(IoParser.FieldCommentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#enumSymbol}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumSymbol(IoParser.EnumSymbolContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#enumDefaultField}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#enumField}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumField(IoParser.EnumFieldContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#enumHead}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumHead(IoParser.EnumHeadContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#enumName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumName(IoParser.EnumNameContext ctx);
 }

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 ${sovereignty}
  * @time ${.now?datetime}
  */
-<#assign name>${type}${name}Message</#assign>
+<#assign name>${javaName}</#assign>
 public class ${name} extends  Message {
 
     public static final int MESSAGE_ID = ${id?c};
