@@ -179,7 +179,7 @@
                     do {
                         int temp${field.name?cap_first} = readVar32(buf);
                         receive${field.name?cap_first}DataSize += computeVar32SizeNoTag(temp${field.name?cap_first});
-                        ${field.name}.add(${field.javaType}.getValue(temp${field.name?cap_first}));
+                        ${field.name}.add(${field.javaType}.get${field.bean.javaName}(temp${field.name?cap_first}));
                     }
                     while(receive${field.name?cap_first}DataSize < ${field.name}DataSize );
                         <#else >
@@ -215,7 +215,7 @@
                     ${field.name} = readString(buf);
             <#else>
                 <#if field.bean.enum>
-                    ${field.name} = ${field.javaType}.getValue( readVar32(buf)) ;
+                    ${field.name} = ${field.javaType}.get${field.bean.javaName}( readVar32(buf)) ;
                     <#else>
                     ${field.name} = new ${field.javaType}();
                     readBean(buf,${field.name});

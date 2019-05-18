@@ -25,6 +25,13 @@ public class FileUtil {
         return path;
     }
 
+    /**
+     * 绝对路径获相对于classRoot目录
+     * C:path or ../path
+     *
+     * @param path
+     * @return
+     */
     public static File file(String path) {
         path = checkPath(path);
         File file;
@@ -33,7 +40,7 @@ public class FileUtil {
         if (path.startsWith("/") || upperPath.startsWith("C:") || upperPath.startsWith("D:") || upperPath.startsWith("E:")
                 || upperPath.startsWith("F:") || upperPath.startsWith("G:") || upperPath.startsWith("H:")
                 || upperPath.startsWith("H:") || upperPath.startsWith("I:") || upperPath.startsWith("G:")
-                ) {
+        ) {
             file = new File(path);
         } else if (path.startsWith("../")) {
             int count = StringUtil.count(path, "../");
@@ -48,9 +55,14 @@ public class FileUtil {
         return file;
     }
 
+    /**
+     * 确保路径是文件符合 '/' 结尾
+     * @param path
+     * @return
+     */
     public static String fullFileEnd(String path) {
         if (!(path.endsWith("/") || path.endsWith(File.separator))) {
-            path = path + "/";
+            path = path + File.separator;
         }
         return path;
     }

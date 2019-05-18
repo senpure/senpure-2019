@@ -40,7 +40,7 @@
         </#if>
             }
             sb.append("\n");
-        sb.append(nextIndent);
+            sb.append(nextIndent);
             sb.append(indent).append("]");
         }else {
             sb.append("null");
@@ -53,7 +53,11 @@
         <#else>
         sb.append(indent).append(rightPad("${field.name}", filedPad)).append(" = ");
         if(${field.name}!=null){
+            <#if field.bean.enum>
+            sb.append(${field.name});
+                <#else >
             sb.append(${field.name}.toString(indent+nextIndent));
+                </#if>
         } else {
             sb.append("null");
         }

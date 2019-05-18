@@ -6,15 +6,12 @@ import com.senpure.base.util.StringUtil;
 import com.senpure.io.antlr.IoBaseListener;
 import com.senpure.io.antlr.IoLexer;
 import com.senpure.io.antlr.IoParser;
-import com.senpure.io.generator.Boot;
 import com.senpure.io.generator.Constant;
-import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
-import com.senpure.io.generator.model.Event;
-import com.senpure.io.generator.model.Field;
-import com.senpure.io.generator.model.Message;
+import com.senpure.io.generator.model.*;
 import com.senpure.io.generator.util.ProtocolUtil;
 import com.senpure.io.generator.util.TemplateUtil;
+import com.senpure.template.FileUtil;
 import com.senpure.template.Generator;
 import freemarker.template.Configuration;
 import org.antlr.v4.runtime.*;
@@ -230,7 +227,7 @@ public class IoProtocolReader extends IoBaseListener {
     @Override
     public void enterEnumSymbol(IoParser.EnumSymbolContext ctx) {
         anEnum = new Enum();
-        bean= anEnum;
+        bean = anEnum;
         enums.add(anEnum);
         setBeanValue();
         if (Constant.JAVA_PACK_ENUM.trim().length() > 0) {
@@ -247,7 +244,7 @@ public class IoProtocolReader extends IoBaseListener {
     @Override
     public void enterEnumDefaultField(IoParser.EnumDefaultFieldContext ctx) {
         field = new Field();
-       anEnum.setDefaultField(field);
+        anEnum.setDefaultField(field);
         bean.getFields().add(field);
     }
 
@@ -368,8 +365,29 @@ public class IoProtocolReader extends IoBaseListener {
             e.printStackTrace();
         }
         TemplateUtil.share(cfg);
+        for (Bean b : beans) {
+            File file = new File(FileUtil.file("../../src/test/java"), FileUtil.fullFileEnd(b.getJavaPack().replace(".", File.separator)) + b.getJavaName() + ".java");
+            //File file = new File(AppEvn.getClassRootPath(), msg.getJavaName() + ".java");
+            if (!file.getParentFile().exists()) {
+
+                file.getParentFile().mkdirs();
+            }
+            logger.info(file.getAbsolutePath());
+            try {
+                Generator.generate(b, cfg.getTemplate("bean.ftl"), file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         for (Message msg : messages) {
-            File file = new File(AppEvn.getClassRootPath(Boot.class), msg.getJavaName() + ".java");
+
+            File file = new File(FileUtil.file("../../src/test/java"), FileUtil.fullFileEnd(msg.getJavaPack().replace(".", File.separator)) + msg.getJavaName() + ".java");
+            //File file = new File(AppEvn.getClassRootPath(), msg.getJavaName() + ".java");
+            if (!file.getParentFile().exists()) {
+
+                file.getParentFile().mkdirs();
+            }
+            logger.info(file.getAbsolutePath());
             try {
                 Generator.generate(msg, cfg.getTemplate("message.ftl"), file);
             } catch (IOException e) {
@@ -377,7 +395,11 @@ public class IoProtocolReader extends IoBaseListener {
             }
         }
         for (Enum anEnum : enums) {
-            File file = new File(AppEvn.getClassRootPath(Boot.class), anEnum.getJavaName() + ".java");
+            File file = new File(FileUtil.file("../../src/test/java"), FileUtil.fullFileEnd(anEnum.getJavaPack().replace(".", File.separator)) + anEnum.getJavaName() + ".java");
+            if (!file.getParentFile().exists()) {
+
+                file.getParentFile().mkdirs();
+            }
             try {
                 Generator.generate(anEnum, cfg.getTemplate("enum.ftl"), file);
             } catch (IOException e) {
@@ -388,11 +410,13 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
     public static void main(String[] args) throws IOException {
-
+        AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
 
         IoProtocolReader reader = new IoProtocolReader();
         reader.ioWalk();
+
         reader.protocolString();
+        //System.out.println(FileUtil.file("lll"));
     }
 }
