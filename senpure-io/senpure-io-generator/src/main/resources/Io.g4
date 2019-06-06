@@ -11,12 +11,16 @@ importValue: filePath'.io';
 
 javaPack:'javaPack'javaPackageValue';';
 javaPackageValue
-	:	Identifier
-	|	javaPackageValue '.'Identifier
-	|   javaPackageValue '.io'
+	:fileName
+	|javaPackageValue '.'fileName
+	|javaPackageValue'.io'
 	;
 namespace:'namespace'namespaceValue ';';
-namespaceValue:javaPackageValue;
+namespaceValue
+    :fileName
+    |namespaceValue '.'fileName
+    |namespaceValue'.io'
+    ;
 fileName:Number* Identifier*;
 filePath:fileName|filePath ('../'|'/'|'\\') fileName;
 
@@ -32,7 +36,8 @@ messageName:Identifier;
 messageId:Number;
 entityComment:LINE_COMMENT;
 event
-    :eventHead  eventName eventId '{'
+    :entityComment*
+    eventHead  eventName eventId '{'
      field*
    '}'
    ;
@@ -41,7 +46,8 @@ event
  eventId:Number;
 
 bean
-    :beanHead beanName'{'
+    :entityComment*
+    beanHead beanName'{'
      field+//至少需要一个字段才有必要定义bean
     '}'
     ;
@@ -69,7 +75,8 @@ fieldType
 fieldName:Identifier;
 fieldComment:LINE_COMMENT;
 enumSymbol  //至少需要两个状态才有必要定义枚举,强制第一个位默认值
-    :enumHead enumName'{'
+    :entityComment*
+     enumHead enumName'{'
      enumDefaultField
      enumField+
     '}'

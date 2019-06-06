@@ -1,26 +1,29 @@
-import jk/jk../jkdf.io;
-import ../../jkjkdf2.io;
-javaPack com.jkl.io;
-namespace test;
-namespace model;
+javaPack  com.jkl.io;
+namespace model2;
+import    hello2.io;
+9message
 //77
 //88
-message   CS  Clazz 1001 {
-    int   na ;//汉子
-    int age  ;//age
-    Sexy sexy;
-    Student[] students;
+message CS Clazz 1001 {
+    int        na;                      //汉子
+    int        age;                     //age
+    Sexy       sexy;
+    Student [] students;
 }
-bean Student{
- int age  ;//age
- String name;
- Sexy X;
+
+//注释
+bean Student {
+    int    age;                         //age
+    String name;
+    Sexy   X;
 }
-enum Sexy{
-    X;
-    Y;
+
+enum Sexy {
+X;
+Y;
 }
-event   Hi 1001 {
-    int   dk ;//comment
-    int age  ;//age
+
+event Hi 1001 {
+    int dk;                             //comment
+    int age;                            //age
 }

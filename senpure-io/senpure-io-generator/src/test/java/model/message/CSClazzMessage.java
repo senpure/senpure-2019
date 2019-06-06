@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * 7788
  * 
  * @author senpure
- * @time 2019-5-18 14:41:36
+ * @time 2019-6-5 17:27:14
  */
 public class CSClazzMessage extends  Message {
 
@@ -198,7 +198,7 @@ public class CSClazzMessage extends  Message {
                 sb.append(indent).append(students.get(i).toString(indent + nextIndent));
             }
             sb.append("\n");
-        sb.append(nextIndent);
+            sb.append(nextIndent);
             sb.append(indent).append("]");
         }else {
             sb.append("null");

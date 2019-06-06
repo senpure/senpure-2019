@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * @author senpure
- * @time 2019-5-18 14:41:36
+ * @time 2019-6-5 17:27:14
  */
 public class Student extends  Bean {
     //age

@@ -46,6 +46,11 @@ public class IoProtocolReader extends IoBaseListener {
     private Field field;
 
     private int fieldIndex = 1;
+    private IoErrorListener ioErrorListener = new IoErrorListener();
+
+    public boolean isHasError() {
+        return ioErrorListener.isHasError();
+    }
 
     private void setBeanValue() {
         bean.setJavaPack(javaPackage);
@@ -349,10 +354,18 @@ public class IoProtocolReader extends IoBaseListener {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         IoParser parser = new IoParser(tokens);
 
-        parser.addErrorListener(new DiagnosticErrorListener(false));
-        // DefaultErrorStrategy();
+        parser.getErrorListeners().clear();
+        parser.addErrorListener(ioErrorListener);
+
+        //默认new DefaultErrorStrategy()
+        //  parser.setErrorHandler(new DefaultErrorStrategy());
+
+        IoParser.ProtocolContext protocolContext = parser.protocol();
         ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(this, parser.protocol());
+        if (!isHasError()) {
+            walker.walk(this, protocolContext);
+        }
+
     }
 
     private void protocolString() {
@@ -416,7 +429,10 @@ public class IoProtocolReader extends IoBaseListener {
         IoProtocolReader reader = new IoProtocolReader();
         reader.ioWalk();
 
-        reader.protocolString();
+        if (!reader.isHasError()) {
+
+            reader.protocolString();
+        }
         //System.out.println(FileUtil.file("lll"));
     }
 }
