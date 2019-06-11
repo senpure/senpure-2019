@@ -11,8 +11,6 @@ public class Bean extends TemplateBean {
 
     private Location nameLocation = new Location();
     //命名空间独立于语言,同一个命名空间name必须唯一
-
-
     private String namespace;
     //原始字符
     private String originalName;

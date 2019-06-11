@@ -21,8 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * IoProtocolReader
@@ -37,16 +39,23 @@ public class IoProtocolReader extends IoBaseListener {
     private List<Bean> beans = new ArrayList<>(128);
     private List<Event> events = new ArrayList<>(128);
     private List<Enum> enums = new ArrayList<>(128);
+    private List<String> importIos = new ArrayList<>();
+    private List<String> importKeys = new ArrayList<>();
     private Bean bean;
     private Enum anEnum;
     private Message message;
     private Event event;
     private String namespace = "com.senpure.io";
     private String javaPackage = "com.senpure.io";
+    private boolean enterJavaPackage = false;
+    private boolean enterNamespace = false;
     private Field field;
 
     private int fieldIndex = 1;
     private IoErrorListener ioErrorListener = new IoErrorListener();
+
+    private File file;
+    private Map<String, IoProtocolReader> ioProtocolReaderMap;
 
     public boolean isHasError() {
         return ioErrorListener.isHasError();
@@ -67,15 +76,53 @@ public class IoProtocolReader extends IoBaseListener {
         bean.getNameLocation().setPosition(token.getCharPositionInLine());
     }
 
+
+    @Override
+    public void enterImportValue(IoParser.ImportValueContext ctx) {
+        String path = ctx.getText();
+        importIos.add(path);
+        File importFile = FileUtil.file(path, file.getParent());
+        if (!importFile.exists()) {
+            Assert.error(file.getAbsolutePath() + " 引用文件 不存在 " + path);
+        }
+        String key = importFile.getAbsolutePath();
+        importKeys.add(key);
+        IoReader.getInstance().read(importFile);
+
+    }
+
+
     @Override
     public void enterJavaPackageValue(IoParser.JavaPackageValueContext ctx) {
+        if (enterJavaPackage) {
+            return;
+        }
+        enterJavaPackage = true;
         javaPackage = ctx.getText();
+
     }
 
     @Override
-    public void enterNamespace(IoParser.NamespaceContext ctx) {
+    public void enterNamespaceValue(IoParser.NamespaceValueContext ctx) {
+        if (enterNamespace) {
+            return;
+        }
+        enterNamespace = true;
         namespace = ctx.getText();
+        if (!enterJavaPackage) {
+            String[] temp = namespace.split("\\.");
+            for (String s : temp) {
+                if (s.length() > 0) {
+                    if (Character.isDigit(s.charAt(0))) {
+                        return;
+                    }
+                }
+
+            }
+            javaPackage = namespace;
+        }
     }
+
 
     @Override
     public void enterMessage(IoParser.MessageContext ctx) {
@@ -298,39 +345,44 @@ public class IoProtocolReader extends IoBaseListener {
 
     @Override
     public void exitProtocol(IoParser.ProtocolContext ctx) {
-
         findBenAndAssignment();
     }
 
     private void findBenAndAssignment() {
         List<Bean> finds = new ArrayList<>();
-        List<Bean> modelBeans = new ArrayList<>();
+        // List<Bean> modelBeans = new ArrayList<>();
         List<Bean> allBeans = new ArrayList<>();
         finds.addAll(beans);
         finds.addAll(events);
         finds.addAll(messages);
 
-        modelBeans.addAll(beans);
-        modelBeans.addAll(enums);
-        allBeans.addAll(modelBeans);
-        findBenAndAssignment(finds, modelBeans, allBeans);
+        // modelBeans.addAll(beans);
+        // modelBeans.addAll(enums);
+        allBeans.addAll(beans);
+        allBeans.addAll(enums);
+        for (String importKey : importKeys) {
+            IoProtocolReader value = ioProtocolReaderMap.get(importKey);
+            allBeans.addAll(value.beans);
+            allBeans.addAll(value.enums);
+        }
+
+        findBenAndAssignment(finds, allBeans);
     }
 
+    /**
+     * @param beans
+     * @param allBeans
+     */
     //给bean 下的 bean赋值
-    private static void findBenAndAssignment(List<Bean> beans, List<Bean> modelBeans, List<Bean> allBeans) {
+    private void findBenAndAssignment(List<Bean> beans, List<Bean> allBeans) {
         for (Bean bean : beans) {
             for (Field field : bean.getFields()) {
                 if (!field.isBaseField()) {
-                    Bean b = findBean(field.getClassType(), modelBeans);
-                    if (b == null) {
-                        b = findBean(field.getClassType(), allBeans);
-                    } else {
-                        field.setOtherPart(false);
-                    }
+                    Bean b = findBean(field.getClassType(), allBeans);
                     if (b != null) {
                         field.setBean(b);
                     } else {
-                        Assert.error("line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
+                        Assert.error(file.getAbsolutePath() + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
                                 + "[" + field.getClassType() + "] Type,未定义，或未引用");
                     }
 
@@ -348,25 +400,28 @@ public class IoProtocolReader extends IoBaseListener {
         return null;
     }
 
-    private void ioWalk() throws IOException {
-        Lexer lexer = new IoLexer(CharStreams.fromStream(getClass().
-                getResourceAsStream("/hello.io")));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        IoParser parser = new IoParser(tokens);
+    public void read(File file, Map<String, IoProtocolReader> ioProtocolReaderMap) {
 
-        parser.getErrorListeners().clear();
-        parser.addErrorListener(ioErrorListener);
-
-        //默认new DefaultErrorStrategy()
-        //  parser.setErrorHandler(new DefaultErrorStrategy());
-
-        IoParser.ProtocolContext protocolContext = parser.protocol();
-        ParseTreeWalker walker = new ParseTreeWalker();
-        if (!isHasError()) {
-            walker.walk(this, protocolContext);
+        try {
+            this.file = file;
+            this.ioProtocolReaderMap = ioProtocolReaderMap;
+            Lexer lexer = new IoLexer(CharStreams.fromFileName(file.getAbsolutePath(), Charset.forName("utf-8")));
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            IoParser parser = new IoParser(tokens);
+            //清除consoleErrorListener
+            parser.getErrorListeners().clear();
+            parser.addErrorListener(ioErrorListener);
+            IoParser.ProtocolContext protocolContext = parser.protocol();
+            ParseTreeWalker walker = new ParseTreeWalker();
+            if (!isHasError()) {
+                walker.walk(this, protocolContext);
+                // findBenAndAssignment(ioProtocolReaderMap);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
+
 
     private void protocolString() {
 
@@ -422,12 +477,51 @@ public class IoProtocolReader extends IoBaseListener {
 
     }
 
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public List<Bean> getBeans() {
+        return beans;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public List<Enum> getEnums() {
+        return enums;
+    }
+
+    public List<String> getImportIos() {
+        return importIos;
+    }
+
+    public List<String> getImportKeys() {
+        return importKeys;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getJavaPackage() {
+        return javaPackage;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public Map<String, IoProtocolReader> getIoProtocolReaderMap() {
+        return ioProtocolReaderMap;
+    }
+
     public static void main(String[] args) throws IOException {
         AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
 
-        IoProtocolReader reader = new IoProtocolReader();
-        reader.ioWalk();
+        IoProtocolReader reader = IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), "hello.io"));
 
         if (!reader.isHasError()) {
 

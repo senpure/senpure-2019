@@ -12,7 +12,7 @@ public class Field {
     private boolean baseField;
     private boolean list;
     private int capacity=16;
-    private boolean otherPart;
+
 
 
     //自定义对象时的信息
@@ -87,13 +87,6 @@ public class Field {
 //        this.originalClassType = originalClassType;
 //    }
 
-    public boolean isOtherPart() {
-        return otherPart;
-    }
-
-    public void setOtherPart(boolean otherPart) {
-        this.otherPart = otherPart;
-    }
 
 
     public Location getTypeLocation() {

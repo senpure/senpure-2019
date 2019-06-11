@@ -33,6 +33,16 @@ public class FileUtil {
      * @return
      */
     public static File file(String path) {
+
+        return file(path, AppEvn.getClassRootPath());
+    }
+
+    /**
+     * @param path   路径  C:path or ../path
+     * @param parent 相对路径的目录
+     * @return
+     */
+    public static File file(String path, String parent) {
         path = checkPath(path);
         File file;
         path = path.replace("\\", "/");
@@ -44,19 +54,20 @@ public class FileUtil {
             file = new File(path);
         } else if (path.startsWith("../")) {
             int count = StringUtil.count(path, "../");
-            File parent = new File(AppEvn.getClassRootPath());
+            File parentFile = new File(parent);
             for (int i = 0; i < count; i++) {
-                parent = parent.getParentFile();
+                parentFile = parentFile.getParentFile();
             }
-            file = new File(parent, path.replace("../", ""));
+            file = new File(parentFile, path.replace("../", ""));
         } else {
-            file = new File(AppEvn.getClassRootPath(), path);
+            file = new File(parent, path);
         }
         return file;
     }
 
     /**
      * 确保路径是文件符合 '/' 结尾
+     *
      * @param path
      * @return
      */

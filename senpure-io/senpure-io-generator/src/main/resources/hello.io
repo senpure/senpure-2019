@@ -1,14 +1,14 @@
 javaPack  com.jkl.io;
 namespace model2;
 import    hello2.io;
-9message
+
 //77
 //88
 message CS Clazz 1001 {
-    int        na;                      //汉子
-    int        age;                     //age
-    Sexy       sexy;
-    Student [] students;
+    int         na;                     //汉子
+    int         age;                    //age
+    Sexy        sexy;
+    Student2 [] students;
 }
 
 //注释

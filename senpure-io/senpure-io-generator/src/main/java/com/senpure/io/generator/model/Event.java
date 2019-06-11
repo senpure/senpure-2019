@@ -17,11 +17,13 @@ public class Event extends Bean {
 
     @Override
     public String getJavaName() {
-        return getType() + getName() + "Event";
+        return getName() + "Event";
     }
+
     public String getJavaHandlerName() {
         return getType() + getName() + "EventHandler";
     }
+
     @Override
     public String getType() {
         return Constant.ENTITY_TYPE_EVENT;
