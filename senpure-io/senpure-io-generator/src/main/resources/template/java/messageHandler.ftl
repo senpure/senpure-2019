@@ -1,7 +1,7 @@
-package ${handlerJavaPack};
+package ${javaHandlerPack};
 
-import ${javaPack}.${type}${name}Message;
-import com.senpure.io.handler.AbstractRealityMessageHandler;
+import ${javaPack}.${javaName};
+import com.senpure.io.producer.handler.AbstractProducerMessageHandler;
 import io.netty.channel.Channel;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +12,10 @@ ${sovereignty}
  * @time ${.now?datetime}
  */
 @Component
-public class ${type}${name}MessageHandler extends AbstractRealityMessageHandler<${type}${name}Message> {
+public class ${javaHandlerName} extends AbstractProducerMessageHandler<${javaName}> {
 
     @Override
-    public void execute(Channel channel, long token, long userId, ${type}${name}Message message) {
+    public void execute(Channel channel, long token, long userId, ${javaName} message) {
         //TODO 请在这里写下你的代码
 
     }
@@ -23,11 +23,11 @@ public class ${type}${name}MessageHandler extends AbstractRealityMessageHandler<
     @Override
     public int handlerId() {
                 //${.now?datetime} ${id?c}
-        return ${type}${name}Message.MESSAGE_ID;
+        return ${javaName}.MESSAGE_ID;
     }
 
     @Override
-    public ${type}${name}Message getEmptyMessage() {
-        return new ${type}${name}Message();
+    public ${javaName} getEmptyMessage() {
+        return new ${javaName}();
     }
 }

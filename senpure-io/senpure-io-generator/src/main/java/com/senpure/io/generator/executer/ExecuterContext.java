@@ -26,6 +26,8 @@ public class ExecuterContext {
     private boolean generateJavaMessage = true;
 
     private boolean generateJavaMessageHandler = true;
+    private boolean generateJavaCSMessageHandler = true;
+    private boolean generateJavaSCMessageHandler = false;
     private boolean generateJavaEvent = true;
     private boolean generateJavaEventHandler = true;
 
@@ -234,5 +236,21 @@ public class ExecuterContext {
 
     public void setJavaTemplateDir(String javaTemplateDir) {
         this.javaTemplateDir = javaTemplateDir;
+    }
+
+    public boolean isGenerateJavaCSMessageHandler() {
+        return generateJavaCSMessageHandler;
+    }
+
+    public void setGenerateJavaCSMessageHandler(boolean generateJavaCSMessageHandler) {
+        this.generateJavaCSMessageHandler = generateJavaCSMessageHandler;
+    }
+
+    public boolean isGenerateJavaSCMessageHandler() {
+        return generateJavaSCMessageHandler;
+    }
+
+    public void setGenerateJavaSCMessageHandler(boolean generateJavaSCMessageHandler) {
+        this.generateJavaSCMessageHandler = generateJavaSCMessageHandler;
     }
 }

@@ -72,7 +72,7 @@ fieldType
     |'string'
     |Identifier
     ;
-fieldName:Identifier;
+fieldName:Identifier|messageHead|beanHead|eventHead;
 fieldComment:LINE_COMMENT;
 enumSymbol  //至少需要两个状态才有必要定义枚举,强制第一个位默认值
     :entityComment*

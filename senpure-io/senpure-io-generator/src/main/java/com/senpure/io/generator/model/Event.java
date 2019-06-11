@@ -4,7 +4,7 @@ package com.senpure.io.generator.model;
 import com.senpure.io.generator.Constant;
 
 public class Event extends Bean {
-    private String handlerJavaPack;
+    private String javaHandlerPack;
     private int id;
 
     public int getId() {
@@ -21,7 +21,7 @@ public class Event extends Bean {
     }
 
     public String getJavaHandlerName() {
-        return getType() + getName() + "EventHandler";
+        return getName() + "EventHandler";
     }
 
     @Override
@@ -29,11 +29,11 @@ public class Event extends Bean {
         return Constant.ENTITY_TYPE_EVENT;
     }
 
-    public String getHandlerJavaPack() {
-        return handlerJavaPack;
+    public String getJavaHandlerPack() {
+        return javaHandlerPack;
     }
 
-    public void setHandlerJavaPack(String handlerJavaPack) {
-        this.handlerJavaPack = handlerJavaPack;
+    public void setJavaHandlerPack(String javaHandlerPack) {
+        this.javaHandlerPack = javaHandlerPack;
     }
 }

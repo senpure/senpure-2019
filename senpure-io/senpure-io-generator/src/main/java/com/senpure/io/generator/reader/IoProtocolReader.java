@@ -52,7 +52,7 @@ public class IoProtocolReader extends IoBaseListener {
     private Field field;
 
     private int fieldIndex = 1;
-    private IoErrorListener ioErrorListener = new IoErrorListener();
+    private IoErrorListener ioErrorListener;
 
     private File file;
     private Map<String, IoProtocolReader> ioProtocolReaderMap;
@@ -130,12 +130,12 @@ public class IoProtocolReader extends IoBaseListener {
         messages.add(message);
         bean = message;
         setBeanValue();
-        message.setHandlerJavaPack(javaPackage);
+        message.setJavaHandlerPack(javaPackage);
         if (Constant.JAVA_PACK_MESSAGE.trim().length() > 0) {
             message.setJavaPack(message.getJavaPack() + "." + Constant.JAVA_PACK_MESSAGE);
         }
         if (Constant.JAVA_PACK_HANDLER.trim().length() > 0) {
-            message.setHandlerJavaPack(message.getHandlerJavaPack() + "." + Constant.JAVA_PACK_HANDLER);
+            message.setJavaHandlerPack(message.getJavaHandlerPack() + "." + Constant.JAVA_PACK_HANDLER);
         }
 
     }
@@ -323,12 +323,12 @@ public class IoProtocolReader extends IoBaseListener {
         bean = event;
         events.add(event);
         setBeanValue();
-        event.setHandlerJavaPack(javaPackage);
+        event.setJavaHandlerPack(javaPackage);
         if (Constant.JAVA_PACK_EVENT.trim().length() > 0) {
             event.setJavaPack(event.getJavaPack() + "." + Constant.JAVA_PACK_EVENT);
         }
         if (Constant.JAVA_PACK_EVENT_HANDLER.trim().length() > 0) {
-            event.setHandlerJavaPack(event.getHandlerJavaPack() + "." + Constant.JAVA_PACK_EVENT_HANDLER);
+            event.setJavaHandlerPack(event.getJavaHandlerPack() + "." + Constant.JAVA_PACK_EVENT_HANDLER);
         }
     }
 
@@ -405,6 +405,7 @@ public class IoProtocolReader extends IoBaseListener {
         try {
             this.file = file;
             this.ioProtocolReaderMap = ioProtocolReaderMap;
+            ioErrorListener = new IoErrorListener(file);
             Lexer lexer = new IoLexer(CharStreams.fromFileName(file.getAbsolutePath(), Charset.forName("utf-8")));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             IoParser parser = new IoParser(tokens);

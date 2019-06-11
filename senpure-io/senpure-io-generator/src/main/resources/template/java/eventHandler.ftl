@@ -1,7 +1,7 @@
 package ${javaHandlerPack};
 
-import ${javaPack}.${name}Event;
-import com.senpure.io.handler.AbstractEventHandler;
+import ${javaPack}.${javaName};
+import com.senpure.io.event.handler.AbstractEventHandler;
 import org.springframework.stereotype.Component;
 
 /**<#if hasExplain>
@@ -11,10 +11,10 @@ ${sovereignty}
  * @time ${.now?datetime}
  */
 @Component
-public class ${name}EventHandler extends AbstractEventHandler<${name}Event> {
+public class ${javaHandlerName} extends AbstractEventHandler<${javaName}> {
 
     @Override
-    public void execute(${name}Event event) {
+    public void execute(${javaName} event) {
         //TODO 请在这里写下你处理${name}Event的代码，并删除该条注释
 
     }
@@ -22,11 +22,11 @@ public class ${name}EventHandler extends AbstractEventHandler<${name}Event> {
     @Override
     public int handlerId() {
                 //${.now?datetime} ${id?c}
-        return ${name}Event.EVENT_ID;
+        return ${javaName}.EVENT_ID;
     }
 
     @Override
-    public ${name}Event getEmptyEvent() {
-        return new ${name}Event();
+    public ${javaName} getEmptyEvent() {
+        return new ${javaName}();
     }
 }

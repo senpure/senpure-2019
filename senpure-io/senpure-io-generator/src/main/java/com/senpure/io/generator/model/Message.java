@@ -4,7 +4,7 @@ package com.senpure.io.generator.model;
 public class Message extends Bean {
     private int id;
     private String type;
-    private String handlerJavaPack;
+    private String javaHandlerPack;
 
     @Override
     public String getJavaName() {
@@ -32,12 +32,12 @@ public class Message extends Bean {
         this.type = type;
     }
 
-    public String getHandlerJavaPack() {
-        return handlerJavaPack;
+    public String getJavaHandlerPack() {
+        return javaHandlerPack;
     }
 
-    public void setHandlerJavaPack(String handlerJavaPack) {
-        this.handlerJavaPack = handlerJavaPack;
+    public void setJavaHandlerPack(String javaHandlerPack) {
+        this.javaHandlerPack = javaHandlerPack;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.senpure.io.generator.executer;
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.model.Event;
 import com.senpure.io.generator.model.Message;
 import com.senpure.io.generator.reader.IoProtocolReader;
 import com.senpure.io.generator.reader.IoReader;
@@ -63,8 +64,8 @@ public class Executer {
         if (context.isGenerateJavaEvent()) {
             generateJavaEvent();
         }
-        if (context.isGenerateJavaMessageHandler()) {
-            // generateJavaMessageHandler();
+        if (context.isGenerateJavaEventHandler()) {
+            generateJavaEventHandler();
         }
     }
 
@@ -139,7 +140,16 @@ public class Executer {
             Assert.error(e);
         }
         for (Message message : context.getMessages()) {
-            File file = new File(context.getJavaCodeRootPath(), FileUtil.fullFileEnd(message.getHandlerJavaPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
+            if (message.getType().equals("CS")) {
+                if (!context.isGenerateJavaCSMessageHandler()) {
+                    continue;
+                }
+            } else if (message.getType().equals("SC")) {
+                if (!context.isGenerateJavaSCMessageHandler()) {
+                    continue;
+                }
+            }
+            File file = new File(context.getJavaCodeRootPath(), FileUtil.fullFileEnd(message.getJavaHandlerPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
                 if (!context.isJavaMessageHandlerCover()) {
@@ -189,8 +199,8 @@ public class Executer {
         } catch (IOException e) {
             Assert.error(e);
         }
-        for (Bean bean : context.getMessages()) {
-            File file = new File(context.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+        for (Event event : context.getEvents()) {
+            File file = new File(context.getJavaCodeRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
                 if (!context.isJavaEventHandlerCover()) {
@@ -202,14 +212,14 @@ public class Executer {
 
             }
             checkFile(file);
-            bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
+            event.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             if (cover) {
                 logger.debug("覆盖生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
             } else {
                 logger.debug("生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
             }
 
-            Generator.generate(bean, template, file);
+            Generator.generate(event, template, file);
         }
 
     }
@@ -222,6 +232,7 @@ public class Executer {
         List<String> paths = new ArrayList<>();
         paths.add("hello.io");
         paths.add("hello2.io");
+        paths.add("ioMessage.io");
         for (String path : paths) {
             IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), path));
         }

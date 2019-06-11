@@ -1,4 +1,4 @@
-package ${handlerJavaPack};
+package ${javaHandlerPack};
 
 import ${javaPack}.${type}${name}Message;
 import com.senpure.io.handler.AbstractRealityMessageHandler;
