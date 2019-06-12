@@ -3,10 +3,12 @@ package com.senpure.io.generator.executer;
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Event;
 import com.senpure.io.generator.model.Message;
 import com.senpure.io.generator.reader.IoProtocolReader;
 import com.senpure.io.generator.reader.IoReader;
+import com.senpure.io.generator.util.CheckUtil;
 import com.senpure.io.generator.util.TemplateUtil;
 import com.senpure.template.FileUtil;
 import com.senpure.template.Generator;
@@ -37,6 +39,7 @@ public class Executer {
 
     public Executer(ExecuterContext context) {
         this.context = context;
+        CheckUtil.loadData(context.getJavaCodeRootPath());
         cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         TemplateUtil.share(cfg);
     }
@@ -50,7 +53,46 @@ public class Executer {
         }
     }
 
+    private boolean check() {
+        boolean check = true;
+        if (context.isGenerateJavaBean()) {
+            for (Bean bean : context.getBeans()) {
+                boolean temp = CheckUtil.check(bean);
+                if (!temp) {
+                    check = temp;
+                }
+            }
+            for (Enum anEnum : context.getEnums()) {
+                boolean temp = CheckUtil.check(anEnum);
+                if (!temp) {
+                    check = temp;
+                }
+            }
+        }
+        if (context.isGenerateJavaMessage() || context.isGenerateJavaMessageHandler()) {
+            for (Message message : context.getMessages()) {
+                boolean temp = CheckUtil.check(message);
+                if (!temp) {
+                    check = temp;
+                }
+            }
+        }
+        if (context.isGenerateJavaEvent()||context.isGenerateJavaEventHandler()) {
+            for (Event event : context.getEvents()) {
+                boolean temp = CheckUtil.check(event);
+                if (!temp) {
+                    check = temp;
+                }
+            }
+        }
+        return check;
+    }
+
     public void generate() {
+        if (!check()) {
+            logger.error("校验不合法不生成");
+            return;
+        }
         if (context.isGenerateJavaBean()) {
             generateJavaBean();
             generateJavaEnum();
@@ -93,7 +135,7 @@ public class Executer {
 
     }
 
-    public void generateJavaEnum() {
+    private void generateJavaEnum() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -112,7 +154,7 @@ public class Executer {
     }
 
 
-    public void generateJavaMessage() {
+    private  void generateJavaMessage() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -131,7 +173,7 @@ public class Executer {
     }
 
 
-    public void generateJavaMessageHandler() {
+    private void generateJavaMessageHandler() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -173,7 +215,7 @@ public class Executer {
 
     }
 
-    public void generateJavaEvent() {
+    private  void generateJavaEvent() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -191,7 +233,7 @@ public class Executer {
 
     }
 
-    public void generateJavaEventHandler() {
+    private  void generateJavaEventHandler() {
         changeTemplateDir2Java();
         Template template = null;
         try {

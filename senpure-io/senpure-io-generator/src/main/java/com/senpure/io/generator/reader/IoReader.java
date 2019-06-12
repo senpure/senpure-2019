@@ -47,6 +47,13 @@ public class IoReader {
 
         return null;
     }
+    public void checkName()
+    {
+
+        for (IoProtocolReader value : ioProtocolReaderMap.values()) {
+
+        }
+    }
 
     public Map<String, IoProtocolReader> getIoProtocolReaderMap() {
         return ioProtocolReaderMap;

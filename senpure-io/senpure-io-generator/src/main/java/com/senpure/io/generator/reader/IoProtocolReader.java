@@ -57,6 +57,7 @@ public class IoProtocolReader extends IoBaseListener {
     private File file;
     private Map<String, IoProtocolReader> ioProtocolReaderMap;
 
+
     public boolean isHasError() {
         return ioErrorListener.isHasError();
     }
@@ -64,6 +65,7 @@ public class IoProtocolReader extends IoBaseListener {
     private void setBeanValue() {
         bean.setJavaPack(javaPackage);
         bean.setNamespace(namespace);
+        bean.setFilePath(file.getPath());
         fieldIndex = 1;
 
     }
@@ -345,7 +347,71 @@ public class IoProtocolReader extends IoBaseListener {
 
     @Override
     public void exitProtocol(IoParser.ProtocolContext ctx) {
+        check();
         findBenAndAssignment();
+    }
+
+    private void checkName(StringBuilder sb, Bean a, Bean b, String aName, String bName) {
+        if (aName.equals(bName)) {
+            if (sb.length() > 0) {
+                sb.append("\n");
+            }
+            sb.append(file.getAbsoluteFile()).append(": name重复 ").append(aName);
+            sb.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
+        }
+    }
+
+    private void checkId(StringBuilder sb, Bean a, Bean b, String aName, String bName, int aId, int bId) {
+        if (aId == bId) {
+            if (sb.length() > 0) {
+                sb.append("\n");
+            }
+            sb.append(file.getAbsoluteFile()).append(": Id重复 ").append(aId);
+            sb.append(" ");
+            sb.append(a.getNameLocation()).append(aName)
+                    .append(" <--> ").append(b.getNameLocation()).append(bName);
+        }
+    }
+
+    private void check() {
+
+        List<Bean> beanAndEnums = new ArrayList<>();
+        beanAndEnums.addAll(beans);
+        beanAndEnums.addAll(enums);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < beanAndEnums.size() - 1; i++) {
+            Bean a = beanAndEnums.get(i);
+            for (int j = i + 1; j < beanAndEnums.size(); j++) {
+                Bean b = beanAndEnums.get(j);
+                checkName(sb, a, b, a.getName(), b.getName());
+            }
+        }
+        for (int i = 0; i < messages.size() - 1; i++) {
+            Message a = messages.get(i);
+            for (int j = i + 1; j < messages.size(); j++) {
+                Message b = messages.get(j);
+                String aName = a.getType() + a.getName();
+                String bName = b.getType() + b.getName();
+                checkName(sb, a, b, aName, bName);
+                checkId(sb, a, b, aName, bName, a.getId(), b.getId());
+            }
+
+        }
+        for (int i = 0; i < events.size() - 1; i++) {
+            Event a = events.get(i);
+            for (int j = i + 1; j < events.size(); j++) {
+                Event b = events.get(j);
+                String aName = a.getName();
+                String bName = b.getName();
+                checkName(sb, a, b, aName, bName);
+                checkId(sb, a, b, aName, bName, a.getId(), b.getId());
+
+            }
+        }
+        if (sb.length() > 0) {
+
+            Assert.error("校验不合法\n" + sb.toString());
+        }
     }
 
     private void findBenAndAssignment() {

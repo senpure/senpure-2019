@@ -1,5 +1,4 @@
-javaPack  com.jkl.io;
-namespace model2;
+namespace abc;
 import    hello2.io;
 
 //77

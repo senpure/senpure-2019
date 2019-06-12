@@ -32,7 +32,8 @@ public class Bean extends TemplateBean {
     //字段的长度格式化toString使用
     private int fieldMaxLen = 0;
     private boolean generate = true;
-
+    //协议文件全路径
+    private String filePath;
 
     public boolean isEnum() {
         return false;
@@ -142,6 +143,14 @@ public class Bean extends TemplateBean {
 
     public void setNameLocation(Location nameLocation) {
         this.nameLocation = nameLocation;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     @Override
