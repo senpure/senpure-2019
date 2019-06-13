@@ -18,8 +18,8 @@ bean Student {
 }
 
 enum Sexy {
-X;
-Y;
+    X = 1;
+    Y;
 }
 
 event Hi 1001 {

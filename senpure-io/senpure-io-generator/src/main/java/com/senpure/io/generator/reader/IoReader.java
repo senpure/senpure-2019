@@ -27,7 +27,7 @@ public class IoReader {
         return Inner.ioReader;
     }
 
-    private Map<String, IoProtocolReader> ioProtocolReaderMap = new HashMap<>();
+    private volatile Map<String, IoProtocolReader> ioProtocolReaderMap = new HashMap<>();
 
     public IoProtocolReader read(File file) {
         String key = file.getAbsolutePath();
@@ -47,8 +47,12 @@ public class IoReader {
 
         return null;
     }
-    public void checkName()
-    {
+
+    public void replace(String key, IoProtocolReader ioProtocolReader) {
+        ioProtocolReaderMap.put(key, ioProtocolReader);
+    }
+
+    public void checkName() {
 
         for (IoProtocolReader value : ioProtocolReaderMap.values()) {
 

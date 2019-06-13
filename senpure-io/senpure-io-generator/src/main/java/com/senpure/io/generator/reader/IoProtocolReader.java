@@ -39,8 +39,7 @@ public class IoProtocolReader extends IoBaseListener {
     private List<Bean> beans = new ArrayList<>(128);
     private List<Event> events = new ArrayList<>(128);
     private List<Enum> enums = new ArrayList<>(128);
-    private List<String> importIos = new ArrayList<>();
-    private List<String> importKeys = new ArrayList<>();
+
     private Bean bean;
     private Enum anEnum;
     private Message message;
@@ -52,20 +51,30 @@ public class IoProtocolReader extends IoBaseListener {
     private Field field;
 
     private int fieldIndex = 1;
-    private IoErrorListener ioErrorListener;
+    protected IoErrorListener ioErrorListener;
 
-    private File file;
-    private Map<String, IoProtocolReader> ioProtocolReaderMap;
+    protected String filePath;
+    protected Map<String, IoProtocolReader> ioProtocolReaderMap;
+    protected List<String> importIos = new ArrayList<>();
+    protected List<String> importKeys = new ArrayList<>();
 
+    protected StringBuilder errorBuiler = new StringBuilder();
 
     public boolean isHasError() {
         return ioErrorListener.isHasError();
     }
 
+
+    protected void checkErrorBuilder() {
+        if (errorBuiler.length() > 0) {
+            errorBuiler.append("\n");
+        }
+    }
+
     private void setBeanValue() {
         bean.setJavaPack(javaPackage);
         bean.setNamespace(namespace);
-        bean.setFilePath(file.getPath());
+        bean.setFilePath(filePath);
         fieldIndex = 1;
 
     }
@@ -83,13 +92,17 @@ public class IoProtocolReader extends IoBaseListener {
     public void enterImportValue(IoParser.ImportValueContext ctx) {
         String path = ctx.getText();
         importIos.add(path);
-        File importFile = FileUtil.file(path, file.getParent());
-        if (!importFile.exists()) {
-            Assert.error(file.getAbsolutePath() + " 引用文件 不存在 " + path);
+        File importFile = FileUtil.file(path, new File(filePath).getParent());
+        if (importFile.exists()) {
+            String key = importFile.getAbsolutePath();
+            importKeys.add(key);
+            IoReader.getInstance().read(importFile);
+        } else {
+            //  Assert.error(filePath + " 引用文件 不存在 " + path);
+            checkErrorBuilder();
+            errorBuiler.append(filePath).append("引用文件 不存在 ").append(path);
         }
-        String key = importFile.getAbsolutePath();
-        importKeys.add(key);
-        IoReader.getInstance().read(importFile);
+
 
     }
 
@@ -224,17 +237,27 @@ public class IoProtocolReader extends IoBaseListener {
             field.setIndex(fieldIndex++);
         }
         if (field.getIndex() < 0) {
-            Assert.error(field.getNameLocation().toString() + " " + field.getName() + "index 为负数");
+            checkErrorBuilder();
+            errorBuiler.append(filePath).append(field.getNameLocation()).append(" ")
+                    .append(field.getName()).append("index 为负数");
+            // Assert.error(field.getNameLocation().toString() + " " + field.getName() + "index 为负数");
         }
         for (int i = 0; i < bean.getFields().size() - 1; i++) {
             Field f = bean.getFields().get(i);
             if (f.getIndex() == field.getIndex()) {
-                Assert.error(bean.getName() + " field index 相同 " + f.getNameLocation().toString() + " " + f.getName() +
-                        "," + field.getNameLocation().toString() + " " + field.getIndex());
+                checkErrorBuilder();
+                errorBuiler.append(bean.getName()).append(" field index 相同 ");
+                errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
+                errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
+                //Assert.error(bean.getName() + " field index 相同 " + f.getNameLocation().toString() + " " + f.getName() +
+                //      "," + field.getNameLocation().toString() + " " + field.getIndex());
             }
             if (f.getName().equals(field.getName())) {
-                Assert.error(bean.getName() + " field name 相同 " + f.getNameLocation().toString() + " " + f.getName() +
-                        "," + field.getNameLocation().toString() + " " + field.getName());
+                errorBuiler.append(bean.getName()).append("  field name 相同");
+                errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
+                errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
+                // Assert.error(bean.getName() + " field name 相同 " + f.getNameLocation().toString() + " " + f.getName() +
+                //        "," + field.getNameLocation().toString() + " " + field.getName());
             }
         }
         int fieldLen = field.getName().length();
@@ -349,26 +372,26 @@ public class IoProtocolReader extends IoBaseListener {
     public void exitProtocol(IoParser.ProtocolContext ctx) {
         check();
         findBenAndAssignment();
-    }
-
-    private void checkName(StringBuilder sb, Bean a, Bean b, String aName, String bName) {
-        if (aName.equals(bName)) {
-            if (sb.length() > 0) {
-                sb.append("\n");
-            }
-            sb.append(file.getAbsoluteFile()).append(": name重复 ").append(aName);
-            sb.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
+        if (errorBuiler.length() > 0) {
+            Assert.error("校验不合法\n" + errorBuiler.toString());
         }
     }
 
-    private void checkId(StringBuilder sb, Bean a, Bean b, String aName, String bName, int aId, int bId) {
+    private void checkName(Bean a, Bean b, String aName, String bName) {
+        if (aName.equals(bName)) {
+
+            checkErrorBuilder();
+            errorBuiler.append(filePath).append(": name重复 ").append(aName);
+            errorBuiler.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
+        }
+    }
+
+    private void checkId(Bean a, Bean b, String aName, String bName, int aId, int bId) {
         if (aId == bId) {
-            if (sb.length() > 0) {
-                sb.append("\n");
-            }
-            sb.append(file.getAbsoluteFile()).append(": Id重复 ").append(aId);
-            sb.append(" ");
-            sb.append(a.getNameLocation()).append(aName)
+            checkErrorBuilder();
+            errorBuiler.append(filePath).append(": Id重复 ").append(aId);
+            errorBuiler.append(" ");
+            errorBuiler.append(a.getNameLocation()).append(aName)
                     .append(" <--> ").append(b.getNameLocation()).append(bName);
         }
     }
@@ -378,12 +401,12 @@ public class IoProtocolReader extends IoBaseListener {
         List<Bean> beanAndEnums = new ArrayList<>();
         beanAndEnums.addAll(beans);
         beanAndEnums.addAll(enums);
-        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < beanAndEnums.size() - 1; i++) {
             Bean a = beanAndEnums.get(i);
             for (int j = i + 1; j < beanAndEnums.size(); j++) {
                 Bean b = beanAndEnums.get(j);
-                checkName(sb, a, b, a.getName(), b.getName());
+                checkName(a, b, a.getName(), b.getName());
             }
         }
         for (int i = 0; i < messages.size() - 1; i++) {
@@ -392,8 +415,8 @@ public class IoProtocolReader extends IoBaseListener {
                 Message b = messages.get(j);
                 String aName = a.getType() + a.getName();
                 String bName = b.getType() + b.getName();
-                checkName(sb, a, b, aName, bName);
-                checkId(sb, a, b, aName, bName, a.getId(), b.getId());
+                checkName(a, b, aName, bName);
+                checkId(a, b, aName, bName, a.getId(), b.getId());
             }
 
         }
@@ -403,15 +426,12 @@ public class IoProtocolReader extends IoBaseListener {
                 Event b = events.get(j);
                 String aName = a.getName();
                 String bName = b.getName();
-                checkName(sb, a, b, aName, bName);
-                checkId(sb, a, b, aName, bName, a.getId(), b.getId());
+                checkName(a, b, aName, bName);
+                checkId(a, b, aName, bName, a.getId(), b.getId());
 
             }
         }
-        if (sb.length() > 0) {
 
-            Assert.error("校验不合法\n" + sb.toString());
-        }
     }
 
     private void findBenAndAssignment() {
@@ -448,8 +468,15 @@ public class IoProtocolReader extends IoBaseListener {
                     if (b != null) {
                         field.setBean(b);
                     } else {
-                        Assert.error(file.getAbsolutePath() + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
-                                + "[" + field.getClassType() + "] Type,未定义，或未引用");
+                        checkErrorBuilder();
+                        errorBuiler.append(filePath).append(field.getTypeLocation()).append(" ")
+                                .append(bean.getType());
+                        errorBuiler.append(bean.getName()).append(".").append(field.getName());
+                        errorBuiler.append("[");
+                        errorBuiler.append(field.getClassType())
+                                .append("] Type,未定义，或未引用 ");
+                        // Assert.error(filePath + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
+                        //      + "[" + field.getClassType() + "] Type,未定义，或未引用");
                     }
 
                 }
@@ -467,28 +494,31 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
     public void read(File file, Map<String, IoProtocolReader> ioProtocolReaderMap) {
-
         try {
-            this.file = file;
+            this.filePath = file.getPath();
             this.ioProtocolReaderMap = ioProtocolReaderMap;
-            ioErrorListener = new IoErrorListener(file);
-            Lexer lexer = new IoLexer(CharStreams.fromFileName(file.getAbsolutePath(), Charset.forName("utf-8")));
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            IoParser parser = new IoParser(tokens);
-            //清除consoleErrorListener
-            parser.getErrorListeners().clear();
-            parser.addErrorListener(ioErrorListener);
-            IoParser.ProtocolContext protocolContext = parser.protocol();
-            ParseTreeWalker walker = new ParseTreeWalker();
-            if (!isHasError()) {
-                walker.walk(this, protocolContext);
-                // findBenAndAssignment(ioProtocolReaderMap);
-            }
+            this.ioErrorListener = new IoErrorListener(filePath);
+            read(CharStreams.fromFileName(file.getAbsolutePath(), Charset.forName("utf-8")));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    protected void read(CharStream input) {
+        Lexer lexer = new IoLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        IoParser parser = new IoParser(tokens);
+        //清除consoleErrorListener
+        parser.getErrorListeners().clear();
+        parser.addErrorListener(ioErrorListener);
+        IoParser.ProtocolContext protocolContext = parser.protocol();
+        ParseTreeWalker walker = new ParseTreeWalker();
+        if (!isHasError()) {
+            walker.walk(this, protocolContext);
+            // findBenAndAssignment(ioProtocolReaderMap);
+        }
+
+    }
 
     private void protocolString() {
 
@@ -576,8 +606,9 @@ public class IoProtocolReader extends IoBaseListener {
         return javaPackage;
     }
 
-    public File getFile() {
-        return file;
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public Map<String, IoProtocolReader> getIoProtocolReaderMap() {
