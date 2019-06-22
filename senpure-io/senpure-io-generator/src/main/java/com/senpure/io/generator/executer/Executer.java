@@ -273,8 +273,8 @@ public class Executer {
 
         List<String> paths = new ArrayList<>();
         paths.add("hello.io");
-        paths.add("hello2.io");
-        paths.add("ioMessage.io");
+       //paths.add("hello2.io");
+       // paths.add("ioMessage.io");
         for (String path : paths) {
             IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), path));
         }

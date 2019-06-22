@@ -155,8 +155,9 @@ fragment DIGIT : [0-9];
 Identifier:	Letter LetterOrDigit*  	;
 //WS      :  [ \t\r\n\u000C]+ -> skip ;
 WS      :  [ \t\r\n]+ -> skip ;
-COMMENT :   '/*' .*? '*/';
+COMMENT :   '/*' .*? '*/' -> skip;
 LINE_COMMENT:   '//' ~[\r\n]*;
+CODE_COMMENT:   '#' ~[\r\n]* -> skip ;
 /*
 LINE_COMMENT
     :'//' .*? '\r'? '\n'//匹配//于换行中间的所有字符

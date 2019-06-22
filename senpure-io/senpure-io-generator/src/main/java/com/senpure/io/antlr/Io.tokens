@@ -84,6 +84,7 @@ Identifier=83
 WS=84
 COMMENT=85
 LINE_COMMENT=86
+CODE_COMMENT=87
 ';'=1
 '.io'=2
 'javaPack'=3

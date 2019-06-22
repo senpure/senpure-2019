@@ -5,6 +5,7 @@ import    hello2.io;
 //88
 message CS Clazz 1001 {
     int         na;                     //汉子
+    int         na;                     //汉子
     int         age;                    //age
     Sexy        sexy;
     Student2 [] students;

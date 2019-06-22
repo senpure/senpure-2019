@@ -153,6 +153,7 @@ public class IoProtocolReader extends IoBaseListener {
             message.setJavaHandlerPack(message.getJavaHandlerPack() + "." + Constant.JAVA_PACK_HANDLER);
         }
 
+
     }
 
     @Override
@@ -193,6 +194,7 @@ public class IoProtocolReader extends IoBaseListener {
     public void enterFieldType(IoParser.FieldTypeContext ctx) {
         field.setClassType(ctx.getText());
         Token token = ctx.getStart();
+
         field.getTypeLocation().setLine(token.getLine());
         field.getTypeLocation().setPosition(token.getCharPositionInLine());
 
@@ -246,6 +248,7 @@ public class IoProtocolReader extends IoBaseListener {
             Field f = bean.getFields().get(i);
             if (f.getIndex() == field.getIndex()) {
                 checkErrorBuilder();
+                errorBuiler.append(filePath).append(":");
                 errorBuiler.append(bean.getName()).append(" field index 相同 ");
                 errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
                 errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
@@ -253,6 +256,8 @@ public class IoProtocolReader extends IoBaseListener {
                 //      "," + field.getNameLocation().toString() + " " + field.getIndex());
             }
             if (f.getName().equals(field.getName())) {
+                checkErrorBuilder();
+                errorBuiler.append(filePath).append(":");
                 errorBuiler.append(bean.getName()).append("  field name 相同");
                 errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
                 errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
@@ -504,9 +509,12 @@ public class IoProtocolReader extends IoBaseListener {
         }
     }
 
+    CommonTokenStream tokens;
+
     protected void read(CharStream input) {
         Lexer lexer = new IoLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        tokens = new CommonTokenStream(lexer);
+
         IoParser parser = new IoParser(tokens);
         //清除consoleErrorListener
         parser.getErrorListeners().clear();
@@ -519,6 +527,8 @@ public class IoProtocolReader extends IoBaseListener {
         }
 
     }
+
+
 
     private void protocolString() {
 
