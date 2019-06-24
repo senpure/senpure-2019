@@ -318,16 +318,6 @@ public interface IoListener extends ParseTreeListener {
 	 */
 	void exitEnumSymbol(IoParser.EnumSymbolContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link IoParser#enumDefaultField}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumDefaultField(IoParser.EnumDefaultFieldContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IoParser#enumDefaultField}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link IoParser#enumField}.
 	 * @param ctx the parse tree
 	 */

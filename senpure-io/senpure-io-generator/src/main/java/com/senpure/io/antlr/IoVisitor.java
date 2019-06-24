@@ -197,12 +197,6 @@ public interface IoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEnumSymbol(IoParser.EnumSymbolContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IoParser#enumDefaultField}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link IoParser#enumField}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

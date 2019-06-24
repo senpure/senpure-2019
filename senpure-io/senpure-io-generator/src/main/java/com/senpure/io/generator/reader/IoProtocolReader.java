@@ -249,7 +249,7 @@ public class IoProtocolReader extends IoBaseListener {
             if (f.getIndex() == field.getIndex()) {
                 checkErrorBuilder();
                 errorBuiler.append(filePath).append(":");
-                errorBuiler.append(bean.getName()).append(" field index 相同 ");
+                errorBuiler.append(bean.getName()).append(" field index 相同 [").append(f.getIndex()).append("] ");
                 errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
                 errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
                 //Assert.error(bean.getName() + " field index 相同 " + f.getNameLocation().toString() + " " + f.getName() +
@@ -323,21 +323,13 @@ public class IoProtocolReader extends IoBaseListener {
         setBeanName(ctx);
     }
 
-    @Override
-    public void enterEnumDefaultField(IoParser.EnumDefaultFieldContext ctx) {
-        field = new Field();
-        anEnum.setDefaultField(field);
-        bean.getFields().add(field);
-    }
-
-    @Override
-    public void exitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx) {
-        fieldCheck();
-    }
 
     @Override
     public void enterEnumField(IoParser.EnumFieldContext ctx) {
         field = new Field();
+        if (bean.getFields().size() == 0) {
+            anEnum.setDefaultField(field);
+        }
         bean.getFields().add(field);
     }
 
@@ -345,6 +337,14 @@ public class IoProtocolReader extends IoBaseListener {
     @Override
     public void exitEnumField(IoParser.EnumFieldContext ctx) {
         fieldCheck();
+    }
+
+    @Override
+    public void exitEnumSymbol(IoParser.EnumSymbolContext ctx) {
+        if (anEnum.getDefaultField().getIndex() != 1) {
+            checkErrorBuilder();
+            errorBuiler.append(filePath).append(": 枚举第一个字段index必须为一 ").append(anEnum.getName());
+        }
     }
 
     @Override
@@ -527,7 +527,6 @@ public class IoProtocolReader extends IoBaseListener {
         }
 
     }
-
 
 
     private void protocolString() {

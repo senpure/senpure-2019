@@ -234,13 +234,6 @@ public class IoBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements IoV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitEnumField(IoParser.EnumFieldContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

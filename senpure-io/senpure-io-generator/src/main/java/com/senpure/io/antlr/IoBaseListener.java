@@ -388,18 +388,6 @@ public class IoBaseListener implements IoListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEnumDefaultField(IoParser.EnumDefaultFieldContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEnumDefaultField(IoParser.EnumDefaultFieldContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterEnumField(IoParser.EnumFieldContext ctx) { }
 	/**
 	 * {@inheritDoc}

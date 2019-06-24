@@ -77,11 +77,10 @@ fieldComment:LINE_COMMENT;
 enumSymbol  //至少需要两个状态才有必要定义枚举,强制第一个位默认值
     :entityComment*
      enumHead enumName'{'
-     enumDefaultField
+     enumField
      enumField+
     '}'
     ;
-enumDefaultField:fieldName('=' '1')?';'fieldComment?;
 enumField:fieldName('='fieldIndex)?';'fieldComment?;
 enumHead:'enum';
 enumName:Identifier;
