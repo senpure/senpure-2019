@@ -21,13 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 网关管理一个服务的多个实例 每个实例可能含有多个管道channel
  * 一个服务对应一个 serverManager
  */
-public class ServerManager {
+public class ProducerManager {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private GatewayMessageExecuter messageExecuter;
 
-    public ServerManager(GatewayMessageExecuter messageExecuter) {
+    public ProducerManager(GatewayMessageExecuter messageExecuter) {
         this.messageExecuter = messageExecuter;
     }
 
@@ -36,15 +36,15 @@ public class ServerManager {
 
     private ConcurrentMap<Long, ServerRelation> tokenServerChannelManagerMap = new ConcurrentHashMap<>();
 
-    private List<ServerChannelManager> useChannelManagers = new ArrayList<>();
+    private List<ProducerChannelManager> useChannelManagers = new ArrayList<>();
 
-    private List<ServerChannelManager> prepStopOldInstance = new ArrayList<>();
+    private List<ProducerChannelManager> prepStopOldInstance = new ArrayList<>();
     private Map<Integer, Boolean> handleIdsMap = new HashMap<>();
     private String serverName;
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
 
 
-    public void bind(Long token, Long relationToken, ServerChannelManager serverChannelManager) {
+    public void bind(Long token, Long relationToken, ProducerChannelManager serverChannelManager) {
         ServerRelation serverRelation = new ServerRelation();
         serverRelation.serverChannelManager = serverChannelManager;
         serverRelation.relationToken = relationToken;
@@ -55,7 +55,7 @@ public class ServerManager {
 
     public void sendMessage(Client2GatewayMessage client2GatewayMessage) {
         ServerRelation serverRelation = tokenServerChannelManagerMap.get(client2GatewayMessage.getToken());
-        ServerChannelManager serverChannelManager;
+        ProducerChannelManager serverChannelManager;
         if (serverRelation == null) {
             serverChannelManager = nextServerChannelManager();
             if (serverChannelManager == null) {
@@ -76,7 +76,7 @@ public class ServerManager {
         }
     }
 
-    public void relationAndWaitSendMessage(ServerChannelManager serverChannelManager, Client2GatewayMessage client2GatewayMessage) {
+    public void relationAndWaitSendMessage(ProducerChannelManager serverChannelManager, Client2GatewayMessage client2GatewayMessage) {
         Long relationToken = messageExecuter.idGenerator.nextId();
         CSRelationUserGatewayMessage message = new CSRelationUserGatewayMessage();
         message.setToken(client2GatewayMessage.getToken());
@@ -98,7 +98,7 @@ public class ServerManager {
         serverChannelManager.sendMessage(toMessage);
     }
 
-    protected ServerChannelManager nextServerChannelManager() {
+    protected ProducerChannelManager nextServerChannelManager() {
         if (useChannelManagers.size() == 0) {
             return null;
         }
@@ -128,10 +128,10 @@ public class ServerManager {
         serverOffLine(channel, useChannelManagers);
     }
 
-    private void serverOffLine(Channel channel, List<ServerChannelManager> channelManagers) {
-        Iterator<ServerChannelManager> iterator = channelManagers.iterator();
+    private void serverOffLine(Channel channel, List<ProducerChannelManager> channelManagers) {
+        Iterator<ProducerChannelManager> iterator = channelManagers.iterator();
         while (iterator.hasNext()) {
-            ServerChannelManager serverChannelManager = iterator.next();
+            ProducerChannelManager serverChannelManager = iterator.next();
             if (serverChannelManager.offline(channel)) {
                 if (!serverChannelManager.isActive()) {
                     iterator.remove();
@@ -140,7 +140,7 @@ public class ServerManager {
             }
         }
 //        for (int i = 0; i < channelManagers.size(); i++) {
-////            ServerChannelManager serverChannelManager = channelManagers.get(i);
+////            ProducerChannelManager serverChannelManager = channelManagers.get(i);
 ////            if (serverChannelManager.offline(channel)) {
 ////                if (!serverChannelManager.isActive()) {
 ////                    channelManagers.remove(i);
@@ -184,7 +184,7 @@ public class ServerManager {
     }
 
 
-    private void clearRelation(ServerChannelManager serverChannelManager) {
+    private void clearRelation(ProducerChannelManager serverChannelManager) {
         logger.warn("{} {} 全部channel已经下线 清空关联列表", serverName, serverChannelManager.getServerKey());
         List<Long> tokens = new ArrayList<>();
         for (Map.Entry<Long, ServerRelation> entry : tokenServerChannelManagerMap.entrySet()) {
@@ -207,24 +207,24 @@ public class ServerManager {
     }
 
 
-    public ServerChannelManager getChannelServer(String serverKey) {
-        for (ServerChannelManager manager : useChannelManagers) {
+    public ProducerChannelManager getChannelServer(String serverKey) {
+        for (ProducerChannelManager manager : useChannelManagers) {
             if (manager.getServerKey().equals(serverKey)) {
                 return manager;
             }
         }
-        ServerChannelManager manager = new ServerChannelManager();
+        ProducerChannelManager manager = new ProducerChannelManager();
         manager.setServerKey(serverKey);
         return manager;
 
     }
 
-    public List<ServerChannelManager> getUseChannelManagers() {
+    public List<ProducerChannelManager> getUseChannelManagers() {
         return useChannelManagers;
     }
 
-    public synchronized void checkChannelServer(String serverKey, ServerChannelManager channelManager) {
-        for (ServerChannelManager manager : useChannelManagers) {
+    public synchronized void checkChannelServer(String serverKey, ProducerChannelManager channelManager) {
+        for (ProducerChannelManager manager : useChannelManagers) {
             if (manager.getServerKey().equals(serverKey)) {
                 return;
             }
@@ -246,7 +246,7 @@ public class ServerManager {
     }
 
     class ServerRelation {
-        ServerChannelManager serverChannelManager;
+        ProducerChannelManager serverChannelManager;
         Long relationToken;
     }
 

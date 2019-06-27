@@ -138,17 +138,17 @@ public class ProducerServerStarter implements ApplicationRunner {
                     }
                     if (start) {
                         gatewayChannelManager.setConnecting(true);
-                        ProducerServer ProducerServer = new ProducerServer();
-                        ProducerServer.setGatewayManager(gatewayManager);
-                        ProducerServer.setProperties(producer);
-                        ProducerServer.setMessageExecuter(messageExecuter);
-                        ProducerServer.setServerName(serverProperties.getName());
-                        ProducerServer.setReadableServerName(producer.getReadableName());
-                        if (ProducerServer.start(instance.getHost(), port)) {
-                            servers.add(ProducerServer);
-                            regServer(ProducerServer, handleMessages);
+                        ProducerServer producerServer = new ProducerServer();
+                        producerServer.setGatewayManager(gatewayManager);
+                        producerServer.setProperties(producer);
+                        producerServer.setMessageExecuter(messageExecuter);
+                        producerServer.setServerName(serverProperties.getName());
+                        producerServer.setReadableServerName(producer.getReadableName());
+                        if (producerServer.start(instance.getHost(), port)) {
+                            servers.add(producerServer);
+                            regServer(producerServer, handleMessages);
                             if (gatewayChannelManager.getChannelSize() == 1 && finalIdNames != null && finalIdNames.size() > 0) {
-                                regIdNames(ProducerServer, finalIdNames);
+                                regIdNames(producerServer, finalIdNames);
                             }
                         } else {
                             failGatewayMap.put(gatewayKey, now);

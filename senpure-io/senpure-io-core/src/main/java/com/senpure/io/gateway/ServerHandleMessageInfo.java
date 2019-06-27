@@ -14,7 +14,7 @@ public class ServerHandleMessageInfo {
     private int valueType;
     private boolean serverShare;
 
-    private ServerManager serverManager;
+    private ProducerManager serverManager;
 
     public int getMessageType() {
         return messageType;
@@ -56,11 +56,11 @@ public class ServerHandleMessageInfo {
         this.serverShare = serverShare;
     }
 
-    public ServerManager getServerManager() {
+    public ProducerManager getProducerManager() {
         return serverManager;
     }
 
-    public void setServerManager(ServerManager serverManager) {
+    public void setProducerManager(ProducerManager serverManager) {
         this.serverManager = serverManager;
     }
 }

@@ -25,8 +25,8 @@ public class HandleMessageManager {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private boolean direct;
     private boolean serverShare;
-    private List<ServerManager> serverManagers = new ArrayList<>();
-    private ServerManager serverManager;
+    private List<ProducerManager> serverManagers = new ArrayList<>();
+    private ProducerManager serverManager;
     private GatewayMessageExecuter messageExecuter;
     private int csAskHandleMessageId = new CSAskHandleMessage().getMessageId();
     //   private AtomicInteger atomicIndex = new AtomicInteger(-1);
@@ -43,13 +43,13 @@ public class HandleMessageManager {
 
     }
 
-    public synchronized void addServerManager(int handId, ServerManager serverManager) {
+    public synchronized void addServerManager(int handId, ProducerManager serverManager) {
         if (this.handId != handId) {
 
             Assert.error("handId 不匹配");
         }
         boolean add = true;
-        for (ServerManager manager : serverManagers) {
+        for (ProducerManager manager : serverManagers) {
             if (manager.getServerName().equalsIgnoreCase(serverManager.getServerName())) {
                 add = false;
                 break;
@@ -109,15 +109,15 @@ public class HandleMessageManager {
             waitAskTask.setValue(value);
 
             int askTimes = 0;
-            for (ServerManager serverManager : serverManagers) {
+            for (ProducerManager serverManager : serverManagers) {
                 askTimes += serverManager.getUseChannelManagers().size();
             }
             waitAskTask.setAskTimes(askTimes);
             waitAskTask.setMessage(message);
 
             messageExecuter.waitAskMap.put(waitAskTask.getAskToken(), waitAskTask);
-            for (ServerManager serverManager : serverManagers) {
-                for (ServerChannelManager channelManager : serverManager.getUseChannelManagers()) {
+            for (ProducerManager serverManager : serverManagers) {
+                for (ProducerChannelManager channelManager : serverManager.getUseChannelManagers()) {
                     Channel channel = channelManager.nextChannel();
                     if (channel != null) {
                         channel.writeAndFlush(temp);

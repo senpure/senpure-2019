@@ -35,7 +35,6 @@ public class GatewayChannelManager {
     private String gatewayKey;
 
 
-
     public GatewayChannelManager(String gatewayKey) {
         this.gatewayKey = gatewayKey;
         gatewayChannelKey = atomicCount.incrementAndGet();
@@ -52,7 +51,18 @@ public class GatewayChannelManager {
 
 
     public void sendMessage(Producer2GatewayMessage frame) {
-        nextChannel().writeAndFlush(frame);
+        for (int i = 0; i < 10; i++) {
+            Channel channel = nextChannel();
+            if (channel != null) {
+                if (channel.isWritable()) {
+                    channel.writeAndFlush(frame);
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+        logger.error("全部channel 不可用 {}", toString());
     }
 
     private Channel nextChannel() {

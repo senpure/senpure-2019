@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class ServerChannelManager {
+public class ProducerChannelManager {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

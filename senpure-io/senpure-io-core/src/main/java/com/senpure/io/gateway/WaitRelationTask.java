@@ -17,9 +17,9 @@ public class WaitRelationTask {
 
     private Client2GatewayMessage message;
 
-    private ServerChannelManager serverChannelManager;
+    private ProducerChannelManager serverChannelManager;
 
-    private ServerManager serverManager;
+    private ProducerManager serverManager;
     private Long relationToken;
 
 
@@ -63,19 +63,19 @@ public class WaitRelationTask {
         this.message = message;
     }
 
-    public ServerChannelManager getServerChannelManager() {
+    public ProducerChannelManager getServerChannelManager() {
         return serverChannelManager;
     }
 
-    public ServerManager getServerManager() {
+    public ProducerManager getServerManager() {
         return serverManager;
     }
 
-    public void setServerManager(ServerManager serverManager) {
+    public void setServerManager(ProducerManager serverManager) {
         this.serverManager = serverManager;
     }
 
-    public void setServerChannelManager(ServerChannelManager serverChannelManager) {
+    public void setServerChannelManager(ProducerChannelManager serverChannelManager) {
         this.serverChannelManager = serverChannelManager;
     }
 

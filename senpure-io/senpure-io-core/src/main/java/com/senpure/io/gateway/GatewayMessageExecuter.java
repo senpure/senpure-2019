@@ -39,9 +39,9 @@ public class GatewayMessageExecuter {
 
     private ConcurrentMap<Long, Channel> userClientChannel = new ConcurrentHashMap<>(32768);
     private ConcurrentMap<Long, Channel> tokenChannel = new ConcurrentHashMap<>(32768);
-    public ConcurrentMap<String, ServerManager> serverInstanceMap = new ConcurrentHashMap<>(128);
+    public ConcurrentMap<String, ProducerManager> serverInstanceMap = new ConcurrentHashMap<>(128);
 
-    public ConcurrentMap<Integer, ServerManager> messageHandleMap = new ConcurrentHashMap<>(2048);
+    public ConcurrentMap<Integer, ProducerManager> messageHandleMap = new ConcurrentHashMap<>(2048);
     public ConcurrentMap<Integer, HandleMessageManager> handleMessageManagerMap = new ConcurrentHashMap<>(2048);
 
 
@@ -233,8 +233,8 @@ public class GatewayMessageExecuter {
 
 
     private void userOffline(Channel channel, Long token, Long userId) {
-        for (Map.Entry<String, ServerManager> entry : serverInstanceMap.entrySet()) {
-            ServerManager serverManager = entry.getValue();
+        for (Map.Entry<String, ProducerManager> entry : serverInstanceMap.entrySet()) {
+            ProducerManager serverManager = entry.getValue();
             serverManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_OFFlINE);
         }
     }
@@ -247,8 +247,8 @@ public class GatewayMessageExecuter {
      * @param userId
      */
     private void userChange(Channel channel, Long token, Long userId) {
-        for (Map.Entry<String, ServerManager> entry : serverInstanceMap.entrySet()) {
-            ServerManager serverManager = entry.getValue();
+        for (Map.Entry<String, ProducerManager> entry : serverInstanceMap.entrySet()) {
+            ProducerManager serverManager = entry.getValue();
             if (serverManager.getHandleIds().contains(csLoginMessageId)) {
                 serverManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_CHANGE, false);
             } else {
@@ -290,9 +290,9 @@ public class GatewayMessageExecuter {
         for (HandleMessage handleMessage : handleMessages) {
             logger.info("{}", handleMessage);
         }
-        ServerManager serverManager = serverInstanceMap.get(message.getServerName());
+        ProducerManager serverManager = serverInstanceMap.get(message.getServerName());
         if (serverManager == null) {
-            serverManager = new ServerManager(this);
+            serverManager = new ProducerManager(this);
             serverInstanceMap.put(message.getServerName(), serverManager);
             for (HandleMessage handleMessage : handleMessages) {
                 serverManager.markHandleId(handleMessage.getHandleMessageId());
@@ -328,7 +328,7 @@ public class GatewayMessageExecuter {
                 break;
             }
         }
-        ServerChannelManager serverChannelManager = serverManager.getChannelServer(serverKey);
+        ProducerChannelManager serverChannelManager = serverManager.getChannelServer(serverKey);
         serverChannelManager.addChannel(channel);
         serverManager.checkChannelServer(serverKey, serverChannelManager);
         for (HandleMessage handleMessage : handleMessages) {
@@ -343,7 +343,7 @@ public class GatewayMessageExecuter {
     }
 
 
-    public void sendMessage(ServerChannelManager serverChannelManager, Message message) {
+    public void sendMessage(ProducerChannelManager serverChannelManager, Message message) {
         Client2GatewayMessage toMessage = new Client2GatewayMessage();
         toMessage.setMessageId(message.getMessageId());
         ByteBuf buf = Unpooled.buffer(message.getSerializedSize());
@@ -412,7 +412,7 @@ public class GatewayMessageExecuter {
             userId = userId == null ? 0 : userId;
             Long token = ChannelAttributeUtil.getToken(userChannel);
             String serverName = ChannelAttributeUtil.getRemoteServerName(channel);
-            ServerManager serverManager = serverInstanceMap.get(serverName);
+            ProducerManager serverManager = serverInstanceMap.get(serverName);
             if (serverManager != null) {
                 serverManager.breakUserGateway(userChannel, token, userId, Constant.BREAK_TYPE_ERROR);
             }
@@ -491,8 +491,8 @@ public class GatewayMessageExecuter {
                 String serverKey = ChannelAttributeUtil.getRemoteServerKey(channel);
                 logger.debug("{} {} 可以处理 {} 值位 {} 的请求", serverName, serverKey,
                         MessageIdReader.read(waitAskTask.getFromMessageId()), waitAskTask.getValue());
-                ServerManager serverManager = serverInstanceMap.get(serverName);
-                for (ServerChannelManager useChannelManager : serverManager.getUseChannelManagers()) {
+                ProducerManager serverManager = serverInstanceMap.get(serverName);
+                for (ProducerChannelManager useChannelManager : serverManager.getUseChannelManagers()) {
                     if (useChannelManager.getServerKey().equalsIgnoreCase(serverKey)) {
                         waitAskTask.answer(serverManager, useChannelManager, true);
                         return true;

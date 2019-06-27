@@ -30,9 +30,9 @@ public class WaitAskTask {
 
     private  int  fromMessageId;
     private int requestId;
-    private ServerChannelManager serverChannelManager;
+    private ProducerChannelManager serverChannelManager;
 
-    private ServerManager serverManager;
+    private ProducerManager serverManager;
     private Client2GatewayMessage message;
 
 
@@ -41,7 +41,7 @@ public class WaitAskTask {
         startTime = System.currentTimeMillis();
     }
 
-    public synchronized void answer(ServerManager serverManager, ServerChannelManager serverChannelManager, boolean canHandle) {
+    public synchronized void answer(ProducerManager serverManager, ProducerChannelManager serverChannelManager, boolean canHandle) {
         answerTimes++;
         if (canHandle) {
             if (this.serverChannelManager != null) {
@@ -65,11 +65,11 @@ public class WaitAskTask {
         return System.currentTimeMillis() - startTime > maxDelay;
     }
 
-    public ServerChannelManager getServerChannelManager() {
+    public ProducerChannelManager getServerChannelManager() {
         return serverChannelManager;
     }
 
-    public void setServerChannelManager(ServerChannelManager serverChannelManager) {
+    public void setServerChannelManager(ProducerChannelManager serverChannelManager) {
         this.serverChannelManager = serverChannelManager;
     }
 
