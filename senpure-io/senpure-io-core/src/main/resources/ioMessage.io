@@ -14,57 +14,65 @@ bean IdName {
 }
 
 //服务器注册消息处理器到网关
-message SC RegServerHandleMessage 8 {
+message SC RegServerHandleMessage 102 {
     String           serverName;         //服务名
     String           serverKey;          //服务实例唯一标识
     String           readableServerName; //服务名
     HandleMessage [] messages;           //可以处理的消息
 }
 
+//数字id与字符串的关联
+message SC IdName 104 {
+    IdName [] idNames;
+}
+
 //关联用户与网关
-message CS RelationUserGateway 9 {
+message CS RelationUserGateway 105 {
     long token;                         // channel token
     long userId;                        //userId
     long relationToken;                 //relation token
 }
 
-//断开用户与网关
-message SC BreakUserGateway 10 {
+message CS BreakUserGateway 107 {
+    long   token;                       //channel token
+    long   userId;                      //用户Id
+    long   relationToken;               //relation token
+    String type;                        //error,userChange,userOffline
 }
 
-message CS AskHandle 11 {
+//断开用户与网关
+message SC BreakUserGateway 108 {
+}
+
+message CS AskHandle 109 {
     long   token;                       // token
     int    fromMessageId;
     String value;                       //值
 }
 
-message SC AskHandle 12 {
+message SC AskHandle 110 {
     boolean handle;                     //是否可以处理
     long    token;                      // token
     int     fromMessageId;
     String  value;                      //值
 }
 
-//数字id与字符串的关联
-message SC IdName 12 {
-    IdName [] idNames;
-}
-
-message SC KickOff 88 {
+message SC KickOff 112 {
     long token;                         // token
     long userId;                        //userId
 }
 
 //心跳
-message CS Heart 88 {
+message CS Heart 65 {
 }
 
 //心跳
-message SC Heart 88 {
+message SC Heart 66 {
 }
 
 //服务器内部错误提示
-message SC InnerError 88 {
+message SC InnerError 100 {
+    int    requestId;                   //请求id
     String type;                        //错误类型
     String message;                     //提示内容
     int    id;                          //消息id

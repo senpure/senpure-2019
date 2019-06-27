@@ -33,6 +33,13 @@ message CS RelationUserGateway 105 {
     long relationToken;                 //relation token
 }
 
+message CS BreakUserGateway 107 {
+    long   token;                       //channel token
+    long   userId;                      //用户Id
+    long   relationToken;               //relation token
+    String type;                        //error,userChange,userOffline
+}
+
 //断开用户与网关
 message SC BreakUserGateway 108 {
 }
@@ -55,6 +62,11 @@ message SC KickOff 112 {
     long userId;                        //userId
 }
 
+message CS ChannelOffline 113 {
+    long token;                         // channel token
+    long userId;                        //userId
+}
+
 //心跳
 message CS Heart 65 {
 }
@@ -65,6 +77,7 @@ message SC Heart 66 {
 
 //服务器内部错误提示
 message SC InnerError 100 {
+    int    requestId;                   //请求id
     String type;                        //错误类型
     String message;                     //提示内容
     int    id;                          //消息id

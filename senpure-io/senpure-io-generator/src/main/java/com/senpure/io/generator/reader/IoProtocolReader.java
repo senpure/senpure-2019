@@ -383,10 +383,10 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
     private void checkName(Bean a, Bean b, String aName, String bName) {
-        if (aName.equals(bName)) {
+        if (aName.equals(bName)&&a.getNamespace().equals(b.getNamespace())) {
 
             checkErrorBuilder();
-            errorBuiler.append(filePath).append(": name重复 ").append(aName);
+            errorBuiler.append(filePath).append(": 同有命名空间name重复 ").append(aName);
             errorBuiler.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
         }
     }

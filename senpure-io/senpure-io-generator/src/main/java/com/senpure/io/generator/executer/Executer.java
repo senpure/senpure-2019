@@ -77,7 +77,7 @@ public class Executer {
                 }
             }
         }
-        if (context.isGenerateJavaEvent()||context.isGenerateJavaEventHandler()) {
+        if (context.isGenerateJavaEvent() || context.isGenerateJavaEventHandler()) {
             for (Event event : context.getEvents()) {
                 boolean temp = CheckUtil.check(event);
                 if (!temp) {
@@ -154,7 +154,7 @@ public class Executer {
     }
 
 
-    private  void generateJavaMessage() {
+    private void generateJavaMessage() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -215,7 +215,7 @@ public class Executer {
 
     }
 
-    private  void generateJavaEvent() {
+    private void generateJavaEvent() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -233,7 +233,7 @@ public class Executer {
 
     }
 
-    private  void generateJavaEventHandler() {
+    private void generateJavaEventHandler() {
         changeTemplateDir2Java();
         Template template = null;
         try {
@@ -270,11 +270,10 @@ public class Executer {
         AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
 
-
         List<String> paths = new ArrayList<>();
-        paths.add("hello.io");
-       //paths.add("hello2.io");
-       // paths.add("ioMessage.io");
+        //paths.add("hello.io");
+       // paths.add("hello3.io");
+         paths.add("ioMessage.io");
         for (String path : paths) {
             IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), path));
         }
