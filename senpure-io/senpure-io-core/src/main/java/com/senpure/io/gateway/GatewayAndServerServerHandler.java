@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 public class GatewayAndServerServerHandler extends SimpleChannelInboundHandler<Server2GatewayMessage> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private GatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecutor messageExecuter;
 
   //  private SourceOffline sourceOffline;
 
-    public GatewayAndServerServerHandler(GatewayMessageExecuter messageExecuter) {
+    public GatewayAndServerServerHandler(GatewayMessageExecutor messageExecuter) {
         this.messageExecuter = messageExecuter;
     }
 

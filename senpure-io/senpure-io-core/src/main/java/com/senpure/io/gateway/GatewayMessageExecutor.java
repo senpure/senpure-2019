@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 
-public class GatewayMessageExecuter {
-    protected static Logger logger = LoggerFactory.getLogger(GatewayMessageExecuter.class);
+public class GatewayMessageExecutor {
+    protected static Logger logger = LoggerFactory.getLogger(GatewayMessageExecutor.class);
     private ScheduledExecutorService service;
     private int serviceRefCount = 0;
     private int csLoginMessageId = 0;
@@ -53,12 +53,12 @@ public class GatewayMessageExecuter {
 
     private boolean init = false;
 
-    public GatewayMessageExecuter() {
+    public GatewayMessageExecutor() {
         this(Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2,
                 new NameThreadFactory("gateway-executor")), new IDGenerator(0, 0));
     }
 
-    public GatewayMessageExecuter(ScheduledExecutorService service, IDGenerator idGenerator) {
+    public GatewayMessageExecutor(ScheduledExecutorService service, IDGenerator idGenerator) {
         this.service = service;
         this.idGenerator = idGenerator;
         // init();

@@ -27,12 +27,12 @@ public class HandleMessageManager {
     private boolean serverShare;
     private List<ProducerManager> serverManagers = new ArrayList<>();
     private ProducerManager serverManager;
-    private GatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecutor messageExecuter;
     private int csAskHandleMessageId = new CSAskHandleMessage().getMessageId();
     //   private AtomicInteger atomicIndex = new AtomicInteger(-1);
     private int handId;
 
-    public HandleMessageManager(int handId, boolean direct, boolean serverShare, GatewayMessageExecuter messageExecuter) {
+    public HandleMessageManager(int handId, boolean direct, boolean serverShare, GatewayMessageExecutor messageExecuter) {
         this.direct = direct;
         this.serverShare = serverShare;
         this.messageExecuter = messageExecuter;
@@ -78,7 +78,7 @@ public class HandleMessageManager {
                 value = Bean.readString(buf);
             } catch (Exception e) {
                 logger.error("读取询问值出错询问值只能是string 类型 messageId " + message.getMessageId(), e);
-                // Assert.error("读取询问值出错 询问值只能是string 类型 messageId  " + message.getMessageId());
+                // Assert.error("读取询问值出错 询问值只能是string 类型 messageId  " + getValue.getMessageId());
 
                 SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
                 errorMessage.setRequestId(message.getRequestId());

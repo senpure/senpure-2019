@@ -49,7 +49,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     private ScheduledExecutorService service;
 
     private List<ProducerServer> servers = new ArrayList<>();
-    private ProducerMessageExecuter messageExecuter;
+    private ProducerMessageExecutor messageExecuter;
 
     private Map<String, Long> failGatewayMap = new HashMap<>();
 
@@ -72,15 +72,15 @@ public class ProducerServerStarter implements ApplicationRunner {
         if (producer.getIoWorkThreadPoolSize() < 1) {
             producer.setIoWorkThreadPoolSize(ioSize);
         }
-        if (producer.getExecuterThreadPoolSize() < 1) {
+        if (producer.getExecutorThreadPoolSize() < 1) {
             producer.setEventThreadPoolSize(logicSize);
         }
     }
 
     private void messageExecuter() {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecuterThreadPoolSize(),
+        ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(serverProperties.getName() + "-executor"));
-        ProducerMessageExecuter messageExecuter = new ProducerMessageExecuter(service);
+        ProducerMessageExecutor messageExecuter = new ProducerMessageExecutor(service);
         this.messageExecuter = messageExecuter;
         this.service = service;
         EventHelper.setService(service);
@@ -141,7 +141,7 @@ public class ProducerServerStarter implements ApplicationRunner {
                         ProducerServer producerServer = new ProducerServer();
                         producerServer.setGatewayManager(gatewayManager);
                         producerServer.setProperties(producer);
-                        producerServer.setMessageExecuter(messageExecuter);
+                        producerServer.setMessageExecutor(messageExecuter);
                         producerServer.setServerName(serverProperties.getName());
                         producerServer.setReadableServerName(producer.getReadableName());
                         if (producerServer.start(instance.getHost(), port)) {

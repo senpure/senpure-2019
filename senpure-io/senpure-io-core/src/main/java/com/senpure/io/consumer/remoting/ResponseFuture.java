@@ -7,9 +7,8 @@ package com.senpure.io.consumer.remoting;
  * @time 2019-06-27 20:05:38
  */
 public interface ResponseFuture {
-    Object get();
+    ResponseResult get() throws Exception;
 
-
-    Object get(int timeout);
+    ResponseResult get(int timeout) throws Exception;
 
 }

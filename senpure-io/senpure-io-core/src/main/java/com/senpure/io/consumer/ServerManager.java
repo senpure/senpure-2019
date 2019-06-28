@@ -1,6 +1,9 @@
 package com.senpure.io.consumer;
 
-import com.senpure.io.protocol.Message;
+import com.senpure.io.consumer.remoting.DefaultFuture;
+import com.senpure.io.consumer.remoting.ResponseResult;
+import com.senpure.io.message.SCAskHandleMessage;
+import io.netty.channel.Channel;
 
 /**
  * ConsumerManager
@@ -10,9 +13,21 @@ import com.senpure.io.protocol.Message;
  */
 public class ServerManager {
 
-    public void sendMessage(Message message)
-    {
 
+    public <T> T sendMessage(Channel channel, MessageFrame frame) {
+
+
+        DefaultFuture future = new DefaultFuture(frame.getRequestId(), 500);
+        MessageHandlerUtil.mark(future);
+        channel.writeAndFlush(frame);
+        return (T) future.get();
+
+    }
+
+    public static void main(String[] args) {
+
+        ResponseResult result = null;
+        SCAskHandleMessage message = result.getValue();
 
     }
 }

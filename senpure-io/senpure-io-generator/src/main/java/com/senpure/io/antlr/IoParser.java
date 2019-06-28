@@ -44,7 +44,7 @@ public class IoParser extends Parser {
 		return new String[] {
 			"protocol", "headContent", "entity", "importIo", "importValue", "javaPack", 
 			"javaPackageValue", "namespace", "namespaceValue", "fileName", "filePath", 
-			"message", "messageHead", "messageType", "messageName", "messageId", 
+			"getValue", "messageHead", "messageType", "messageName", "messageId",
 			"entityComment", "event", "eventHead", "eventName", "eventId", "bean", 
 			"beanHead", "beanName", "field", "fieldList", "fieldIndex", "fieldType", 
 			"fieldName", "fieldComment", "enumSymbol", "enumField", "enumHead", "enumName"
@@ -55,7 +55,7 @@ public class IoParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "';'", "'.io'", "'javaPack'", "'.'", "'namespace'", "'../'", "'/'", 
-			"'\\'", "'{'", "'}'", "'message'", "'cs'", "'CS'", "'sc'", "'SC'", "'event'", 
+			"'\\'", "'{'", "'}'", "'getValue'", "'cs'", "'CS'", "'sc'", "'SC'", "'event'",
 			"'bean'", "'='", "'['", "']'", "'sint'", "'slong'", "'sfixed32'", "'sfixed64'", 
 			"'String'", "'string'", "'abstract'", "'assert'", "'boolean'", "'break'", 
 			"'byte'", "'case'", "'catch'", "'char'", "'class'", "'const'", "'continue'", 

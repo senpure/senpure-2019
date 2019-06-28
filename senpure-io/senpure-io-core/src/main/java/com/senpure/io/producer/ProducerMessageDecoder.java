@@ -48,13 +48,13 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
                 frame.setBuf(buf);
                 out.add(frame);
 
-//                Gateway2ServerMessage message = new Gateway2ServerMessage();
+//                Gateway2ServerMessage getValue = new Gateway2ServerMessage();
 //                ByteBuf buf = in.readBytes(packageLength - 20);
-//                message.setMessageId(messageId);
-//                message.setToken(token);
-//                message.setBuf(buf);
-//                message.setUserId(userId);
-//                out.add(message);
+//                getValue.setMessageId(messageId);
+//                getValue.setToken(token);
+//                getValue.setBuf(buf);
+//                getValue.setUserId(userId);
+//                out.add(getValue);
             }
 
         }

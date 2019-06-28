@@ -25,9 +25,9 @@ public class ProducerManager {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private GatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecutor messageExecuter;
 
-    public ProducerManager(GatewayMessageExecuter messageExecuter) {
+    public ProducerManager(GatewayMessageExecutor messageExecuter) {
         this.messageExecuter = messageExecuter;
     }
 

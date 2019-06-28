@@ -563,7 +563,7 @@ public class IoProtocolReader extends IoBaseListener {
             }
             logger.info(file.getAbsolutePath());
             try {
-                Generator.generate(msg, cfg.getTemplate("message.ftl"), file);
+                Generator.generate(msg, cfg.getTemplate("getValue.ftl"), file);
             } catch (IOException e) {
                 e.printStackTrace();
             }

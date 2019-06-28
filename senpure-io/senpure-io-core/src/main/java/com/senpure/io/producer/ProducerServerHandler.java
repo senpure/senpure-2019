@@ -16,20 +16,20 @@ import org.slf4j.LoggerFactory;
 public class ProducerServerHandler extends SimpleChannelInboundHandler<Gateway2ProducerMessage> {
 
 
-    private ProducerMessageExecuter messageExecuter;
+    private ProducerMessageExecutor messageExecutor;
     private GatewayManager gatewayManager;
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ProducerServerHandler( ProducerMessageExecuter messageExecuter, GatewayManager gatewayManager) {
-        this.messageExecuter = messageExecuter;
+    public ProducerServerHandler(ProducerMessageExecutor messageExecutor, GatewayManager gatewayManager) {
+        this.messageExecutor = messageExecutor;
         this.gatewayManager = gatewayManager;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Gateway2ProducerMessage msg) throws Exception {
-        messageExecuter.execute(ctx.channel(), msg);
+        messageExecutor.execute(ctx.channel(), msg);
     }
 
 
@@ -42,7 +42,8 @@ public class ProducerServerHandler extends SimpleChannelInboundHandler<Gateway2P
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         //解决强断的错误 远程主机强迫关闭了一个现有的连接
-        ctx.flush();
+        //ctx.flush();
+        super.channelReadComplete(ctx);
     }
 
     @Override

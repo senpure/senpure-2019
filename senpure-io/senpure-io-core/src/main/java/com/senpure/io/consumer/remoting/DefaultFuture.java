@@ -1,6 +1,7 @@
 package com.senpure.io.consumer.remoting;
 
 import com.senpure.io.consumer.MessageFrame;
+import com.senpure.io.protocol.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public class DefaultFuture implements ResponseFuture {
 
     private static final Map<Integer, DefaultFuture> FUTURES = new ConcurrentHashMap();
 
-    private final long requestId;
+    private final int requestId;
 
     private final int timeout;
     private final Lock lock = new ReentrantLock();
@@ -33,13 +34,13 @@ public class DefaultFuture implements ResponseFuture {
 
     private volatile MessageFrame frame;
 
-    public DefaultFuture(long requestId, int timeout) {
+    public DefaultFuture(int requestId, int timeout) {
         this.requestId = requestId;
         this.timeout = timeout;
     }
 
 
-    public  void doReceived(MessageFrame frame) {
+    public void doReceived(MessageFrame frame) {
         lock.lock();
         try {
             this.frame = frame;
@@ -51,12 +52,12 @@ public class DefaultFuture implements ResponseFuture {
     }
 
     @Override
-    public Object get() {
+    public ResponseResult get() {
         return get(timeout);
     }
 
     @Override
-    public Object get(int timeout) {
+    public ResponseResult get(int timeout) {
         if (timeout <= 0) {
             timeout = 500;
         }
@@ -79,10 +80,29 @@ public class DefaultFuture implements ResponseFuture {
                 throw new RuntimeException("超时" + timeout);
             }
         }
-        return frame.getMessage();
+        return returnMessage();
+
+    }
+
+    private ResponseResult returnMessage() {
+         Message message = frame.getMessage();
+
+        return null;
     }
 
     public boolean isDone() {
         return frame != null;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public long getStartTime() {
+        return start;
+    }
+
+    public int getRequestId() {
+        return requestId;
     }
 }

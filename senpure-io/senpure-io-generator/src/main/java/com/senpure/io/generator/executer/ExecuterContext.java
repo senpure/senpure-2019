@@ -36,7 +36,7 @@ public class ExecuterContext {
 
     private String javaBeanCodeRootPath;
     private String javaBeanTemplate = "bean.ftl";
-    private String javaMessageTemplate = "message.ftl";
+    private String javaMessageTemplate = "getValue.ftl";
     private String javaMessageHandlerTemplate = "messageHandler.ftl";
     private boolean javaMessageHandlerCover = false;
 

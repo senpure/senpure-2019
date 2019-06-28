@@ -5,7 +5,7 @@ import com.senpure.base.util.NameThreadFactory;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.gateway.GatewayAndClientServer;
 import com.senpure.io.gateway.GatewayAndServerServer;
-import com.senpure.io.gateway.GatewayMessageExecuter;
+import com.senpure.io.gateway.GatewayMessageExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class GatewayServerStarter implements ApplicationRunner {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private ServerProperties properties;
-    private GatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecutor messageExecuter;
     private GatewayAndClientServer gatewayAndClientServer;
     private GatewayAndServerServer gatewayAndServerServer;
 
@@ -53,8 +53,8 @@ public class GatewayServerStarter implements ApplicationRunner {
         ioSize = ioSize < 1 ? 1 : ioSize;
         int logicSize = (int) (size * 0.4);
         logicSize = logicSize < 1 ? 1 : logicSize;
-        if (gateway.getExecuterThreadPoolSize() < 1) {
-            gateway.setExecuterThreadPoolSize(logicSize);
+        if (gateway.getExecutorThreadPoolSize() < 1) {
+            gateway.setExecutorThreadPoolSize(logicSize);
         }
         if (gateway.getIoCsWorkThreadPoolSize() < 1) {
             int workSize = ioSize << 1;
@@ -71,9 +71,9 @@ public class GatewayServerStarter implements ApplicationRunner {
 
     private void messageExecuter() {
         ServerProperties.Gateway gateway = properties.getGateway();
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecuterThreadPoolSize(),
+        ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(properties.getName() + "-executor"));
-        messageExecuter = new GatewayMessageExecuter(service, new IDGenerator(gateway.getSnowflakeDataCenterId(), gateway.getSnowflakeworkId()));
+        messageExecuter = new GatewayMessageExecutor(service, new IDGenerator(gateway.getSnowflakeDataCenterId(), gateway.getSnowflakeWorkId()));
         messageExecuter.setCsLoginMessageId(gateway.getCsLoginMessageId());
         messageExecuter.setScLoginMessageId(gateway.getScLoginMessageId());
         messageExecuter.setGateway(properties.getGateway());

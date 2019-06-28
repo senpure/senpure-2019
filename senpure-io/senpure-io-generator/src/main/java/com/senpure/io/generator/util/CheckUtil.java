@@ -84,7 +84,7 @@ public class CheckUtil {
 
     public static boolean check(Message bean) {
         String name = bean.getNamespace() + "." + bean.getType() + bean.getName();
-        if (check(name, bean, "message", bean.getId())) {
+        if (check(name, bean, "getValue", bean.getId())) {
             CheckObj obj = messageMap.get(bean.getId());
             if (obj != null) {
                 if (!name.equals(obj.name)) {
@@ -160,7 +160,7 @@ public class CheckUtil {
             nameMap.put(key, obj);
         } else if (head.equals("enum")) {
             nameMap.put(key, obj);
-        } else if (head.equals("message")) {
+        } else if (head.equals("getValue")) {
             nameMap.put(key, obj);
 
             messageMap.put(obj.id, obj);
@@ -250,7 +250,7 @@ public class CheckUtil {
     public static void main(String[] args) {
 
         CheckObj obj = new CheckObj();
-        obj.setHead("message");
+        obj.setHead("getValue");
         obj.setName("jkl");
 
         obj.id = 105;

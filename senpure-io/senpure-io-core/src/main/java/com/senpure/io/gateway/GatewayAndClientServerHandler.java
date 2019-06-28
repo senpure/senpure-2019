@@ -14,10 +14,10 @@ public class GatewayAndClientServerHandler extends SimpleChannelInboundHandler<C
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private GatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecutor messageExecuter;
 
 
-    public GatewayAndClientServerHandler(GatewayMessageExecuter messageExecuter) {
+    public GatewayAndClientServerHandler(GatewayMessageExecutor messageExecuter) {
         this.messageExecuter = messageExecuter;
     }
 

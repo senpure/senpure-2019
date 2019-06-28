@@ -19,7 +19,7 @@ public class ConsumerMessageEncoder extends MessageToByteEncoder<MessageFrame> {
 
         Message message = frame.getMessage();
         int length = message.getSerializedSize();
-        // logger.debug("message length {}", length);
+        // logger.debug("getValue length {}", length);
         //head 4 +requestId 4 +messageId 4+ content length
 
         out.ensureWritable(12 + length);

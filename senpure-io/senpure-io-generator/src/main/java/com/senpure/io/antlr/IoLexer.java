@@ -59,7 +59,7 @@ public class IoLexer extends Lexer {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "';'", "'.io'", "'javaPack'", "'.'", "'namespace'", "'../'", "'/'", 
-			"'\\'", "'{'", "'}'", "'message'", "'cs'", "'CS'", "'sc'", "'SC'", "'event'", 
+			"'\\'", "'{'", "'}'", "'getValue'", "'cs'", "'CS'", "'sc'", "'SC'", "'event'",
 			"'bean'", "'='", "'['", "']'", "'sint'", "'slong'", "'sfixed32'", "'sfixed64'", 
 			"'String'", "'string'", "'abstract'", "'assert'", "'boolean'", "'break'", 
 			"'byte'", "'case'", "'catch'", "'char'", "'class'", "'const'", "'continue'", 

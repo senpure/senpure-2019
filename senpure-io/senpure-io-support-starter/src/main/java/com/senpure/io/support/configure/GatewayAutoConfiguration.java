@@ -95,7 +95,7 @@ public class GatewayAutoConfiguration {
                 Assert.error(properties.getGateway().getSnowflakeDispatcherName() + "雪花调度服务出错 :" + result.message + (result.getValidators() == null ? "" : result.getValidators().toString()));
             }
             properties.getGateway().setSnowflakeDataCenterId(result.getServerCenterAndWork().getCenterId());
-            properties.getGateway().setSnowflakeworkId(result.getServerCenterAndWork().getWorkId());
+            properties.getGateway().setSnowflakeWorkId(result.getServerCenterAndWork().getWorkId());
         }
 
         GatewayServerStarter gatewayServer = new GatewayServerStarter();
@@ -144,9 +144,9 @@ public class GatewayAutoConfiguration {
 
         @Override
         public String toString() {
-            return "Result{" +
+            return "ResponseResult{" +
                     "code=" + code +
-                    ", message='" + message + '\'' +
+                    ", getValue='" + message + '\'' +
                     ", serverCenterAndWork=" + serverCenterAndWork +
                     ", validators=" + validators +
                     '}';
@@ -238,7 +238,7 @@ public class GatewayAutoConfiguration {
     }
 
     public static void main(String[] args) throws UnknownHostException {
-        String str = " {\"code\":104,\"validators\":{\"serverName\":\"不能为空\"},\"message\":\"输入格式错误\"}";
+        String str = " {\"code\":104,\"validators\":{\"serverName\":\"不能为空\"},\"getValue\":\"输入格式错误\"}";
 
 
         System.out.println(getLocalHostLANAddress().getHostAddress());

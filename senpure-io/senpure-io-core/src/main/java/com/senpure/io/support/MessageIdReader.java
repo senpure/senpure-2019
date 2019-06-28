@@ -31,7 +31,7 @@ public class MessageIdReader {
     }
 
     static {
-        relation(MessageScanner.scan("com.senpure.io.message"));
+        relation(MessageScanner.scan("com.senpure.io.getValue"));
     }
 
     public static void main(String[] args) {

@@ -187,7 +187,7 @@ public class SCInnerErrorMessage extends  Message {
         return "SCInnerErrorMessage[100]{"
                 +"requestId=" + requestId
                 +",type=" + type
-                +",message=" + message
+                +",getValue=" + message
                 +",id=" + id
                 +",value=" + value
                 + "}";
@@ -209,7 +209,7 @@ public class SCInnerErrorMessage extends  Message {
         sb.append(indent).append(rightPad("type", filedPad)).append(" = ").append(type);
         //提示内容
         sb.append("\n");
-        sb.append(indent).append(rightPad("message", filedPad)).append(" = ").append(message);
+        sb.append(indent).append(rightPad("getValue", filedPad)).append(" = ").append(message);
         //消息id
         sb.append("\n");
         sb.append(indent).append(rightPad("id", filedPad)).append(" = ").append(id);

@@ -166,7 +166,7 @@ public class Executer {
             File file = new File(context.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
-            logger.debug("生成 message {} {}", file.getName(), file.getAbsoluteFile());
+            logger.debug("生成 getValue {} {}", file.getName(), file.getAbsoluteFile());
             Generator.generate(bean, template, file);
         }
 

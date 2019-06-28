@@ -1,6 +1,7 @@
 package com.senpure.io.producer;
 
 
+import com.senpure.base.util.Spring;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ public class GatewayChannelManager {
 
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
 
+    private List<Producer2GatewayMessage> failMessage = new ArrayList<>(128);
 
     private boolean connecting = false;
 
@@ -43,15 +45,78 @@ public class GatewayChannelManager {
 
     public void addChannel(Channel channel) {
         channels.add(channel);
+        checkFailMessage();
     }
 
     public void removeChannel(Channel channel) {
         channels.remove(channel);
     }
 
+    private void checkFailMessage() {
+        ProducerMessageExecutor executor = Spring.getBean(ProducerMessageExecutor.class);
+        if (executor != null) {
+            executor.execute(this::sendFailMessage);
+        } else {
+            logger.warn("没有从spring 容器中找到ProducerMessageExecutor");
+            new Thread(this::sendFailMessage).start();
+        }
+
+    }
+
+    private void sendFailMessage() {
+        List<Producer2GatewayMessage> list = null;
+        synchronized (failMessage) {
+            if (failMessage.size() > 0) {
+                list = new ArrayList<>(failMessage);
+                failMessage.clear();
+            }
+        }
+        if (list != null) {
+            logger.info("重新发送失败消息 {}", list.size());
+            sendMessage(list);
+        }
+    }
+
+    private void addFailMessage(Producer2GatewayMessage frame) {
+        synchronized (failMessage) {
+            failMessage.add(frame);
+        }
+    }
+
+    public void sendMessage(List<Producer2GatewayMessage> frames) {
+
+        for (int i = 0; i < channels.size(); i++) {
+            Channel channel = nextChannel();
+            if (channel != null) {
+                if (channel.isWritable()) {
+                    //  channel.writeAndFlush(frame);
+                    int temp = 1;
+                    for (Producer2GatewayMessage frame : frames) {
+                        channel.write(frame);
+                        if (temp % 100 == 0) {
+                            channel.flush();
+                            temp = 1;
+                        }
+                        temp++;
+                    }
+                    if (temp > 1) {
+                        channel.flush();
+                    }
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+        for (Producer2GatewayMessage frame : frames) {
+            addFailMessage(frame);
+        }
+
+        logger.error("全部channel 不可用 {}", toString());
+    }
 
     public void sendMessage(Producer2GatewayMessage frame) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < channels.size(); i++) {
             Channel channel = nextChannel();
             if (channel != null) {
                 if (channel.isWritable()) {
@@ -62,6 +127,7 @@ public class GatewayChannelManager {
                 return;
             }
         }
+        addFailMessage(frame);
         logger.error("全部channel 不可用 {}", toString());
     }
 

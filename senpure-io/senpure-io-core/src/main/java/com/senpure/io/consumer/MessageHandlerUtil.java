@@ -3,7 +3,7 @@ package com.senpure.io.consumer;
 
 import com.senpure.base.util.Assert;
 import com.senpure.io.consumer.handler.MessageHandler;
-import com.senpure.io.consumer.remoting.ResponseFuture;
+import com.senpure.io.consumer.remoting.DefaultFuture;
 import com.senpure.io.protocol.Message;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -18,11 +18,35 @@ import java.util.concurrent.ScheduledExecutorService;
 public class MessageHandlerUtil {
     private static Logger logger = LoggerFactory.getLogger(MessageHandlerUtil.class);
 
-    private static Map<Integer, ResponseFuture> FUTURES = new ConcurrentHashMap<>();
+    private static Map<Integer, DefaultFuture> FUTURES = new ConcurrentHashMap<>();
     private static Map<Integer, MessageHandler> handlerMap = new HashMap<>();
 
     private static ScheduledExecutorService service;
 
+
+    static {
+        //单独的线程检查超时,不受线程池调度影响
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    for (DefaultFuture future : FUTURES.values()) {
+                        if (future == null || future.isDone()) {
+                            continue;
+                        }
+                        if (System.currentTimeMillis() - future.getStartTime() > future.getTimeout()) {
+
+                            // DefaultFuture.received(future.getChannel(), timeoutResponse);
+                        }
+                    }
+                    Thread.sleep(30);
+                } catch (Exception e) {
+                    logger.error("远程消息返回 超时检查线程 出错", e);
+                }
+            }
+        }, "ConsumerResponseTimeoutScanTimer");
+        thread.setDaemon(true);
+        thread.start();
+    }
 
     public static void setService(ScheduledExecutorService service) {
         MessageHandlerUtil.service = service;
@@ -34,28 +58,36 @@ public class MessageHandlerUtil {
 
 
     public static boolean isShutdown() {
-       return service.isShutdown();
+        return service.isShutdown();
     }
-    public static void execute(Channel channel, MessageFrame frame) {
 
+
+    public static void execute(Channel channel, MessageFrame frame) {
         service.execute(() -> {
             Message message = frame.getMessage();
             int requestId = frame.getRequestId();
-            if (requestId > 0) {
-                ResponseFuture future = FUTURES.get(requestId);
-                if (future == null) {
-                    return;
-                }
-            }
-
-
             try {
-                handlerMap.get(message.getMessageId()).execute(channel, message);
+                if (requestId != 0) {
+                    DefaultFuture future = FUTURES.get(requestId);
+                    if (future == null) {
+                        logger.warn("没有找到返回Feature {} {}", requestId, message.toString());
+                        return;
+                    } else {
+                        future.doReceived(frame);
+                    }
+                } else {
+                    handlerMap.get(message.getMessageId()).execute(channel, message);
+                }
             } catch (Exception e) {
                 logger.error("执行handler[" + handlerMap.get(message.getMessageId()).getClass().getName() + "]逻辑出错 ", e);
 
             }
         });
+    }
+
+
+    public static void mark(DefaultFuture future) {
+        FUTURES.put(future.getRequestId(), future);
     }
 
     public static MessageHandler getHandler(int messageId) {

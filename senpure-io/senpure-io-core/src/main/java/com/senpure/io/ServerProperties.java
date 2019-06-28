@@ -14,8 +14,119 @@ public class ServerProperties {
     @Value("${spring.application.name:}")
     private String name;
 
+    private Consumer consumer = new Consumer();
     private Gateway gateway = new Gateway();
     private Producer producer = new Producer();
+
+    public static class Consumer {
+
+        /**
+         * 连接的服务目标服务名
+         */
+        private String remoteName = "gateway";
+        private boolean setReadableName = false;
+        /**
+         * 服务器名
+         */
+        private String readableName = "realityServer";
+        /**
+         * 开启事件
+         */
+        private boolean enableEvent = false;
+
+        /**
+         * 输出格式化
+         */
+        private boolean outFormat = true;
+        /**
+         * 输入格式化
+         */
+        private boolean inFormat = true;
+        /**
+         * 开启ssl
+         */
+        private boolean ssl = false;
+
+        /**
+         * 是否开启心跳检查
+         */
+        private boolean enableHeartCheck = false;
+        /**
+         * 心跳写入间隔毫秒
+         */
+        private long writerIdleTime = 5000;
+        public boolean isOutFormat() {
+            return outFormat;
+        }
+
+        public void setOutFormat(boolean outFormat) {
+            this.outFormat = outFormat;
+        }
+
+        public boolean isInFormat() {
+            return inFormat;
+        }
+
+        public void setInFormat(boolean inFormat) {
+            this.inFormat = inFormat;
+        }
+
+        public boolean isSsl() {
+            return ssl;
+        }
+
+        public void setSsl(boolean ssl) {
+            this.ssl = ssl;
+        }
+
+        public boolean isEnableHeartCheck() {
+            return enableHeartCheck;
+        }
+
+        public void setEnableHeartCheck(boolean enableHeartCheck) {
+            this.enableHeartCheck = enableHeartCheck;
+        }
+
+        public long getWriterIdleTime() {
+            return writerIdleTime;
+        }
+
+        public void setWriterIdleTime(long writerIdleTime) {
+            this.writerIdleTime = writerIdleTime;
+        }
+
+        public String getRemoteName() {
+            return remoteName;
+        }
+
+        public void setRemoteName(String remoteName) {
+            this.remoteName = remoteName;
+        }
+
+        public boolean isSetReadableName() {
+            return setReadableName;
+        }
+
+        public void setSetReadableName(boolean setReadableName) {
+            this.setReadableName = setReadableName;
+        }
+
+        public String getReadableName() {
+            return readableName;
+        }
+
+        public void setReadableName(String readableName) {
+            this.readableName = readableName;
+        }
+
+        public boolean isEnableEvent() {
+            return enableEvent;
+        }
+
+        public void setEnableEvent(boolean enableEvent) {
+            this.enableEvent = enableEvent;
+        }
+    }
 
     public static class Producer {
         /**
@@ -46,13 +157,13 @@ public class ServerProperties {
         /**
          * 逻辑处理线程数
          */
-        private int executerThreadPoolSize = 0;
+        private int executorThreadPoolSize = 0;
         /**
          * 连接网关失败后下一次连接间隔毫秒
          */
         private long connectFailInterval = 20000;
         /**
-         * 与网关建立的channl 数量
+         * 与网关建立的channel 数量
          */
         private int gatewayChannel = 2;
         /**
@@ -91,12 +202,12 @@ public class ServerProperties {
             setReadableName = true;
         }
 
-        public int getExecuterThreadPoolSize() {
-            return executerThreadPoolSize;
+        public int getExecutorThreadPoolSize() {
+            return executorThreadPoolSize;
         }
 
-        public void setExecuterThreadPoolSize(int executerThreadPoolSize) {
-            this.executerThreadPoolSize = executerThreadPoolSize;
+        public void setExecutorThreadPoolSize(int executorThreadPoolSize) {
+            this.executorThreadPoolSize = executorThreadPoolSize;
         }
 
         public long getConnectFailInterval() {
@@ -204,9 +315,9 @@ public class ServerProperties {
          */
         private String readableName = "gateway";
         /**
-         * 工作现场数量
+         * 工作线程数量
          */
-        private int executerThreadPoolSize = 0;
+        private int executorThreadPoolSize = 0;
         /**
          * cs模块 netty boosGroup 线程数
          */
@@ -257,7 +368,7 @@ public class ServerProperties {
          */
         private long csReaderIdleTime = 10000;
         /**
-         *  是否开启sc 模块的心跳检查
+         * 是否开启sc 模块的心跳检查
          */
         private boolean enableSCHeartCheck = false;
         /**
@@ -279,11 +390,11 @@ public class ServerProperties {
         /**
          * 雪花算法 workId
          */
-        private int snowflakeworkId = 0;
+        private int snowflakeWorkId = 0;
         /**
          * 询问处理最多延迟毫秒
          */
-        private long askMaxDelay=3000;
+        private long askMaxDelay = 3000;
 
         public int getCsPort() {
             return csPort;
@@ -327,12 +438,12 @@ public class ServerProperties {
             this.askMaxDelay = askMaxDelay;
         }
 
-        public int getExecuterThreadPoolSize() {
-            return executerThreadPoolSize;
+        public int getExecutorThreadPoolSize() {
+            return executorThreadPoolSize;
         }
 
-        public void setExecuterThreadPoolSize(int executerThreadPoolSize) {
-            this.executerThreadPoolSize = executerThreadPoolSize;
+        public void setExecutorThreadPoolSize(int executorThreadPoolSize) {
+            this.executorThreadPoolSize = executorThreadPoolSize;
         }
 
         public String getSnowflakeDispatcherName() {
@@ -355,12 +466,12 @@ public class ServerProperties {
             this.snowflakeDataCenterId = snowflakeDataCenterId;
         }
 
-        public int getSnowflakeworkId() {
-            return snowflakeworkId;
+        public int getSnowflakeWorkId() {
+            return snowflakeWorkId;
         }
 
-        public void setSnowflakeworkId(int snowflakeworkId) {
-            this.snowflakeworkId = snowflakeworkId;
+        public void setSnowflakeWorkId(int snowflakeWorkId) {
+            this.snowflakeWorkId = snowflakeWorkId;
         }
 
         public void setSnowflakeDispatcherName(String snowflakeDispatcherName) {
@@ -464,7 +575,7 @@ public class ServerProperties {
         public String toString() {
             return "Gateway{" +
                     ", readableName='" + readableName + '\'' +
-                    ", executerThreadPoolSize=" + executerThreadPoolSize +
+                    ", executorThreadPoolSize=" + executorThreadPoolSize +
                     ", ioCsBossThreadPoolSize=" + ioCsBossThreadPoolSize +
                     ", ioScBossThreadPoolSize=" + ioScBossThreadPoolSize +
                     ", ioCsWorkThreadPoolSize=" + ioCsWorkThreadPoolSize +
@@ -504,4 +615,11 @@ public class ServerProperties {
         this.name = name;
     }
 
+    public Consumer getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
+    }
 }

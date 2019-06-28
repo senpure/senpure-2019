@@ -28,7 +28,7 @@ public class ProducerServer {
     private String serverName = "producerServer";
     private String readableServerName = "producerSServer";
     private boolean setReadableServerName = false;
-    private ProducerMessageExecuter messageExecuter;
+    private ProducerMessageExecutor messageExecutor;
 
     private Channel channel;
     private GatewayManager gatewayManager;
@@ -43,7 +43,7 @@ public class ProducerServer {
     public final boolean start(String host, int port) {
         Assert.notNull(gatewayManager);
         Assert.notNull(properties);
-        Assert.notNull(messageExecuter);
+        Assert.notNull(messageExecutor);
 
         // Configure SSL.
         if (group == null || group.isShuttingDown() || group.isShutdown()) {
@@ -77,7 +77,7 @@ public class ProducerServer {
                                     if (properties.isEnableHeartCheck()) {
                                         p.addLast(new IdleStateHandler(0, properties.getWriterIdleTime(), 0, TimeUnit.MILLISECONDS));
                                     }
-                                    p.addLast(new ProducerServerHandler(messageExecuter, gatewayManager));
+                                    p.addLast(new ProducerServerHandler(messageExecutor, gatewayManager));
                                 }
                             });
 
@@ -166,8 +166,8 @@ public class ProducerServer {
     }
 
 
-    public void setMessageExecuter(ProducerMessageExecuter messageExecuter) {
-        this.messageExecuter = messageExecuter;
+    public void setMessageExecutor(ProducerMessageExecutor messageExecutor) {
+        this.messageExecutor = messageExecutor;
     }
 
 

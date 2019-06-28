@@ -10,20 +10,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class ProducerMessageExecuter {
+public class ProducerMessageExecutor {
     private ExecutorService service;
 
-    public ProducerMessageExecuter() {
+    public ProducerMessageExecutor() {
 
         service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     }
 
-    public ProducerMessageExecuter(ExecutorService service) {
+    public ProducerMessageExecutor(ExecutorService service) {
         this.service = service;
 
     }
 
-    private Logger logger = LoggerFactory.getLogger(ProducerMessageExecuter.class);
+    private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
 
     public void execute(Runnable runnable) {
         service.execute(runnable);

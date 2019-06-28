@@ -30,7 +30,7 @@ public class GatewayAndServerServer {
     private EventLoopGroup workerGroup;
     private String readableServerName = "网关服务器[SC]";
 
-    private GatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecutor messageExecuter;
     private ServerProperties.Gateway properties;
 
     public boolean start() {
@@ -104,7 +104,7 @@ public class GatewayAndServerServer {
     }
 
 
-    public void setMessageExecuter(GatewayMessageExecuter messageExecuter) {
+    public void setMessageExecuter(GatewayMessageExecutor messageExecuter) {
         this.messageExecuter = messageExecuter;
     }
 
