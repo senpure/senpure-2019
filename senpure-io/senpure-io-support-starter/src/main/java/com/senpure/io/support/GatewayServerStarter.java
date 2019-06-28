@@ -88,13 +88,13 @@ public class GatewayServerStarter implements ApplicationRunner {
 
     private void servers() {
         GatewayAndClientServer gatewayAndClientServer = new GatewayAndClientServer();
-        gatewayAndClientServer.setMessageExecuter(messageExecuter);
+        gatewayAndClientServer.setMessageExecutor(messageExecuter);
         gatewayAndClientServer.setProperties(properties.getGateway());
         if (gatewayAndClientServer.start()) {
             this.gatewayAndClientServer = gatewayAndClientServer;
         }
         GatewayAndServerServer gatewayAndServerServer = new GatewayAndServerServer();
-        gatewayAndServerServer.setMessageExecuter(messageExecuter);
+        gatewayAndServerServer.setMessageExecutor(messageExecuter);
         gatewayAndServerServer.setProperties(properties.getGateway());
         if (gatewayAndServerServer.start()) {
             this.gatewayAndServerServer = gatewayAndServerServer;

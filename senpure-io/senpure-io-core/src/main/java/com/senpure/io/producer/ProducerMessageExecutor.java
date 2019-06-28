@@ -11,11 +11,12 @@ import java.util.concurrent.Executors;
 
 
 public class ProducerMessageExecutor {
+    private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
     private ExecutorService service;
 
     public ProducerMessageExecutor() {
 
-        service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+        this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
     }
 
     public ProducerMessageExecutor(ExecutorService service) {
@@ -23,7 +24,6 @@ public class ProducerMessageExecutor {
 
     }
 
-    private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
 
     public void execute(Runnable runnable) {
         service.execute(runnable);

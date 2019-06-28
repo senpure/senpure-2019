@@ -28,11 +28,11 @@ public class GatewayAndClientServer {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private String readableName = "网关服务器[CS]";
-    private GatewayMessageExecutor messageExecuter;
+    private GatewayMessageExecutor messageExecutor;
     private ServerProperties.Gateway properties;
 
     public boolean start() {
-        Assert.notNull(messageExecuter);
+        Assert.notNull(messageExecutor);
         Assert.notNull(properties);
         logger.info("启动 {} CS模块，监听端口号 {}", properties.getReadableName(), properties.getCsPort());
         readableName = properties.getReadableName() + "[CS][" + properties.getCsPort() + "]";
@@ -69,7 +69,7 @@ public class GatewayAndClientServer {
                             if (properties.isEnableCSHeartCheck()) {
                                 p.addLast(new IdleStateHandler(properties.getCsReaderIdleTime(), 0L, 0L, TimeUnit.MILLISECONDS));
                             }
-                            p.addLast(new GatewayAndClientServerHandler(messageExecuter));
+                            p.addLast(new GatewayAndClientServerHandler(messageExecutor));
 
                         }
                     });
@@ -90,8 +90,8 @@ public class GatewayAndClientServer {
     }
 
 
-    public void setMessageExecuter(GatewayMessageExecutor messageExecuter) {
-        this.messageExecuter = messageExecuter;
+    public void setMessageExecutor(GatewayMessageExecutor messageExecutor) {
+        this.messageExecutor = messageExecutor;
     }
 
     public void setProperties(ServerProperties.Gateway properties) {

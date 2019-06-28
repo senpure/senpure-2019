@@ -1,10 +1,7 @@
 package com.senpure.io.consumer;
 
-import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
-import com.senpure.io.ChannelAttributeUtil;
 import com.senpure.io.ServerProperties;
-import com.senpure.io.producer.*;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -32,7 +29,7 @@ public class ConsumerServer {
     private ConsumerMessageExecutor messageExecutor;
 
     private Channel channel;
-    private GatewayManager gatewayManager;
+    private RemoteServerChannelManager remoteServerChannelManager;
 
 
     private static EventLoopGroup group;
@@ -42,7 +39,7 @@ public class ConsumerServer {
     private static int serverRefCont = 0;
 
     public final boolean start(String host, int port) {
-        Assert.notNull(gatewayManager);
+        Assert.notNull(remoteServerChannelManager);
         Assert.notNull(properties);
         Assert.notNull(messageExecutor);
         // Configure SSL.
@@ -77,7 +74,7 @@ public class ConsumerServer {
                                     if (properties.isEnableHeartCheck()) {
                                         p.addLast(new IdleStateHandler(0, properties.getWriterIdleTime(), 0, TimeUnit.MILLISECONDS));
                                     }
-                                  //  p.addLast(new ProducerServerHandler(messageExecutor, gatewayManager));
+                                    p.addLast(new ConsumerServerHandler(messageExecutor, remoteServerChannelManager));
                                 }
                             });
 
@@ -86,28 +83,28 @@ public class ConsumerServer {
         }
         // Start the client.
         try {
-            logger.debug("启动{}，远程地址 {}", properties.getReadableName(), host + ":" + port);
+            logger.debug("启动{}，远程服务器地址 {}", properties.getReadableName(), host + ":" + port);
             readableServerName = properties.getReadableName() + "->[" + host + ":" + port + "]";
             channelFuture = bootstrap.connect(host, port).sync();
             channel = channelFuture.channel();
             synchronized (groupLock) {
                 serverRefCont++;
             }
-            InetSocketAddress address = (InetSocketAddress) channel.localAddress();
-
-            String gatewayKey = gatewayManager.getGatewayKey(host, port);
-            String path;
-            if (AppEvn.classInJar(AppEvn.getStartClass())) {
-                path = AppEvn.getClassPath(AppEvn.getStartClass());
-            } else {
-                path = AppEvn.getClassRootPath();
-            }
-            String serverKey = address.getAddress().getHostAddress() + "->" + path;
-            GatewayChannelManager channelServer = gatewayManager.getGatewayChannelServer(gatewayKey);
-            channelServer.addChannel(channel);
-            ChannelAttributeUtil.setRemoteServerKey(channel, gatewayKey);
-            ChannelAttributeUtil.setLocalServerKey(channel, serverKey);
-            logger.info("{}启动完成 localServerKey {} address {}", getReadableServerName(), serverKey, address);
+//            InetSocketAddress address = (InetSocketAddress) channel.localAddress();
+//
+//            String gatewayKey = gatewayManager.getGatewayKey(host, port);
+//            String path;
+//            if (AppEvn.classInJar(AppEvn.getStartClass())) {
+//                path = AppEvn.getClassPath(AppEvn.getStartClass());
+//            } else {
+//                path = AppEvn.getClassRootPath();
+//            }
+//            String serverKey = address.getAddress().getHostAddress() + "->" + path;
+//            GatewayChannelManager channelServer = gatewayManager.getGatewayChannelServer(gatewayKey);
+//            channelServer.addChannel(channel);
+//            ChannelAttributeUtil.setRemoteServerKey(channel, gatewayKey);
+//            ChannelAttributeUtil.setLocalServerKey(channel, serverKey);
+//            logger.info("{}启动完成 localServerKey {} address {}", getReadableServerName(), serverKey, address);
         } catch (Exception e) {
             logger.error("启动" + getReadableServerName() + " 失败", e);
             destroy();
@@ -156,10 +153,9 @@ public class ConsumerServer {
     }
 
 
-    public void setGatewayManager(GatewayManager gatewayManager) {
-        this.gatewayManager = gatewayManager;
+    public void setRemoteServerChannelManager(RemoteServerChannelManager remoteServerChannelManager) {
+        this.remoteServerChannelManager = remoteServerChannelManager;
     }
-
 
     public String getServerName() {
         return serverName;

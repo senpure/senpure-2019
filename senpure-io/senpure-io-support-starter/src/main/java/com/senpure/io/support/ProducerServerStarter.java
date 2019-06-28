@@ -77,11 +77,11 @@ public class ProducerServerStarter implements ApplicationRunner {
         }
     }
 
-    private void messageExecuter() {
+    private void messageExecutor() {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(serverProperties.getName() + "-executor"));
-        ProducerMessageExecutor messageExecuter = new ProducerMessageExecutor(service);
-        this.messageExecuter = messageExecuter;
+        ProducerMessageExecutor messageExecutor = new ProducerMessageExecutor(service);
+        this.messageExecuter = messageExecutor;
         this.service = service;
         EventHelper.setService(service);
     }
@@ -89,7 +89,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         check();
-        messageExecuter();
+        messageExecutor();
         List<Integer> ids = ProducerMessageHandlerUtil.getHandlerMessageIds();
 
         List<HandleMessage> handleMessages = new ArrayList<>();

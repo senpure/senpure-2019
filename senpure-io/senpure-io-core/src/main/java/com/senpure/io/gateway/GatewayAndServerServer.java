@@ -30,11 +30,11 @@ public class GatewayAndServerServer {
     private EventLoopGroup workerGroup;
     private String readableServerName = "网关服务器[SC]";
 
-    private GatewayMessageExecutor messageExecuter;
+    private GatewayMessageExecutor messageExecutor;
     private ServerProperties.Gateway properties;
 
     public boolean start() {
-        Assert.notNull(messageExecuter);
+        Assert.notNull(messageExecutor);
         Assert.notNull(properties);
         logger.debug("启动 {} SC模块，监听端口号 {}", properties.getReadableName(), properties.getScPort());
         readableServerName = properties.getReadableName() + "[SC][" + properties.getScPort() + "]";
@@ -71,7 +71,7 @@ public class GatewayAndServerServer {
                             if (properties.isEnableSCHeartCheck()) {
                                 p.addLast(new IdleStateHandler(properties.getScReaderIdleTime(), 0L, 0L, TimeUnit.MILLISECONDS));
                             }
-                            p.addLast(new GatewayAndServerServerHandler(messageExecuter));
+                            p.addLast(new GatewayAndServerServerHandler(messageExecutor));
 
                         }
                     });
@@ -104,8 +104,8 @@ public class GatewayAndServerServer {
     }
 
 
-    public void setMessageExecuter(GatewayMessageExecutor messageExecuter) {
-        this.messageExecuter = messageExecuter;
+    public void setMessageExecutor(GatewayMessageExecutor messageExecutor) {
+        this.messageExecutor = messageExecutor;
     }
 
     public void setProperties(ServerProperties.Gateway properties) {

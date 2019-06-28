@@ -3,19 +3,27 @@ package com.senpure.io.consumer;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFrame> {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private RemoteServerChannelManager remoteServerChannelManager;
+    private ConsumerMessageExecutor messageExecutor;
+
+
+    public ConsumerServerHandler(ConsumerMessageExecutor messageExecutor, RemoteServerChannelManager remoteServerChannelManager) {
+        this.remoteServerChannelManager = remoteServerChannelManager;
+        this.messageExecutor = messageExecutor;
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageFrame frame) throws Exception {
 
-
-        MessageHandlerUtil.execute(ctx.channel(), frame);
+        messageExecutor.execute(ctx.channel(), frame);
     }
 
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        //解决强断的错误 远程主机强迫关闭了一个现有的连接
-        ctx.flush();
-    }
+
 }
