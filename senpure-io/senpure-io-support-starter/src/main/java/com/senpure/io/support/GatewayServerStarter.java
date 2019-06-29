@@ -34,7 +34,7 @@ public class GatewayServerStarter implements ApplicationRunner {
 
     public void start() {
         check();
-        messageExecuter();
+        messageExecutor();
         servers();
     }
 
@@ -69,7 +69,7 @@ public class GatewayServerStarter implements ApplicationRunner {
         logger.info(gateway.toString());
     }
 
-    private void messageExecuter() {
+    private void messageExecutor() {
         ServerProperties.Gateway gateway = properties.getGateway();
         ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(properties.getName() + "-executor"));

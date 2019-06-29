@@ -86,11 +86,22 @@ public class ProducerChannelManager {
         handleIds.add(messageId);
     }
 
+    /**
+     * 返回一个可用的channel
+     *
+     * @return
+     */
     public Channel nextChannel() {
         if (channels.size() == 0) {
             return null;
         }
-        return channels.get(nextIndex());
+        for (int i = 0; i < channels.size(); i++) {
+            Channel channel = channels.get(nextIndex());
+            if (channel.isWritable()) {
+                return channel;
+            }
+        }
+        return null;
     }
 
     private int nextIndex() {

@@ -84,30 +84,23 @@ public class GatewayChannelManager {
     }
 
     public void sendMessage(List<Producer2GatewayMessage> frames) {
-
-        for (int i = 0; i < channels.size(); i++) {
-            Channel channel = nextChannel();
-            if (channel != null) {
-                if (channel.isWritable()) {
-                    //  channel.writeAndFlush(frame);
-                    int temp = 1;
-                    for (Producer2GatewayMessage frame : frames) {
-                        channel.write(frame);
-                        if (temp % 100 == 0) {
-                            channel.flush();
-                            temp = 1;
-                        }
-                        temp++;
-                    }
-                    if (temp > 1) {
-                        channel.flush();
-                    }
-                    return;
+        Channel channel = nextChannel();
+        if (channel != null) {
+            int temp = 1;
+            for (Producer2GatewayMessage frame : frames) {
+                channel.write(frame);
+                if (temp % 100 == 0) {
+                    channel.flush();
+                    temp = 1;
                 }
-            } else {
-                return;
+                temp++;
             }
+            if (temp > 1) {
+                channel.flush();
+            }
+            return;
         }
+
         for (Producer2GatewayMessage frame : frames) {
             addFailMessage(frame);
         }
@@ -116,27 +109,32 @@ public class GatewayChannelManager {
     }
 
     public void sendMessage(Producer2GatewayMessage frame) {
-        for (int i = 0; i < channels.size(); i++) {
-            Channel channel = nextChannel();
-            if (channel != null) {
-                if (channel.isWritable()) {
-                    channel.writeAndFlush(frame);
-                    return;
-                }
-            } else {
-                return;
-            }
+        Channel channel = nextChannel();
+        if (channel != null) {
+            channel.writeAndFlush(frame);
+            return;
         }
         addFailMessage(frame);
         logger.error("全部channel 不可用 {}", toString());
     }
 
+    /**
+     * 返回一个可写的channel
+     *
+     * @return
+     */
     private Channel nextChannel() {
         if (channels.size() == 0) {
             logger.warn("{}没有可用得channel ", gatewayKey);
             return null;
         }
-        return channels.get(nextIndex());
+        for (int i = 0; i < channels.size(); i++) {
+            Channel channel = channels.get(nextIndex());
+            if (channel.isWritable()) {
+                return channel;
+            }
+        }
+        return null;
     }
 
     public int getGatewayChannelKey() {
@@ -148,15 +146,24 @@ public class GatewayChannelManager {
             return 0;
         }
         int index = atomicIndex.incrementAndGet();
-        if (index >= channels.size()) {
-            boolean reset = atomicIndex.compareAndSet(index, 0);
-            if (!reset) {
-                return nextIndex();
-            }
-            return 0;
-        }
-        return index;
+        return Math.abs(index % channels.size());
+
     }
+
+//    private int nextIndex2() {
+//        if (channels.size() == 1) {
+//            return 0;
+//        }
+//        int index = atomicIndex.incrementAndGet();
+//        if (index >= channels.size()) {
+//            boolean reset = atomicIndex.compareAndSet(index, 0);
+//            if (!reset) {
+//                return nextIndex2();
+//            }
+//            return 0;
+//        }
+//        return index;
+//    }
 
     public String getGatewayKey() {
         return gatewayKey;

@@ -25,10 +25,10 @@ public class ProducerManager {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private GatewayMessageExecutor messageExecuter;
+    private GatewayMessageExecutor messageExecutor;
 
-    public ProducerManager(GatewayMessageExecutor messageExecuter) {
-        this.messageExecuter = messageExecuter;
+    public ProducerManager(GatewayMessageExecutor messageExecutor) {
+        this.messageExecutor = messageExecutor;
     }
 
 
@@ -65,7 +65,7 @@ public class ProducerManager {
                 errorMessage.setType(Constant.ERROR_NOT_FOUND_SERVER);
                 errorMessage.setId(client2GatewayMessage.getMessageId());
                 errorMessage.setMessage("没有服务器处理" + MessageIdReader.read(client2GatewayMessage.getMessageId()));
-                messageExecuter.sendMessage2Client(errorMessage, client2GatewayMessage.getToken());
+                messageExecutor.sendMessage2Client(errorMessage, client2GatewayMessage.getToken());
             } else {
                 relationAndWaitSendMessage(serverChannelManager, client2GatewayMessage);
             }
@@ -77,7 +77,7 @@ public class ProducerManager {
     }
 
     public void relationAndWaitSendMessage(ProducerChannelManager serverChannelManager, Client2GatewayMessage client2GatewayMessage) {
-        Long relationToken = messageExecuter.idGenerator.nextId();
+        Long relationToken = messageExecutor.idGenerator.nextId();
         CSRelationUserGatewayMessage message = new CSRelationUserGatewayMessage();
         message.setToken(client2GatewayMessage.getToken());
         message.setUserId(client2GatewayMessage.getUserId());
@@ -94,7 +94,7 @@ public class ProducerManager {
         waitRelationTask.setMessage(client2GatewayMessage);
         waitRelationTask.setServerChannelManager(serverChannelManager);
         waitRelationTask.setServerManager(this);
-        messageExecuter.waitRelationMap.put(relationToken, waitRelationTask);
+        messageExecutor.waitRelationMap.put(relationToken, waitRelationTask);
         serverChannelManager.sendMessage(toMessage);
     }
 

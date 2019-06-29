@@ -30,6 +30,10 @@ public class ServerProperties {
          */
         private String readableName = "realityServer";
         /**
+         * 同步请求超时时间
+         */
+        private int requestTimeout = 500;
+        /**
          * 开启事件
          */
         private boolean enableEvent = false;
@@ -55,6 +59,7 @@ public class ServerProperties {
          * 心跳写入间隔毫秒
          */
         private long writerIdleTime = 5000;
+
         public boolean isOutFormat() {
             return outFormat;
         }
@@ -125,6 +130,14 @@ public class ServerProperties {
 
         public void setEnableEvent(boolean enableEvent) {
             this.enableEvent = enableEvent;
+        }
+
+        public int getRequestTimeout() {
+            return requestTimeout;
+        }
+
+        public void setRequestTimeout(int requestTimeout) {
+            this.requestTimeout = requestTimeout;
         }
     }
 
