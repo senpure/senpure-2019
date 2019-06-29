@@ -1,15 +1,11 @@
 package com.senpure.io.consumer;
 
-import com.senpure.io.consumer.remoting.DefaultFuture;
-import com.senpure.io.consumer.remoting.ResponseResult;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,17 +17,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RemoteServerChannelManager {
 
 
-    private static Map<Integer, DefaultFuture> FUTURES = new ConcurrentHashMap<>();
+
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private List<Channel> channels = new ArrayList<>();
 
-    private AtomicInteger atomicRequestId = new AtomicInteger(1);
+
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
     private int defaultTimeout;
     private String remoteServerKey;
 
-    public RemoteServerChannelManager(String remoteServerKey,int defaultTimeout) {
+    public RemoteServerChannelManager(String remoteServerKey, int defaultTimeout) {
         this.defaultTimeout = defaultTimeout;
         this.remoteServerKey = remoteServerKey;
     }
@@ -45,17 +41,11 @@ public class RemoteServerChannelManager {
         channels.remove(channel);
     }
 
-    public ResponseResult sendMessage(MessageFrame frame) {
-
-        return null;
-    }
-
-    private int nextRequestId() {
-        int requestId = atomicRequestId.getAndIncrement();
-        if (requestId == 0) {
-            return nextRequestId();
+    public void sendMessage(MessageFrame frame) {
+        Channel channel = nextChannel();
+        if (channel != null) {
+            channel.writeAndFlush(frame);
         }
-        return nextRequestId();
     }
 
 
@@ -64,15 +54,12 @@ public class RemoteServerChannelManager {
             logger.warn("{}没有可用得channel ", remoteServerKey);
             return null;
         }
-
-        for (int i = 0; i <channels.size() ; i++) {
-
-            Channel channel = nextChannel();
+        for (int i = 0; i < channels.size(); i++) {
+            Channel channel = channels.get(nextIndex());
             if (channel.isWritable()) {
                 return channel;
             }
         }
-
         return null;
     }
 

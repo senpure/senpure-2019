@@ -11,4 +11,7 @@ public interface ResponseFuture {
 
     ResponseResult get(int timeout) throws Exception;
 
+    void setCallback(ResponseCallback callback);
+
+    boolean isDone();
 }

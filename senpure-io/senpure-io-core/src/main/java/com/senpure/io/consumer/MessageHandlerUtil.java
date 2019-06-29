@@ -73,7 +73,7 @@ public class MessageHandlerUtil {
                         logger.warn("没有找到返回Feature {} {}", requestId, message.toString());
                         return;
                     } else {
-                        future.doReceived(frame);
+                       // future.doReceived(frame);
                     }
                 } else {
                     handlerMap.get(message.getMessageId()).execute(channel, message);

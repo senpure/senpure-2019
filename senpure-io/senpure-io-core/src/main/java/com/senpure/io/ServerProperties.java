@@ -59,6 +59,10 @@ public class ServerProperties {
          * 心跳写入间隔毫秒
          */
         private long writerIdleTime = 5000;
+        /**
+         * 服务器返回错误消息id
+         */
+        private int scErrorMessageId = 1000500;
 
         public boolean isOutFormat() {
             return outFormat;
@@ -138,6 +142,14 @@ public class ServerProperties {
 
         public void setRequestTimeout(int requestTimeout) {
             this.requestTimeout = requestTimeout;
+        }
+
+        public int getScErrorMessageId() {
+            return scErrorMessageId;
+        }
+
+        public void setScErrorMessageId(int scErrorMessageId) {
+            this.scErrorMessageId = scErrorMessageId;
         }
     }
 

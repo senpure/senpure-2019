@@ -19,6 +19,7 @@ public class ConsumerMessageExecutor {
     private ExecutorService service;
 
 
+
     public ConsumerMessageExecutor() {
         this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
     }
@@ -32,7 +33,17 @@ public class ConsumerMessageExecutor {
     }
 
 
+
+
     public void execute(Channel channel, MessageFrame frame) {
+
+        service.execute(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+
 
     }
 
