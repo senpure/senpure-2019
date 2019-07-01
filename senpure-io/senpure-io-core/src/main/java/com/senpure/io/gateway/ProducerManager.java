@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 网关管理一个服务的多个实例 每个实例可能含有多个管道channel
- * 一个服务对应一个 serverManager
+ * 一个服务对应一个 producerManager
  */
 public class ProducerManager {
 

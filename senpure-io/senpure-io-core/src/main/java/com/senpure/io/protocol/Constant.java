@@ -28,6 +28,11 @@ public class Constant {
     public final static String ERROR_SERVER_ERROR = "SERVER_ERROR ";
 
 
+    /**
+     * 超时错误
+     */
+    public final static String ERROR_TIMEOUT = "TIMEOUT ";
+
     public static final String BREAK_TYPE_ERROR = "ERROR";
     public static final String BREAK_TYPE_USER_OFFlINE = "USER_OFFLINE";
     public static final String BREAK_TYPE_USER_CHANGE = "USER_CHANGE";

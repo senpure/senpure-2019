@@ -290,28 +290,28 @@ public class GatewayMessageExecutor {
         for (HandleMessage handleMessage : handleMessages) {
             logger.info("{}", handleMessage);
         }
-        ProducerManager serverManager = serverInstanceMap.get(message.getServerName());
-        if (serverManager == null) {
-            serverManager = new ProducerManager(this);
-            serverInstanceMap.put(message.getServerName(), serverManager);
+        ProducerManager producerManager = serverInstanceMap.get(message.getServerName());
+        if (producerManager == null) {
+            producerManager = new ProducerManager(this);
+            serverInstanceMap.put(message.getServerName(), producerManager);
             for (HandleMessage handleMessage : handleMessages) {
-                serverManager.markHandleId(handleMessage.getHandleMessageId());
-                messageHandleMap.putIfAbsent(handleMessage.getHandleMessageId(), serverManager);
+                producerManager.markHandleId(handleMessage.getHandleMessageId());
+                messageHandleMap.putIfAbsent(handleMessage.getHandleMessageId(), producerManager);
             }
-            serverManager.setServerName(message.getServerName());
+            producerManager.setServerName(message.getServerName());
         }
         //如果同一个服务处理消息id不一致，旧得实例停止接收新的连接
         for (HandleMessage handleMessage : handleMessages) {
-            if (!serverManager.handleId(handleMessage.getHandleMessageId())) {
+            if (!producerManager.handleId(handleMessage.getHandleMessageId())) {
                 logger.info("{} 处理了新的消息{}[{}] ，旧的服务器停止接收新的请求分发", message.getServerName(), handleMessage.getHandleMessageId(), handleMessage.getMessageClasses());
-                serverManager.prepStopOldInstance();
+                producerManager.prepStopOldInstance();
                 for (HandleMessage hm : handleMessages) {
-                    serverManager.markHandleId(hm.getHandleMessageId());
+                    producerManager.markHandleId(hm.getHandleMessageId());
                 }
                 break;
             }
         }
-        for (Integer id : serverManager.getHandleIds()) {
+        for (Integer id : producerManager.getHandleIds()) {
             boolean discard = true;
             for (HandleMessage handleMessage : handleMessages) {
                 if (handleMessage.getHandleMessageId() == id) {
@@ -321,23 +321,23 @@ public class GatewayMessageExecutor {
             }
             if (discard) {
                 logger.info("{} 丢弃了消息{} ，旧的服务器停止接收新的请求分发", message.getServerName(), id);
-                serverManager.prepStopOldInstance();
+                producerManager.prepStopOldInstance();
                 for (HandleMessage hm : handleMessages) {
-                    serverManager.markHandleId(hm.getHandleMessageId());
+                    producerManager.markHandleId(hm.getHandleMessageId());
                 }
                 break;
             }
         }
-        ProducerChannelManager serverChannelManager = serverManager.getChannelServer(serverKey);
+        ProducerChannelManager serverChannelManager = producerManager.getChannelServer(serverKey);
         serverChannelManager.addChannel(channel);
-        serverManager.checkChannelServer(serverKey, serverChannelManager);
+        producerManager.checkChannelServer(serverKey, serverChannelManager);
         for (HandleMessage handleMessage : handleMessages) {
             HandleMessageManager handleMessageManager = handleMessageManagerMap.get(handleMessage.getHandleMessageId());
             if (handleMessageManager == null) {
                 handleMessageManager = new HandleMessageManager(handleMessage.getHandleMessageId(), handleMessage.isDirect(), handleMessage.isServerShare(), this);
                 handleMessageManagerMap.put(handleMessage.getHandleMessageId(), handleMessageManager);
             }
-            handleMessageManager.addServerManager(handleMessage.getHandleMessageId(), serverManager);
+            handleMessageManager.addServerManager(handleMessage.getHandleMessageId(), producerManager);
         }
         return true;
     }

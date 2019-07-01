@@ -24,11 +24,11 @@ public class RemoteServerChannelManager {
 
 
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
-    private int defaultTimeout;
+
     private String remoteServerKey;
 
-    public RemoteServerChannelManager(String remoteServerKey, int defaultTimeout) {
-        this.defaultTimeout = defaultTimeout;
+    public RemoteServerChannelManager(String remoteServerKey) {
+
         this.remoteServerKey = remoteServerKey;
     }
 
@@ -72,19 +72,11 @@ public class RemoteServerChannelManager {
     }
 
 
-    public int getDefaultTimeout() {
-        return defaultTimeout;
-    }
 
-    public void setDefaultTimeout(int defaultTimeout) {
-        this.defaultTimeout = defaultTimeout;
-    }
 
     public String getRemoteServerKey() {
         return remoteServerKey;
     }
 
-    public void setRemoteServerKey(String remoteServerKey) {
-        this.remoteServerKey = remoteServerKey;
-    }
+
 }

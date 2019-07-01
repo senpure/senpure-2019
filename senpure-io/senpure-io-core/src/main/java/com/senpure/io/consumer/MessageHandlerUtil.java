@@ -24,29 +24,7 @@ public class MessageHandlerUtil {
     private static ScheduledExecutorService service;
 
 
-    static {
-        //单独的线程检查超时,不受线程池调度影响
-        Thread thread = new Thread(() -> {
-            while (true) {
-                try {
-                    for (DefaultFuture future : FUTURES.values()) {
-                        if (future == null || future.isDone()) {
-                            continue;
-                        }
-                        if (System.currentTimeMillis() - future.getStartTime() > future.getTimeout()) {
 
-                            // DefaultFuture.received(future.getChannel(), timeoutResponse);
-                        }
-                    }
-                    Thread.sleep(30);
-                } catch (Exception e) {
-                    logger.error("远程消息返回 超时检查线程 出错", e);
-                }
-            }
-        }, "ConsumerResponseTimeoutScanTimer");
-        thread.setDaemon(true);
-        thread.start();
-    }
 
     public static void setService(ScheduledExecutorService service) {
         MessageHandlerUtil.service = service;

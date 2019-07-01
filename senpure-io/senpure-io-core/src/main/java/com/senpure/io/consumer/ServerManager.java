@@ -17,7 +17,8 @@ public class ServerManager {
     public <T> T sendMessage(Channel channel, MessageFrame frame) {
 
 
-        DefaultFuture future = new DefaultFuture(frame.getRequestId(), 500);
+        DefaultFuture future=null
+                ;
         MessageHandlerUtil.mark(future);
         channel.writeAndFlush(frame);
         return (T) future.get();
