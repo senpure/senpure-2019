@@ -29,7 +29,7 @@ public class RemoteServerManager {
     private RemoteServerChannelManager defaultChannelManager;
     private ServerProperties.Consumer properties;
 
-    private int defaultTimeout=500;
+    private int defaultTimeout;
     public RemoteServerManager(ServerProperties.Consumer properties) {
 
         defaultTimeout = properties.getRequestTimeout();
