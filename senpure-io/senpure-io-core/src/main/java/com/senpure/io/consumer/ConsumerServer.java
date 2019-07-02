@@ -101,7 +101,7 @@ public class ConsumerServer {
                 path = AppEvn.getClassRootPath();
             }
             String serverKey = address.getAddress().getHostAddress() + "->" + path;
-            remoteServerManager.getRemoteServerChannelManager(host,port).addChannel(channel);
+            remoteServerManager.getRemoteServerChannelManager(serverKey).addChannel(channel);
             ChannelAttributeUtil.setRemoteServerKey(channel, remoteServerKey);
             ChannelAttributeUtil.setLocalServerKey(channel, serverKey);
             logger.info("{}启动完成 localServerKey {} address {}", getReadableServerName(), serverKey, address);
