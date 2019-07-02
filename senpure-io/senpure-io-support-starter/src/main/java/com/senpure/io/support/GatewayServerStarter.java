@@ -27,7 +27,7 @@ public class GatewayServerStarter implements ApplicationRunner {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private ServerProperties properties;
-    private GatewayMessageExecutor messageExecuter;
+    private GatewayMessageExecutor messageExecutor;
     private GatewayAndClientServer gatewayAndClientServer;
     private GatewayAndServerServer gatewayAndServerServer;
 
@@ -73,11 +73,11 @@ public class GatewayServerStarter implements ApplicationRunner {
         ServerProperties.Gateway gateway = properties.getGateway();
         ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(properties.getName() + "-executor"));
-        messageExecuter = new GatewayMessageExecutor(service, new IDGenerator(gateway.getSnowflakeDataCenterId(), gateway.getSnowflakeWorkId()));
-        messageExecuter.setCsLoginMessageId(gateway.getCsLoginMessageId());
-        messageExecuter.setScLoginMessageId(gateway.getScLoginMessageId());
-        messageExecuter.setGateway(properties.getGateway());
-        messageExecuter.init();
+        messageExecutor = new GatewayMessageExecutor(service, new IDGenerator(gateway.getSnowflakeDataCenterId(), gateway.getSnowflakeWorkId()));
+        messageExecutor.setCsLoginMessageId(gateway.getCsLoginMessageId());
+        messageExecutor.setScLoginMessageId(gateway.getScLoginMessageId());
+        messageExecutor.setGateway(properties.getGateway());
+        messageExecutor.init();
     }
 
     @Override
@@ -88,13 +88,13 @@ public class GatewayServerStarter implements ApplicationRunner {
 
     private void servers() {
         GatewayAndClientServer gatewayAndClientServer = new GatewayAndClientServer();
-        gatewayAndClientServer.setMessageExecutor(messageExecuter);
+        gatewayAndClientServer.setMessageExecutor(messageExecutor);
         gatewayAndClientServer.setProperties(properties.getGateway());
         if (gatewayAndClientServer.start()) {
             this.gatewayAndClientServer = gatewayAndClientServer;
         }
         GatewayAndServerServer gatewayAndServerServer = new GatewayAndServerServer();
-        gatewayAndServerServer.setMessageExecutor(messageExecuter);
+        gatewayAndServerServer.setMessageExecutor(messageExecutor);
         gatewayAndServerServer.setProperties(properties.getGateway());
         if (gatewayAndServerServer.start()) {
             this.gatewayAndServerServer = gatewayAndServerServer;
@@ -109,8 +109,8 @@ public class GatewayServerStarter implements ApplicationRunner {
         if (gatewayAndServerServer != null) {
             gatewayAndServerServer.destroy();
         }
-        if (messageExecuter != null) {
-            messageExecuter.shutdownService();
+        if (messageExecutor != null) {
+            messageExecutor.shutdownService();
         }
     }
 

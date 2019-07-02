@@ -62,10 +62,9 @@ message SC KickOff 112 {
     long userId;                        //userId
 }
 
-message CS ChannelOffline 113 {
-    long token;                         // channel token
-    long userId;                        //userId
-}
+
+
+
 
 //心跳
 message CS Heart 65 {

@@ -49,7 +49,7 @@ public class ProducerServer {
         if (group == null || group.isShuttingDown() || group.isShutdown()) {
             synchronized (groupLock) {
                 if (group == null || group.isShuttingDown() || group.isShutdown()) {
-                    group = new NioEventLoopGroup();
+                    group = new NioEventLoopGroup(properties.getIoWorkThreadPoolSize());
                     SslContext sslCtx = null;
                     try {
                         if (properties.isSsl()) {

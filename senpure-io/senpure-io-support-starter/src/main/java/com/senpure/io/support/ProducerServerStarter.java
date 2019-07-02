@@ -19,6 +19,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     private ScheduledExecutorService service;
 
     private List<ProducerServer> servers = new ArrayList<>();
-    private ProducerMessageExecutor messageExecuter;
+    private ProducerMessageExecutor messageExecutor;
 
     private Map<String, Long> failGatewayMap = new HashMap<>();
 
@@ -81,9 +82,20 @@ public class ProducerServerStarter implements ApplicationRunner {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(serverProperties.getName() + "-executor"));
         ProducerMessageExecutor messageExecutor = new ProducerMessageExecutor(service);
-        this.messageExecuter = messageExecutor;
+        this.messageExecutor = messageExecutor;
         this.service = service;
         EventHelper.setService(service);
+    }
+
+
+    @PreDestroy
+    public void destroy() {
+        for (ProducerServer server : servers) {
+            server.destroy();
+        }
+        if (messageExecutor != null) {
+            messageExecutor.shutdownService();
+        }
     }
 
     @Override
@@ -141,7 +153,7 @@ public class ProducerServerStarter implements ApplicationRunner {
                         ProducerServer producerServer = new ProducerServer();
                         producerServer.setGatewayManager(gatewayManager);
                         producerServer.setProperties(producer);
-                        producerServer.setMessageExecutor(messageExecuter);
+                        producerServer.setMessageExecutor(messageExecutor);
                         producerServer.setServerName(serverProperties.getName());
                         producerServer.setReadableServerName(producer.getReadableName());
                         if (producerServer.start(instance.getHost(), port)) {
@@ -171,7 +183,7 @@ public class ProducerServerStarter implements ApplicationRunner {
         message.setReadableServerName(server.getReadableServerName());
         message.setServerKey(ChannelAttributeUtil.getLocalServerKey(server.getChannel()));
         message.setMessages(handleMessages);
-        Producer2GatewayMessage gatewayMessage = new  Producer2GatewayMessage ();
+        Producer2GatewayMessage gatewayMessage = new Producer2GatewayMessage();
         gatewayMessage.setMessageId(message.getMessageId());
         gatewayMessage.setMessage(message);
         gatewayMessage.setUserIds(new Long[]{0L});
@@ -194,7 +206,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     }
 
     private void regIdNames(ProducerServer server, SCIdNameMessage message) {
-        Producer2GatewayMessage gatewayMessage = new  Producer2GatewayMessage ();
+        Producer2GatewayMessage gatewayMessage = new Producer2GatewayMessage();
         gatewayMessage.setMessageId(message.getMessageId());
         gatewayMessage.setMessage(message);
         gatewayMessage.setUserIds(new Long[]{0L});

@@ -51,6 +51,9 @@ public class ProducerChannelManager {
     }
 
     public synchronized void addChannel(Channel channel) {
+        if (channels.contains(channel)) {
+            return;
+        }
         channels.add(channel);
     }
 

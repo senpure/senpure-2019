@@ -28,7 +28,7 @@ public class ServerProperties {
         /**
          * 服务器名
          */
-        private String readableName = "realityServer";
+        private String readableName = "consumerServer";
         /**
          * 同步请求超时时间
          */
@@ -37,6 +37,27 @@ public class ServerProperties {
          * 开启事件
          */
         private boolean enableEvent = false;
+
+        /**
+         * 处理事件的线程数
+         */
+        private int eventThreadPoolSize = 0;
+        /**
+         * netty workGroup 线程数
+         */
+        private int ioWorkThreadPoolSize = 0;
+        /**
+         * 逻辑处理线程数
+         */
+        private int executorThreadPoolSize = 0;
+        /**
+         * 连接目标失败后下一次连接间隔毫秒
+         */
+        private long connectFailInterval = 20000;
+        /**
+         * 与目标建立的channel 数量
+         */
+        private int remoteChannel = 2;
 
         /**
          * 输出格式化
@@ -150,6 +171,46 @@ public class ServerProperties {
 
         public void setScErrorMessageId(int scErrorMessageId) {
             this.scErrorMessageId = scErrorMessageId;
+        }
+
+        public int getEventThreadPoolSize() {
+            return eventThreadPoolSize;
+        }
+
+        public void setEventThreadPoolSize(int eventThreadPoolSize) {
+            this.eventThreadPoolSize = eventThreadPoolSize;
+        }
+
+        public int getIoWorkThreadPoolSize() {
+            return ioWorkThreadPoolSize;
+        }
+
+        public void setIoWorkThreadPoolSize(int ioWorkThreadPoolSize) {
+            this.ioWorkThreadPoolSize = ioWorkThreadPoolSize;
+        }
+
+        public int getExecutorThreadPoolSize() {
+            return executorThreadPoolSize;
+        }
+
+        public void setExecutorThreadPoolSize(int executorThreadPoolSize) {
+            this.executorThreadPoolSize = executorThreadPoolSize;
+        }
+
+        public long getConnectFailInterval() {
+            return connectFailInterval;
+        }
+
+        public void setConnectFailInterval(long connectFailInterval) {
+            this.connectFailInterval = connectFailInterval;
+        }
+
+        public int getRemoteChannel() {
+            return remoteChannel;
+        }
+
+        public void setRemoteChannel(int remoteChannel) {
+            this.remoteChannel = remoteChannel;
         }
     }
 

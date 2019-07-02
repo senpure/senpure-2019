@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * RemoteServerManager
+ * 一个服务对应一个RemoteServerManager 对象 <br>
+ * 一个RemoteServerManager   对象 可以有多个RemoteServerChannelManager <br>
+ * 一个RemoteServerChannelManager 可以有多个channel
  *
  * @author senpure
  * @time 2019-06-29 15:15:57
@@ -27,9 +30,10 @@ public class RemoteServerManager {
     private AtomicInteger atomicRequestId = new AtomicInteger(1);
 
     private RemoteServerChannelManager defaultChannelManager;
-    private ServerProperties.Consumer properties;
+    //  private ServerProperties.Consumer properties;
 
     private int defaultTimeout;
+
     public RemoteServerManager(ServerProperties.Consumer properties) {
 
         defaultTimeout = properties.getRequestTimeout();
@@ -40,10 +44,11 @@ public class RemoteServerManager {
     }
 
 
-    public synchronized RemoteServerChannelManager getRemoteServerChannelManager(String remoteServerKey) {
+    public synchronized RemoteServerChannelManager getRemoteServerChannelManager(String host, int port) {
+        String remoteServerKey = getRemoteServerKey(host, port);
         RemoteServerChannelManager manager = remoteServerChannelManager.get(remoteServerKey);
         if (manager == null) {
-            manager = new RemoteServerChannelManager(remoteServerKey);
+            manager = new RemoteServerChannelManager(remoteServerKey, host, port);
             remoteServerChannelManager.put(remoteServerKey, manager);
             return remoteServerChannelManager.get(remoteServerKey);
         }
@@ -84,9 +89,6 @@ public class RemoteServerManager {
     }
 
 
-
-
-
     private int nextRequestId() {
         int requestId = atomicRequestId.getAndIncrement();
         if (requestId == 0) {
@@ -95,10 +97,6 @@ public class RemoteServerManager {
         return nextRequestId();
     }
 
-
-    public void setProperties(ServerProperties.Consumer properties) {
-        this.properties = properties;
-    }
 
     public RemoteServerChannelManager getDefaultChannelManager() {
         return defaultChannelManager;

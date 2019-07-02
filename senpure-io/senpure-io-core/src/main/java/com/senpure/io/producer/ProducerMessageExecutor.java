@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 public class ProducerMessageExecutor {
     private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
     private ExecutorService service;
-
+    private int serviceRefCount = 0;
     public ProducerMessageExecutor() {
 
         this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
@@ -48,5 +48,30 @@ public class ProducerMessageExecutor {
         });
     }
 
+    /**
+     * 引用计数+1
+     */
+    public void retainService() {
+        serviceRefCount++;
+    }
 
+    public void releaseService() {
+        serviceRefCount--;
+
+    }
+
+    public void releaseAndTryShutdownService() {
+        serviceRefCount--;
+        if (serviceRefCount <= 0) {
+            service.shutdown();
+        }
+    }
+
+    public void shutdownService() {
+        if (serviceRefCount <= 0) {
+            service.shutdown();
+        } else {
+            logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
+        }
+    }
 }

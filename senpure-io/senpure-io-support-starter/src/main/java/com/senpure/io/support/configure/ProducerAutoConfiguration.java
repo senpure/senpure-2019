@@ -4,11 +4,11 @@ import com.senpure.base.util.Assert;
 import com.senpure.io.message.CSBreakUserGatewayMessage;
 import com.senpure.io.producer.GatewayManager;
 import com.senpure.io.producer.ProducerMessageHandlerUtil;
-import com.senpure.io.producer.ProducerServer;
 import com.senpure.io.producer.handler.CSAskHandleMessageHandler;
 import com.senpure.io.producer.handler.CSBreakUserGatewayMessageHandler;
 import com.senpure.io.producer.handler.CSRelationUserGatewayMessageHandler;
 import com.senpure.io.producer.handler.ProducerMessageHandler;
+import com.senpure.io.support.ProducerServerStarter;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +21,9 @@ import org.springframework.context.annotation.Bean;
  */
 
 public class ProducerAutoConfiguration {
-   // private Logger logger = LoggerFactory.getLogger(getClass());
+    // private Logger logger = LoggerFactory.getLogger(getClass());
 
-   // @Autowired
+    // @Autowired
     //private DiscoveryClient discoveryClient;
 
     @Bean
@@ -52,8 +52,8 @@ public class ProducerAutoConfiguration {
     }
 
     @Bean
-    public ProducerServer producerServer(){
-        return new ProducerServer();
+    public ProducerServerStarter producerServerStarter() {
+        return new ProducerServerStarter();
     }
 
     @Bean

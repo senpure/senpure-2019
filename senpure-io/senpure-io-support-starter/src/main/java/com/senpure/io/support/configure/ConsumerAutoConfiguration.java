@@ -1,7 +1,17 @@
 package com.senpure.io.support.configure;
 
+import com.senpure.base.util.Assert;
+import com.senpure.io.ServerProperties;
+import com.senpure.io.consumer.RemoteServerManager;
+import com.senpure.io.message.SCInnerErrorMessage;
+import com.senpure.io.producer.ProducerMessageHandlerUtil;
+import com.senpure.io.producer.handler.ProducerMessageHandler;
+import com.senpure.io.support.ConsumerServerStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -11,15 +21,41 @@ import org.springframework.context.annotation.Bean;
  * @time 2019-03-01 11:46:50
  */
 
+
 public class ConsumerAutoConfiguration {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    public ConsumerAutoConfiguration() {
-        ModuleStatistics.enableProducer();
 
+
+    @Autowired
+    private ServerProperties properties;
+
+    @Bean
+    public RemoteServerManager remoteServerManager() {
+        return new RemoteServerManager(properties.getConsumer());
     }
-    @Bean("b")
-    public String a() {
-        logger.info("模块启动数量{}  {} {} {} ", ModuleStatistics.getModuleAmount(), ModuleStatistics.isEnableGateway(), ModuleStatistics.isEnableConsumer(), ModuleStatistics.isEnableProducer());
-        return "bean-b";
+
+    @Bean
+    public ConsumerServerStarter consumerServerStarter() {
+        return new ConsumerServerStarter();
+    }
+
+    @Bean
+    public HandlerChecker handlerChecker() {
+        return new HandlerChecker();
+    }
+
+
+    public void setProperties(ServerProperties properties) {
+        this.properties = properties;
+    }
+
+    class HandlerChecker implements ApplicationRunner {
+        @Override
+        public void run(ApplicationArguments args) throws Exception {
+            ProducerMessageHandler handler = ProducerMessageHandlerUtil.getHandler(SCInnerErrorMessage.MESSAGE_ID);
+            if (handler == null) {
+                Assert.error("缺少[SCInnerErrorMessage]处理器");
+            }
+        }
     }
 }

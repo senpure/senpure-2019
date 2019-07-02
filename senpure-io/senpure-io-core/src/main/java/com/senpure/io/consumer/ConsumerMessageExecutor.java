@@ -25,7 +25,7 @@ public class ConsumerMessageExecutor {
 
     private Logger logger = LoggerFactory.getLogger(ConsumerMessageExecutor.class);
     private ExecutorService service;
-
+    private int serviceRefCount = 0;
     private Set<Integer> errorMessageIds = new HashSet<>();
     public ConsumerMessageExecutor(ServerProperties.Consumer properties) {
         this(properties,Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
@@ -77,6 +77,32 @@ public class ConsumerMessageExecutor {
     }
     public boolean isErrorMessage(Message message) {
         return errorMessageIds.contains(message.getMessageId());
+    }
+    /**
+     * 引用计数+1
+     */
+    public void retainService() {
+        serviceRefCount++;
+    }
+
+    public void releaseService() {
+        serviceRefCount--;
+
+    }
+
+    public void releaseAndTryShutdownService() {
+        serviceRefCount--;
+        if (serviceRefCount <= 0) {
+            service.shutdown();
+        }
+    }
+
+    public void shutdownService() {
+        if (serviceRefCount <= 0) {
+            service.shutdown();
+        } else {
+            logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
+        }
     }
     public boolean isShutdown() {
         return service.isShutdown();

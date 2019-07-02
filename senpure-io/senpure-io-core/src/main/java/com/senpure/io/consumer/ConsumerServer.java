@@ -48,7 +48,7 @@ public class ConsumerServer {
         if (group == null || group.isShuttingDown() || group.isShutdown()) {
             synchronized (groupLock) {
                 if (group == null || group.isShuttingDown() || group.isShutdown()) {
-                    group = new NioEventLoopGroup();
+                    group = new NioEventLoopGroup(properties.getIoWorkThreadPoolSize());
                     SslContext sslCtx = null;
                     try {
                         if (properties.isSsl()) {
@@ -92,8 +92,7 @@ public class ConsumerServer {
             synchronized (groupLock) {
                 serverRefCont++;
             }
-            String remoteServerKey = host + ":" + port;
-
+            String remoteServerKey =remoteServerManager.getRemoteServerKey(host,port);
             InetSocketAddress address = (InetSocketAddress) channel.localAddress();
             String path;
             if (AppEvn.classInJar(AppEvn.getStartClass())) {
@@ -102,7 +101,7 @@ public class ConsumerServer {
                 path = AppEvn.getClassRootPath();
             }
             String serverKey = address.getAddress().getHostAddress() + "->" + path;
-            remoteServerManager.getRemoteServerChannelManager(remoteServerKey).addChannel(channel);
+            remoteServerManager.getRemoteServerChannelManager(host,port).addChannel(channel);
             ChannelAttributeUtil.setRemoteServerKey(channel, remoteServerKey);
             ChannelAttributeUtil.setLocalServerKey(channel, serverKey);
             logger.info("{}启动完成 localServerKey {} address {}", getReadableServerName(), serverKey, address);
