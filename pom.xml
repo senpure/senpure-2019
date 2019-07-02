@@ -13,6 +13,8 @@
         <module>senpure-base</module>
         <module>senpure-io</module>
         <module>senpure-template</module>
+        <module>senpure-result</module>
+        <module>senpure-web</module>
     </modules>
     <dependencyManagement>
         <dependencies>
