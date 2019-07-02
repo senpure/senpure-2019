@@ -51,7 +51,7 @@ public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFr
         if (evt instanceof IdleStateEvent) {
             Channel channel = ctx.channel();
             if (channel.isWritable()) {
-                logger.info("维持网关心跳{} : {}", ChannelAttributeUtil.getRemoteServerKey(channel), channel);
+                logger.info("维持服务器心跳{} : {}", ChannelAttributeUtil.getRemoteServerKey(channel), channel);
                 SCHeartMessage heartMessage = new SCHeartMessage();
                 Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
                 toGateway.setUserIds(new Long[0]);
@@ -59,7 +59,7 @@ public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFr
                 toGateway.setMessageId(heartMessage.getMessageId());
                 channel.writeAndFlush(toGateway);
             } else {
-                logger.warn("网关心跳失败并且channel不可用{}:{}", ChannelAttributeUtil.getRemoteServerKey(channel), channel);
+                logger.warn("服务器心跳失败并且channel不可用{}:{}", ChannelAttributeUtil.getRemoteServerKey(channel), channel);
                 channel.close();
             }
 

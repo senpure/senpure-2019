@@ -2,10 +2,11 @@ package com.senpure.io.support.configure;
 
 import com.senpure.base.util.Assert;
 import com.senpure.io.ServerProperties;
+import com.senpure.io.consumer.MessageHandlerUtil;
 import com.senpure.io.consumer.RemoteServerManager;
+import com.senpure.io.consumer.handler.MessageHandler;
+import com.senpure.io.message.SCHeartMessage;
 import com.senpure.io.message.SCInnerErrorMessage;
-import com.senpure.io.producer.ProducerMessageHandlerUtil;
-import com.senpure.io.producer.handler.ProducerMessageHandler;
 import com.senpure.io.support.ConsumerServerStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class ConsumerAutoConfiguration {
 
     @Autowired
     private ServerProperties properties;
+
 
     @Bean
     public RemoteServerManager remoteServerManager() {
@@ -52,9 +54,13 @@ public class ConsumerAutoConfiguration {
     class HandlerChecker implements ApplicationRunner {
         @Override
         public void run(ApplicationArguments args) throws Exception {
-            ProducerMessageHandler handler = ProducerMessageHandlerUtil.getHandler(SCInnerErrorMessage.MESSAGE_ID);
+            MessageHandler handler = MessageHandlerUtil.getHandler(SCInnerErrorMessage.MESSAGE_ID);
             if (handler == null) {
                 Assert.error("缺少[SCInnerErrorMessage]处理器");
+            }
+            handler = MessageHandlerUtil.getHandler(SCHeartMessage.MESSAGE_ID);
+            if (handler == null) {
+                Assert.error("缺少[SCHeartMessage]处理器");
             }
         }
     }

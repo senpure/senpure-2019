@@ -44,11 +44,11 @@ public class RemoteServerManager {
     }
 
 
-    public synchronized RemoteServerChannelManager getRemoteServerChannelManager(String host, int port) {
-        String remoteServerKey = getRemoteServerKey(host, port);
+    public synchronized RemoteServerChannelManager getRemoteServerChannelManager(String remoteServerKey) {
+
         RemoteServerChannelManager manager = remoteServerChannelManager.get(remoteServerKey);
         if (manager == null) {
-            manager = new RemoteServerChannelManager(remoteServerKey, host, port);
+            manager = new RemoteServerChannelManager(remoteServerKey);
             remoteServerChannelManager.put(remoteServerKey, manager);
             return remoteServerChannelManager.get(remoteServerKey);
         }

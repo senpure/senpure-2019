@@ -70,6 +70,7 @@ public class ConsumerServerStarter implements ApplicationRunner {
             consumer.setEventThreadPoolSize(logicSize);
         }
     }
+
     private void messageExecutor() {
         ServerProperties.Consumer consumer = properties.getConsumer();
         ScheduledExecutorService service = Executors.newScheduledThreadPool(consumer.getExecutorThreadPoolSize(),
@@ -121,8 +122,11 @@ public class ConsumerServerStarter implements ApplicationRunner {
                 } else {
                     port = Integer.parseInt(portStr);
                 }
+                String serverKey = remoteServerManager.getRemoteServerKey(instance.getHost(), port);
                 RemoteServerChannelManager remoteServerChannelManager = remoteServerManager.
-                        getRemoteServerChannelManager(instance.getHost(), port);
+                        getRemoteServerChannelManager(serverKey);
+                remoteServerChannelManager.setHost(instance.getHost());
+                remoteServerChannelManager.setPort(port);
                 remoteServerManager.setDefaultChannelManager(remoteServerChannelManager);
 
             } else {
