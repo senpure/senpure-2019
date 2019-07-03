@@ -13,16 +13,14 @@ javaPack:'javaPack'javaPackageValue';';
 javaPackageValue
 	:fileName
 	|javaPackageValue '.'fileName
-	|javaPackageValue'.io'
 	;
 namespace:'namespace'namespaceValue ';';
 namespaceValue
     :fileName
     |namespaceValue '.'fileName
-    |namespaceValue'.io'
     ;
-fileName:Number* Identifier*;
-filePath:fileName|filePath ('../'|'/'|'\\') fileName;
+fileName:(Number* Identifier*)|'cs'|'CS'|'sc'|'SC'|'bean'|'message'|'event'|'io'|'namespace';
+filePath:fileName|filePath ('-'|'.'|'../'|'/'|'\\') fileName;
 
 
 message

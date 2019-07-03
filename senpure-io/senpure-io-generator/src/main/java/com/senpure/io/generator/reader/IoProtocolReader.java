@@ -471,10 +471,15 @@ public class IoProtocolReader extends IoBaseListener {
                 if (!field.isBaseField()) {
                     Bean b = findBean(field.getClassType(), allBeans);
                     if (b != null) {
+                        if (b instanceof Enum) {
+                            bean.setHasBean(false);
+                        }
                         field.setBean(b);
                     } else {
                         checkErrorBuilder();
-                        errorBuiler.append(filePath).append(field.getTypeLocation()).append(" ")
+                        errorBuiler.append(filePath)
+                                .append(" ")
+                                .append(field.getTypeLocation()).append(" ")
                                 .append(bean.getType());
                         errorBuiler.append(bean.getName()).append(".").append(field.getName());
                         errorBuiler.append("[");

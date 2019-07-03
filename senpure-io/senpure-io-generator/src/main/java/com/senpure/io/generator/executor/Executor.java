@@ -1,4 +1,4 @@
-package com.senpure.io.generator.executer;
+package com.senpure.io.generator.executor;
 
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;

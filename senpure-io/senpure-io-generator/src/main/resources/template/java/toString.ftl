@@ -5,17 +5,17 @@
 <#break >
 </#if>
 </#list>
-<#if hasBean||hasNextIndent!false>
-    //${fieldMaxLen} + 3 = ${fieldMaxLen+3} 个空格
-    private String nextIndent ="<#list 1..fieldMaxLen+3 as i> </#list>";
-</#if>
-<#if fields?size gt 0>
-    //最长字段长度 ${fieldMaxLen}
-    private int filedPad = ${fieldMaxLen};
-</#if>
 
     @Override
     public String toString(String indent) {
+<#if hasBean||hasNextIndent!false>
+        //${fieldMaxLen} + 3 = ${fieldMaxLen+3} 个空格
+        String nextIndent ="<#list 1..fieldMaxLen+3 as i> </#list>";
+</#if>
+<#if fields?size gt 0>
+        //最长字段长度 ${fieldMaxLen}
+        int filedPad = ${fieldMaxLen};
+</#if>
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
         sb.append("${name}")<#if type!="NA">.append("[${id?c}]")</#if>.append("{");

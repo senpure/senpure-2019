@@ -1,4 +1,4 @@
-package com.senpure.io.generator.executer;
+package com.senpure.io.generator.executor;
 
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
@@ -36,7 +36,7 @@ public class ExecutorContext {
 
     private String javaBeanCodeRootPath;
     private String javaBeanTemplate = "bean.ftl";
-    private String javaMessageTemplate = "getValue.ftl";
+    private String javaMessageTemplate = "message.ftl";
     private String javaMessageHandlerTemplate = "messageHandler.ftl";
     private boolean javaMessageHandlerCover = false;
 

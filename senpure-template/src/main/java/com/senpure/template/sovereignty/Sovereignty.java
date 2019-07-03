@@ -29,7 +29,7 @@ public class Sovereignty {
     }
 
     public String sovereigntyJavaComment() {
-        return sovereignty(" * @", true, javaSovereignties);
+        return sovereignty("* @", true, javaSovereignties);
     }
 
     public String sovereigntyLuaComment() {

@@ -8,17 +8,11 @@ import org.springframework.stereotype.Component;
 /**<#if hasExplain>
  * ${explain}处理器
  *</#if>
-${sovereignty}
+ ${sovereignty}
  * @time ${.now?datetime}
  */
 @Component
 public class ${javaHandlerName} extends AbstractProducerMessageHandler<${javaName}> {
-
-    @Override
-    public void execute(Channel channel, long token, long userId, ${javaName} message) {
-        //TODO 请在这里写下你的代码
-
-    }
 
     @Override
     public int handlerId() {
@@ -29,5 +23,11 @@ public class ${javaHandlerName} extends AbstractProducerMessageHandler<${javaNam
     @Override
     public ${javaName} getEmptyMessage() {
         return new ${javaName}();
+    }
+
+    @Override
+    public void execute(Channel channel, long token, long userId, ${javaName} message) {
+        //TODO 请在这里写下你的代码
+
     }
 }

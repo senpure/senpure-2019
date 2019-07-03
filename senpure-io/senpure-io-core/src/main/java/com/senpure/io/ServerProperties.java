@@ -440,11 +440,11 @@ public class ServerProperties {
         /**
          * 客户端登录消息id
          */
-        private int csLoginMessageId = 1000100;
+        private int csLoginMessageId = 1000101;
         /**
          * 服务器登录成功返回消息id
          */
-        private int scLoginMessageId = 1000101;
+        private int scLoginMessageId = 1000102;
         /**
          * 是否开启cs 模块的心跳检查
          */

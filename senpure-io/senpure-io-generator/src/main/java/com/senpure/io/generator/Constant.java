@@ -17,8 +17,8 @@ public class Constant {
 
     public static String JAVA_PACK_BEAN = "bean";
     public static String JAVA_PACK_ENUM = "bean";
-    public static String JAVA_PACK_MESSAGE = "getValue";
-    public static String JAVA_PACK_HANDLER = "getValue.handler";
+    public static String JAVA_PACK_MESSAGE = "message";
+    public static String JAVA_PACK_HANDLER = "message.handler";
     public static String JAVA_PACK_EVENT= "event";
     public static String JAVA_PACK_EVENT_HANDLER= "event.handler";
 

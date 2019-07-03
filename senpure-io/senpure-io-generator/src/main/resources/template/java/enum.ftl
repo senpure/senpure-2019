@@ -1,11 +1,11 @@
 package ${javaPack};
 
 /**<#if hasExplain>
-    * ${explain}
-    * </#if>
-${sovereignty}
-* @time ${.now?datetime}
-*/
+ * ${explain}
+ * </#if>
+ ${sovereignty}
+ * @time ${.now?datetime}
+ */
 public enum ${javaName} {
 <#list fields as field>
     ${field.name}(${field.index}),<#if field.hasExplain>//${field.explain}</#if>
@@ -22,10 +22,14 @@ public enum ${javaName} {
         return value;
     }
 
+<#list fields as field>
+    public static final int ${field.name}_VALUE = ${field.index};
+</#list>
+
     public static ${javaName}  get${javaName} (int value) {
         switch(value){
 <#list fields as field>
-        case ${field.index}:
+        case ${field.name}_VALUE:
             return ${field.name};
 </#list>
         default:
@@ -33,7 +37,4 @@ public enum ${javaName} {
         }
     }
 
-<#list fields as field>
-    public static final int ${field.name}_VALUE = ${field.index};
-</#list>
 }
