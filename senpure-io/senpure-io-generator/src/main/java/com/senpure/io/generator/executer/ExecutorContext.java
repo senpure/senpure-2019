@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ExecuterContext
+ * ExecutorContext
  *
  * @author senpure
  * @time 2019-06-11 16:03:02
  */
-public class ExecuterContext {
+public class ExecutorContext {
 
     private List<Message> messages = new ArrayList<>(128);
     private List<Bean> beans = new ArrayList<>(128);

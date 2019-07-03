@@ -25,19 +25,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Executer
+ * Executor
  *
  * @author senpure
  * @time 2019-06-11 15:56:05
  */
-public class Executer {
+public class Executor {
 
     private Configuration cfg;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private ExecuterContext context;
+    private ExecutorContext context;
 
-    public Executer(ExecuterContext context) {
+    public Executor(ExecutorContext context) {
         this.context = context;
         CheckUtil.loadData(context.getJavaCodeRootPath());
         cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
@@ -279,7 +279,7 @@ public class Executer {
         }
         Map<String, IoProtocolReader> ioProtocolReaderMap = IoReader.getInstance().getIoProtocolReaderMap();
 
-        ExecuterContext context = new ExecuterContext();
+        ExecutorContext context = new ExecutorContext();
 
         for (IoProtocolReader value : ioProtocolReaderMap.values()) {
             context.addBeans(value.getBeans());
@@ -289,7 +289,7 @@ public class Executer {
         }
         context.setJavaCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
         context.setJavaBeanCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
-        Executer executer = new Executer(context);
+        Executor executer = new Executor(context);
         executer.generate();
     }
 }
