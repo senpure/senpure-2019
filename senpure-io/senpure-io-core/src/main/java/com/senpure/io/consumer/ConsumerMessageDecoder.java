@@ -39,7 +39,7 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
         } else {
             int requestId=in.readInt();
             int messageId = in.readInt();
-            Message message = MessageHandlerUtil.getEmptyMessage(messageId);
+            Message message = ConsumerMessageHandlerUtil.getEmptyMessage(messageId);
             int messageLength = packageLength - 4;
             if (message == null) {
                 logger.warn("没有找到消息处理程序 messageId {}", messageId);

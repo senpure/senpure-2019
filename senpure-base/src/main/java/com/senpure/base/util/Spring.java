@@ -5,26 +5,20 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Map;
 
 
-public class Spring implements SpringApplicationRunListener {
+public class Spring implements ApplicationContextAware {
 
     protected static Logger logger = LogManager.getLogger(Spring.class);
     private static AbstractApplicationContext act;
 
-    public Spring(SpringApplication springApplication, String[] args) {
 
-
-    }
-
-    //  @Override
+     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
 
         regApplicationContext(context);
@@ -32,6 +26,8 @@ public class Spring implements SpringApplicationRunListener {
     }
 
     public static void regApplicationContext(ApplicationContext context) {
+        logger.info("regApplicationContext:{}  {}" , context.getApplicationName(),context.getClass() );
+
         if (act == null) {
             // logger.info("Spring 获取ApplicationContext上下文:applicationName:" + context.getApplicationName() + ",displayName:" + context.getDisplayName() + ",id:" + context.getId());
             act = (AbstractApplicationContext) context;
@@ -72,39 +68,5 @@ public class Spring implements SpringApplicationRunListener {
 
     }
 
-    @Override
-    public void starting() {
 
-    }
-
-    @Override
-    public void environmentPrepared(ConfigurableEnvironment environment) {
-
-    }
-
-    @Override
-    public void contextPrepared(ConfigurableApplicationContext context) {
-        regApplicationContext(context);
-    }
-
-    @Override
-    public void contextLoaded(ConfigurableApplicationContext context) {
-
-    }
-
-    @Override
-    public void started(ConfigurableApplicationContext context) {
-
-
-    }
-
-    @Override
-    public void running(ConfigurableApplicationContext context) {
-
-    }
-
-    @Override
-    public void failed(ConfigurableApplicationContext context, Throwable exception) {
-
-    }
 }

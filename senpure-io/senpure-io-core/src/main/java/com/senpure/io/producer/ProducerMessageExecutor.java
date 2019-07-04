@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class ProducerMessageExecutor {
@@ -16,14 +15,12 @@ public class ProducerMessageExecutor {
     private int serviceRefCount = 0;
     public ProducerMessageExecutor() {
 
-        this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
     }
 
-    public ProducerMessageExecutor(ExecutorService service) {
+
+    public void setService(ExecutorService service) {
         this.service = service;
-
     }
-
 
     public void execute(Runnable runnable) {
         service.execute(runnable);

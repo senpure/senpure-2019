@@ -46,6 +46,7 @@ public class ConsumerServerStarter implements ApplicationRunner {
     private ServerProperties.Gateway gateway = new ServerProperties.Gateway();
     private List<ConsumerServer> servers = new ArrayList<>();
     private long lastFailTime = 0;
+    private long lastLogTime = 0;
     private long failTimes = 0;
     private String lastFailServerKey;
 
@@ -99,81 +100,105 @@ public class ConsumerServerStarter implements ApplicationRunner {
     }
 
 
+    private boolean canLog() {
+        long now = System.currentTimeMillis();
+        if (now - lastLogTime >= 60000) {
+            lastLogTime = now;
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
+
+        logger.debug("consumerServerStarter-----------{}", remoteServerManager == null);
         check();
         messageExecutor();
         service.scheduleWithFixedDelay(() -> {
-            if (remoteServerManager.getDefaultChannelManager() == null) {
-                List<ServiceInstance> serviceInstances = discoveryClient.getInstances(properties.getConsumer().getRemoteName());
-                ServiceInstance instance;
-                if (lastFailServerKey == null) {
-                    instance = serviceInstances.get(0);
-                } else {
-                    Random random = new Random();
-                    instance = serviceInstances.get(random.nextInt(serviceInstances.size()));
-                }
+            try {
+                if (remoteServerManager.getDefaultChannelManager() == null) {
 
-                String portStr = instance.getMetadata().get("scPort");
-                int port;
-                if (portStr == null) {
-                    // logger.warn("网关 [{}] {} {} 没有 没有配置sc socket端口,使用默认端口 {}", producer.getGatewayName(), instance.getHost(), instance.getUri(), gateway.getScPort());
-                    port = gateway.getScPort();
-                } else {
-                    port = Integer.parseInt(portStr);
-                }
-                String serverKey = remoteServerManager.getRemoteServerKey(instance.getHost(), port);
-                RemoteServerChannelManager remoteServerChannelManager = remoteServerManager.
-                        getRemoteServerChannelManager(serverKey);
-                remoteServerChannelManager.setHost(instance.getHost());
-                remoteServerChannelManager.setPort(port);
-                remoteServerManager.setDefaultChannelManager(remoteServerChannelManager);
-
-            } else {
-
-                RemoteServerChannelManager remoteServerChannelManager = remoteServerManager.getDefaultChannelManager();
-
-                if (remoteServerChannelManager.isConnecting()) {
-                    return;
-                }
-                long now = System.currentTimeMillis();
-                if (remoteServerChannelManager.getChannelSize() < properties.getConsumer().getRemoteChannel()) {
-                    boolean start = false;
-                    if (lastFailTime == 0) {
-                        start = true;
-                    } else {
-                        if (now - lastFailTime >= properties.getConsumer().getConnectFailInterval()) {
-                            start = true;
+                    List<ServiceInstance> serviceInstances = discoveryClient.getInstances(properties.getConsumer().getRemoteName());
+                    if (serviceInstances.size() == 0) {
+                        if (canLog()) {
+                            logger.warn("没有服务可用{}", properties.getConsumer().getRemoteName());
                         }
+                        return;
                     }
-                    if (start) {
-                        remoteServerChannelManager.setConnecting(true);
-                        ConsumerServer consumerServer = new ConsumerServer();
-                        consumerServer.setMessageExecutor(messageExecutor);
-                        consumerServer.setRemoteServerManager(remoteServerManager);
-                        consumerServer.setProperties(properties.getConsumer());
-                        if (consumerServer.start(remoteServerChannelManager.getHost(), remoteServerChannelManager.getPort())) {
-                            servers.add(consumerServer);
-                            //验证
-                            failTimes = 0;
+                    ServiceInstance instance;
+                    if (lastFailServerKey == null) {
+                        instance = serviceInstances.get(0);
+                    } else {
+                        Random random = new Random();
+                        instance = serviceInstances.get(random.nextInt(serviceInstances.size()));
+                    }
+
+                    String portStr = instance.getMetadata().get("scPort");
+                    int port;
+                    if (portStr == null) {
+                        // logger.warn("网关 [{}] {} {} 没有 没有配置sc socket端口,使用默认端口 {}", producer.getGatewayName(), instance.getHost(), instance.getUri(), gateway.getScPort());
+                        port = gateway.getScPort();
+                    } else {
+                        port = Integer.parseInt(portStr);
+                    }
+                    String serverKey = remoteServerManager.getRemoteServerKey(instance.getHost(), port);
+                    RemoteServerChannelManager remoteServerChannelManager = remoteServerManager.
+                            getRemoteServerChannelManager(serverKey);
+                    remoteServerChannelManager.setHost(instance.getHost());
+                    remoteServerChannelManager.setPort(port);
+                    remoteServerManager.setDefaultChannelManager(remoteServerChannelManager);
+
+                } else {
+
+                    RemoteServerChannelManager remoteServerChannelManager = remoteServerManager.getDefaultChannelManager();
+
+                    if (remoteServerChannelManager.isConnecting()) {
+                        return;
+                    }
+                    long now = System.currentTimeMillis();
+                    if (remoteServerChannelManager.getChannelSize() < properties.getConsumer().getRemoteChannel()) {
+                        boolean start = false;
+                        if (lastFailTime == 0) {
+                            start = true;
                         } else {
-                            lastFailTime = now;
-                            lastFailServerKey = remoteServerChannelManager.getServerKey();
-                            failTimes++;
-                            if (failTimes >= 10 && remoteServerChannelManager.getChannelSize() == 0) {
-                                remoteServerManager.setDefaultChannelManager(null);
-                                failTimes = 0;
+                            if (now - lastFailTime >= properties.getConsumer().getConnectFailInterval()) {
+                                start = true;
                             }
                         }
-                        remoteServerChannelManager.setConnecting(false);
+                        if (start) {
+                            remoteServerChannelManager.setConnecting(true);
+                            ConsumerServer consumerServer = new ConsumerServer();
+                            consumerServer.setMessageExecutor(messageExecutor);
+                            consumerServer.setRemoteServerManager(remoteServerManager);
+                            consumerServer.setProperties(properties.getConsumer());
+                            if (consumerServer.start(remoteServerChannelManager.getHost(), remoteServerChannelManager.getPort())) {
+                                servers.add(consumerServer);
+                                //验证
+                                failTimes = 0;
+                            } else {
+                                lastFailTime = now;
+                                lastFailServerKey = remoteServerChannelManager.getServerKey();
+                                failTimes++;
+                                if (failTimes >= 10 && remoteServerChannelManager.getChannelSize() == 0) {
+                                    remoteServerManager.setDefaultChannelManager(null);
+                                    failTimes = 0;
+                                }
+                            }
+                            remoteServerChannelManager.setConnecting(false);
+                        }
+
                     }
 
+
                 }
+            } catch (Exception e) {
 
-
+                logger.error("error", e);
             }
 
 
-        }, 2000, 50, TimeUnit.MILLISECONDS);
+        }, 500, 50, TimeUnit.MILLISECONDS);
     }
+
 }

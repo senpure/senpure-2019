@@ -2,9 +2,9 @@ package com.senpure.io.support.configure;
 
 import com.senpure.base.util.Assert;
 import com.senpure.io.ServerProperties;
-import com.senpure.io.consumer.MessageHandlerUtil;
+import com.senpure.io.consumer.ConsumerMessageHandlerUtil;
 import com.senpure.io.consumer.RemoteServerManager;
-import com.senpure.io.consumer.handler.MessageHandler;
+import com.senpure.io.consumer.handler.ConsumerMessageHandler;
 import com.senpure.io.message.SCHeartMessage;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.support.ConsumerServerStarter;
@@ -54,11 +54,11 @@ public class ConsumerAutoConfiguration {
     class HandlerChecker implements ApplicationRunner {
         @Override
         public void run(ApplicationArguments args) throws Exception {
-            MessageHandler handler = MessageHandlerUtil.getHandler(SCInnerErrorMessage.MESSAGE_ID);
+            ConsumerMessageHandler handler = ConsumerMessageHandlerUtil.getHandler(SCInnerErrorMessage.MESSAGE_ID);
             if (handler == null) {
                 Assert.error("缺少[SCInnerErrorMessage]处理器");
             }
-            handler = MessageHandlerUtil.getHandler(SCHeartMessage.MESSAGE_ID);
+            handler = ConsumerMessageHandlerUtil.getHandler(SCHeartMessage.MESSAGE_ID);
             if (handler == null) {
                 Assert.error("缺少[SCHeartMessage]处理器");
             }

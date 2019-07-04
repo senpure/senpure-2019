@@ -15,7 +15,7 @@ public class DefaultBannerShowConfiguration {
     private String banner;
 
     @Bean
-    @Order(100000000)
+    @Order
     public DefaultBannerShow defaultBannerShow() {
         return new DefaultBannerShow();
     }

@@ -15,6 +15,7 @@ public class CurrentSpringApplicationRunListener implements SpringApplicationRun
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
+    private static boolean done=false;
     public CurrentSpringApplicationRunListener(SpringApplication springApplication, String[] args) {
 
     }
@@ -24,9 +25,15 @@ public class CurrentSpringApplicationRunListener implements SpringApplicationRun
 
     }
 
+
     @Override
     public void environmentPrepared(ConfigurableEnvironment environment) {
+        //多个springContext 只需要执行一次
         //保证开发阶段的的有几个classpath 时rootPath正确性
+        if (done) {
+            return;
+        }
+        done=true;
         Class clazz = AppEvn.getStartClass();
         if (clazz == null) {
             StackTraceElement[] statcks = Thread.currentThread().getStackTrace();

@@ -1,0 +1,34 @@
+package com.senpure.io.consumer;
+
+
+import com.senpure.base.util.Assert;
+import com.senpure.io.consumer.handler.ConsumerMessageHandler;
+import com.senpure.io.protocol.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class ConsumerMessageHandlerUtil {
+    private static Logger logger = LoggerFactory.getLogger(ConsumerMessageHandlerUtil.class);
+    private static Map<Integer, ConsumerMessageHandler> handlerMap = new HashMap<>();
+
+    public static ConsumerMessageHandler getHandler(int messageId) {
+        return handlerMap.get(messageId);
+    }
+
+    public static void regMessageHandler(ConsumerMessageHandler handler) {
+        Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
+        handlerMap.put(handler.handlerId(), handler);
+    }
+
+    public static Message getEmptyMessage(int messageId) {
+        ConsumerMessageHandler handler = handlerMap.get(messageId);
+        if (handler == null) {
+            return null;
+        }
+        return handler.getEmptyMessage();
+    }
+}

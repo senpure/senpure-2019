@@ -51,10 +51,10 @@ public class ConsumerMessageExecutor {
             Message message = frame.getMessage();
             if (requestId == 0) {
                 try {
-                    MessageHandlerUtil.getHandler(message.getMessageId())
+                    ConsumerMessageHandlerUtil.getHandler(message.getMessageId())
                             .execute(channel, message);
                 } catch (Exception e) {
-                    logger.error("执行handler[" + MessageHandlerUtil.getHandler(message.getMessageId()).getClass().getName() + "]逻辑出错 ", e);
+                    logger.error("执行handler[" + ConsumerMessageHandlerUtil.getHandler(message.getMessageId()).getClass().getName() + "]逻辑出错 ", e);
                 }
             } else {
                 DefaultFuture future = DefaultFuture.received(requestId);

@@ -44,13 +44,15 @@ public class ProducerServerStarter implements ApplicationRunner {
     private ServerProperties serverProperties;
     @Autowired
     private GatewayManager gatewayManager;
+    @Autowired
+    private ProducerMessageExecutor messageExecutor;
 
     private ServerProperties.Producer producer;
     private ServerProperties.Gateway gateway = new ServerProperties.Gateway();
     private ScheduledExecutorService service;
 
     private List<ProducerServer> servers = new ArrayList<>();
-    private ProducerMessageExecutor messageExecutor;
+
 
     private Map<String, Long> failGatewayMap = new HashMap<>();
 
@@ -81,8 +83,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     private void messageExecutor() {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(serverProperties.getName() + "-executor"));
-        ProducerMessageExecutor messageExecutor = new ProducerMessageExecutor(service);
-        this.messageExecutor = messageExecutor;
+        messageExecutor.setService(service);
         this.service = service;
         EventHelper.setService(service);
     }

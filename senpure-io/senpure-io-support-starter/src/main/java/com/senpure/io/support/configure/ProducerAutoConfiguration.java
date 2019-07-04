@@ -3,6 +3,7 @@ package com.senpure.io.support.configure;
 import com.senpure.base.util.Assert;
 import com.senpure.io.message.CSBreakUserGatewayMessage;
 import com.senpure.io.producer.GatewayManager;
+import com.senpure.io.producer.ProducerMessageExecutor;
 import com.senpure.io.producer.ProducerMessageHandlerUtil;
 import com.senpure.io.producer.handler.CSAskHandleMessageHandler;
 import com.senpure.io.producer.handler.CSBreakUserGatewayMessageHandler;
@@ -49,6 +50,11 @@ public class ProducerAutoConfiguration {
     public GatewayManager gatewayManager() {
         GatewayManager gatewayManager = new GatewayManager();
         return gatewayManager;
+    }
+
+    @Bean
+    public ProducerMessageExecutor producerMessageExecutor() {
+        return new ProducerMessageExecutor();
     }
 
     @Bean

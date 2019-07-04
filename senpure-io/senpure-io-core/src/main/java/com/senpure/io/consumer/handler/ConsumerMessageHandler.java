@@ -5,7 +5,7 @@ import com.senpure.io.protocol.Message;
 import io.netty.channel.Channel;
 
 
-public interface MessageHandler<T extends Message> {
+public interface ConsumerMessageHandler<T extends Message> {
 
 
     T getEmptyMessage();

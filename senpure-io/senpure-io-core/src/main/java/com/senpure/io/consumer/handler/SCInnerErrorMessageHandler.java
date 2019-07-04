@@ -9,7 +9,7 @@ import io.netty.channel.Channel;
  * @author senpure
  * @time 2019-07-02 17:02:44
  */
-public class SCInnerErrorMessageHandler extends AbstractMessageHandler<SCInnerErrorMessage> {
+public class SCInnerErrorMessageHandler extends AbstractConsumerMessageHandler<SCInnerErrorMessage> {
     @Override
     public void execute(Channel channel, SCInnerErrorMessage message) throws Exception {
         logger.debug(message.toString());
