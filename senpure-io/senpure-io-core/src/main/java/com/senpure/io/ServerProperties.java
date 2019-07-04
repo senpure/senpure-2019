@@ -45,7 +45,7 @@ public class ServerProperties {
         /**
          * netty workGroup 线程数
          */
-        private int ioWorkThreadPoolSize = 0;
+        private int ioWorkThreadPoolSize = 1;
         /**
          * 逻辑处理线程数
          */

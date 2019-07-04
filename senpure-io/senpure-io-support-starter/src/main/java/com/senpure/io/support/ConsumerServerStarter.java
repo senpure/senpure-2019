@@ -16,6 +16,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,15 +41,21 @@ public class ConsumerServerStarter implements ApplicationRunner {
     @Autowired
     private RemoteServerManager remoteServerManager;
 
-
+    @Autowired
     private ConsumerMessageExecutor messageExecutor;
-    private ScheduledExecutorService service;
+
     private ServerProperties.Gateway gateway = new ServerProperties.Gateway();
     private List<ConsumerServer> servers = new ArrayList<>();
     private long lastFailTime = 0;
     private long lastLogTime = 0;
     private long failTimes = 0;
     private String lastFailServerKey;
+
+    @PostConstruct
+    public void init() {
+        check();
+        messageExecutor();
+    }
 
     private void check() {
         if (StringUtils.isEmpty(properties.getName())) {
@@ -68,20 +75,18 @@ public class ConsumerServerStarter implements ApplicationRunner {
             consumer.setIoWorkThreadPoolSize(ioSize);
         }
         if (consumer.getExecutorThreadPoolSize() < 1) {
-            consumer.setEventThreadPoolSize(logicSize);
+            consumer.setExecutorThreadPoolSize(logicSize);
         }
     }
+
 
     private void messageExecutor() {
         ServerProperties.Consumer consumer = properties.getConsumer();
         ScheduledExecutorService service = Executors.newScheduledThreadPool(consumer.getExecutorThreadPoolSize(),
                 new NameThreadFactory(properties.getName() + "-executor"));
-        messageExecutor = new ConsumerMessageExecutor(properties.getConsumer(), service);
-        this.service = service;
+        messageExecutor.setService(service);
         EventHelper.setService(service);
-
     }
-
 
     @PreDestroy
     public void destroy() {
@@ -110,18 +115,17 @@ public class ConsumerServerStarter implements ApplicationRunner {
     }
 
     @Override
+
     public void run(ApplicationArguments args) throws Exception {
 
-        logger.debug("consumerServerStarter-----------{}", remoteServerManager == null);
-        check();
-        messageExecutor();
-        service.scheduleWithFixedDelay(() -> {
+        messageExecutor.getService().scheduleWithFixedDelay(() -> {
             try {
+                boolean canLog = canLog();
                 if (remoteServerManager.getDefaultChannelManager() == null) {
 
                     List<ServiceInstance> serviceInstances = discoveryClient.getInstances(properties.getConsumer().getRemoteName());
                     if (serviceInstances.size() == 0) {
-                        if (canLog()) {
+                        if (canLog) {
                             logger.warn("没有服务可用{}", properties.getConsumer().getRemoteName());
                         }
                         return;
@@ -134,11 +138,10 @@ public class ConsumerServerStarter implements ApplicationRunner {
                         instance = serviceInstances.get(random.nextInt(serviceInstances.size()));
                     }
 
-                    String portStr = instance.getMetadata().get("scPort");
+                    String portStr = instance.getMetadata().get("csPort");
                     int port;
                     if (portStr == null) {
-                        // logger.warn("网关 [{}] {} {} 没有 没有配置sc socket端口,使用默认端口 {}", producer.getGatewayName(), instance.getHost(), instance.getUri(), gateway.getScPort());
-                        port = gateway.getScPort();
+                         port = gateway.getCsPort();
                     } else {
                         port = Integer.parseInt(portStr);
                     }

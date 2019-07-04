@@ -35,7 +35,7 @@ public class GatewayAndClientMessageDecoder extends ByteToMessageDecoder {
             } else {
                 int requestId=in.readInt();
                 int messageId = in.readInt();
-                int messageLength = packageLength - 4;
+                int messageLength = packageLength - 8;
                 byte data[] = new byte[messageLength];
                 in.readBytes(data);
                 Client2GatewayMessage transfer = new Client2GatewayMessage();

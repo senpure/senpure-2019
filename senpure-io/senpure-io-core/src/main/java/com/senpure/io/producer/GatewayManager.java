@@ -17,11 +17,25 @@ import java.util.concurrent.ConcurrentMap;
 public class GatewayManager {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private final static ThreadLocal<Integer> requestIdLocal = ThreadLocal.withInitial(() -> 0);
     private ConcurrentMap<String, GatewayChannelManager> gatewayChannelMap = new ConcurrentHashMap<>();
 
     private ConcurrentMap<Long, GatewayRelation> userGatewayMap = new ConcurrentHashMap<>();
 
     private ConcurrentMap<Long, GatewayRelation> tokenGatewayMap = new ConcurrentHashMap<>();
+
+
+    public static void setRequestId(int requestId) {
+        requestIdLocal.set(requestId);
+    }
+
+    public static void clearRequestId() {
+        requestIdLocal.set(0);
+    }
+
+    public static int getRequestId() {
+        return requestIdLocal.get();
+    }
 
     public String getGatewayKey(String host, int port) {
         return host + ":" + port;
@@ -127,11 +141,12 @@ public class GatewayManager {
         if (userId == 0) {
             return;
         }
-         Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
+        Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
         toGateway.setToken(token);
         toGateway.setUserIds(new Long[]{userId});
         toGateway.setMessage(message);
         toGateway.setMessageId(message.getMessageId());
+        toGateway.setRequestId(GatewayManager.getRequestId());
         GatewayRelation gatewayRelation = tokenGatewayMap.get(token);
         if (gatewayRelation != null) {
             gatewayRelation.gatewayChannelManager.sendMessage(toGateway);
@@ -150,7 +165,7 @@ public class GatewayManager {
      * @param userId
      */
     public void sendBreakGatewayMessage2Gateway(Long userId) {
-        sendMessage2Gateway(userId,new SCBreakUserGatewayMessage());
+        sendMessage2Gateway(userId, new SCBreakUserGatewayMessage());
     }
 
     /**
@@ -165,6 +180,7 @@ public class GatewayManager {
 
     /**
      * 踢下线
+     *
      * @param userId
      */
     public void sendKickOffMessage2Gateway(Long userId) {
@@ -175,6 +191,7 @@ public class GatewayManager {
 
     /**
      * 踢下线
+     *
      * @param token
      */
     public void sendKickOffMessage2GatewayByToken(Long token) {
@@ -189,6 +206,7 @@ public class GatewayManager {
         toGateway.setUserIds(new Long[0]);
         toGateway.setMessage(message);
         toGateway.setMessageId(message.getMessageId());
+        toGateway.setRequestId(GatewayManager.getRequestId());
         GatewayRelation gatewayRelation = tokenGatewayMap.get(token);
         if (gatewayRelation != null) {
             gatewayRelation.gatewayChannelManager.sendMessage(toGateway);
@@ -203,6 +221,7 @@ public class GatewayManager {
         toGateway.setUserIds(new Long[]{userId});
         toGateway.setMessage(message);
         toGateway.setMessageId(message.getMessageId());
+        toGateway.setRequestId(GatewayManager.getRequestId());
         GatewayRelation gatewayRelation = userGatewayMap.get(userId);
         if (gatewayRelation != null) {
             gatewayRelation.gatewayChannelManager.sendMessage(toGateway);

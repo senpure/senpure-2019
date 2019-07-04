@@ -33,7 +33,7 @@ public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFr
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        logger.info("{} :{} 网关连接断开 ", ChannelAttributeUtil.getRemoteServerKey(ctx.channel()), ctx.channel());
+        logger.info("{} :{} 远程服务器连接断开 ", ChannelAttributeUtil.getRemoteServerKey(ctx.channel()), ctx.channel());
         remoteServerManager.getRemoteServerChannelManager(ChannelAttributeUtil.
                 getRemoteServerKey(ctx.channel())).removeChannel(ctx.channel());
 

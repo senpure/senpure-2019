@@ -2,6 +2,7 @@ package com.senpure.io.support.configure;
 
 import com.senpure.base.util.Assert;
 import com.senpure.io.ServerProperties;
+import com.senpure.io.consumer.ConsumerMessageExecutor;
 import com.senpure.io.consumer.ConsumerMessageHandlerUtil;
 import com.senpure.io.consumer.RemoteServerManager;
 import com.senpure.io.consumer.handler.ConsumerMessageHandler;
@@ -34,6 +35,12 @@ public class ConsumerAutoConfiguration {
     @Bean
     public RemoteServerManager remoteServerManager() {
         return new RemoteServerManager(properties.getConsumer());
+    }
+
+    @Bean
+    public ConsumerMessageExecutor messageExecutor() {
+
+        return new ConsumerMessageExecutor(properties.getConsumer());
     }
 
     @Bean

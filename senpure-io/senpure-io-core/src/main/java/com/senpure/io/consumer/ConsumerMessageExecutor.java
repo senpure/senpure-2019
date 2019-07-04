@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * ConsumerMessageExecutor
@@ -24,25 +23,27 @@ import java.util.concurrent.Executors;
 public class ConsumerMessageExecutor {
 
     private Logger logger = LoggerFactory.getLogger(ConsumerMessageExecutor.class);
-    private ExecutorService service;
+    private ScheduledExecutorService service;
     private int serviceRefCount = 0;
     private Set<Integer> errorMessageIds = new HashSet<>();
-    public ConsumerMessageExecutor(ServerProperties.Consumer properties) {
-        this(properties,Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
-    }
 
-    public ConsumerMessageExecutor(ServerProperties.Consumer properties,ExecutorService service) {
-        this.service = service;
+    public ConsumerMessageExecutor(ServerProperties.Consumer properties) {
         errorMessageIds.add(SCInnerErrorMessage.MESSAGE_ID);
         errorMessageIds.add(properties.getScErrorMessageId());
+    }
+
+
+    public void setService(ScheduledExecutorService service) {
+        this.service = service;
+    }
+
+    public ScheduledExecutorService getService() {
+        return service;
     }
 
     public void execute(Runnable runnable) {
         service.execute(runnable);
     }
-
-
-
 
     public void execute(Channel channel, MessageFrame frame) {
         //channel 本地构造的超时返回 channel = null
@@ -75,9 +76,11 @@ public class ConsumerMessageExecutor {
 
 
     }
+
     public boolean isErrorMessage(Message message) {
         return errorMessageIds.contains(message.getMessageId());
     }
+
     /**
      * 引用计数+1
      */
@@ -104,6 +107,7 @@ public class ConsumerMessageExecutor {
             logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
         }
     }
+
     public boolean isShutdown() {
         return service.isShutdown();
     }

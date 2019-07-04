@@ -9,7 +9,7 @@ public class Server2GatewayMessage {
 
     private Long[] userIds;
 
-    private long requestId;
+    private int  requestId;
     private long token;
     private int messageId;
 
@@ -50,11 +50,11 @@ public class Server2GatewayMessage {
     }
 
 
-    public long getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(long requestId) {
+    public void setRequestId(int requestId) {
         this.requestId = requestId;
     }
 

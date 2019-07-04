@@ -18,6 +18,7 @@ public class GatewayAndClientMessageEncoder extends MessageToByteEncoder<Server2
         //head 4 +requestId 4 +messageId 4 +  data
         out.ensureWritable(12 + msg.getData().length);
         out.writeInt(8 + msg.getData().length);
+        out.writeInt(msg.getRequestId());
         out.writeInt(msg.getMessageId());
         out.writeBytes(msg.getData());
 

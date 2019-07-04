@@ -94,7 +94,7 @@ public class RemoteServerManager {
         if (requestId == 0) {
             return nextRequestId();
         }
-        return nextRequestId();
+        return requestId;
     }
 
 

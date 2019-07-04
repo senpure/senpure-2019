@@ -13,6 +13,7 @@ public class ProducerMessageExecutor {
     private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
     private ExecutorService service;
     private int serviceRefCount = 0;
+
     public ProducerMessageExecutor() {
 
     }
@@ -37,6 +38,7 @@ public class ProducerMessageExecutor {
             Message message = handler.getEmptyMessage();
             message.read(gsMessage.getBuf(), gsMessage.getBuf().writerIndex());
             try {
+                GatewayManager.setRequestId(gsMessage.getRequestId());
                 handler.execute(channel, gsMessage.getToken(), userId, message);
             } catch (Exception e) {
                 logger.error("执行handler[" + handler.getClass().getName() + "]逻辑出错 ", e);

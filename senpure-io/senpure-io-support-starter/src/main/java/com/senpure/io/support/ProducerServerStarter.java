@@ -19,6 +19,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +59,13 @@ public class ProducerServerStarter implements ApplicationRunner {
 
     private long lastLogTime = 0;
 
+
+    @PostConstruct
+    public void init() {
+        check();
+        messageExecutor();
+    }
+
     private void check() {
         if (StringUtils.isEmpty(serverProperties.getName())) {
             serverProperties.setName("producerServer");
@@ -76,7 +84,7 @@ public class ProducerServerStarter implements ApplicationRunner {
             producer.setIoWorkThreadPoolSize(ioSize);
         }
         if (producer.getExecutorThreadPoolSize() < 1) {
-            producer.setEventThreadPoolSize(logicSize);
+            producer.setExecutorThreadPoolSize(logicSize);
         }
     }
 
@@ -101,10 +109,7 @@ public class ProducerServerStarter implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        check();
-        messageExecutor();
         List<Integer> ids = ProducerMessageHandlerUtil.getHandlerMessageIds();
-
         List<HandleMessage> handleMessages = new ArrayList<>();
         for (Integer id : ids) {
             HandleMessage handleMessage = new HandleMessage();
