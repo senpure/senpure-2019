@@ -61,11 +61,10 @@ public class ProducerManager {
             if (serverChannelManager == null) {
                 logger.warn("{}没有服务实例可以使用", serverName);
                 SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                errorMessage.setRequestId(client2GatewayMessage.getRequestId());
                 errorMessage.setType(Constant.ERROR_NOT_FOUND_SERVER);
                 errorMessage.setId(client2GatewayMessage.getMessageId());
                 errorMessage.setMessage("没有服务器处理" + MessageIdReader.read(client2GatewayMessage.getMessageId()));
-                messageExecutor.sendMessage2Client(errorMessage, client2GatewayMessage.getToken());
+                messageExecutor.sendMessage2Client(client2GatewayMessage.getRequestId(),errorMessage, client2GatewayMessage.getToken());
             } else {
                 relationAndWaitSendMessage(serverChannelManager, client2GatewayMessage);
             }

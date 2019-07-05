@@ -141,7 +141,6 @@ public class DefaultFuture implements ResponseFuture {
                         }
                         if (System.currentTimeMillis() - future.getStartTime() > future.getTimeout()) {
                             SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                            errorMessage.setRequestId(future.getRequestId());
                             errorMessage.setType(Constant.ERROR_TIMEOUT);
                             errorMessage.setMessage("同步请求超时" + future.getTimeout());
                             errorMessage.setId(future.getMessageId());

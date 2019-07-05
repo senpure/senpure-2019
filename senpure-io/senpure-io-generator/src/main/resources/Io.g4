@@ -7,7 +7,7 @@ protocol
 headContent:importIo|javaPack|namespace;
 entity:message|event|bean|enumSymbol;
 importIo:'import'importValue';';
-importValue: filePath'.io';
+importValue: filePath'.''io';
 
 javaPack:'javaPack'javaPackageValue';';
 javaPackageValue

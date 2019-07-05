@@ -62,10 +62,6 @@ message SC KickOff 112 {
     long userId;                        //userId
 }
 
-
-
-
-
 //心跳
 message CS Heart 65 {
 }
@@ -76,9 +72,8 @@ message SC Heart 66 {
 
 //服务器内部错误提示
 message SC InnerError 100 {
-    int    requestId;                   //请求id
     String type;                        //错误类型
     String message;                     //提示内容
     int    id;                          //消息id
-    String value;
+    String value;                       //ask的value
 }

@@ -79,13 +79,11 @@ public class HandleMessageManager {
             } catch (Exception e) {
                 logger.error("读取询问值出错询问值只能是string 类型 messageId " + message.getMessageId(), e);
                 // Assert.error("读取询问值出错 询问值只能是string 类型 messageId  " + getValue.getMessageId());
-
                 SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                errorMessage.setRequestId(message.getRequestId());
                 errorMessage.setType(Constant.ERROR_SERVER_ERROR);
                 errorMessage.setId(message.getMessageId());
                 errorMessage.setMessage("询问值只能是String类型" + MessageIdReader.read(message.getMessageId()));
-                messageExecuter.sendMessage2Client(errorMessage, message.getToken());
+                messageExecuter.sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
                 return;
             }
             CSAskHandleMessage askHandleMessage = new CSAskHandleMessage();

@@ -6,20 +6,23 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 
 public class ProducerMessageExecutor {
     private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
-    private ExecutorService service;
+    private ScheduledExecutorService service;
     private int serviceRefCount = 0;
 
     public ProducerMessageExecutor() {
 
     }
 
+    public  ScheduledExecutorService getService() {
+        return service;
+    }
 
-    public void setService(ExecutorService service) {
+    public void setService( ScheduledExecutorService service) {
         this.service = service;
     }
 

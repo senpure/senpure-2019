@@ -113,7 +113,7 @@ public class GatewayMessageExecutor {
                 prepLoginChannels.put(ChannelAttributeUtil.getToken(channel), channel);
             } else if (message.getMessageId() == csHeartMessageId) {
                 SCHeartMessage heartMessage = new SCHeartMessage();
-                sendMessage2Client(heartMessage, ChannelAttributeUtil.getToken(channel));
+                sendMessage2Client(message.getRequestId(),heartMessage, ChannelAttributeUtil.getToken(channel));
                 return;
             }
 
@@ -127,11 +127,11 @@ public class GatewayMessageExecutor {
             if (handleMessageManager == null) {
                 logger.warn("没有找到消息的接收服务器{}", message.getMessageId());
                 SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                errorMessage.setRequestId(message.getRequestId());
+
                 errorMessage.setType(Constant.ERROR_NOT_FOUND_SERVER);
                 errorMessage.setId(message.getMessageId());
                 errorMessage.setMessage("没有服务器处理" + MessageIdReader.read(message.getMessageId()));
-                sendMessage2Client(errorMessage, message.getToken());
+                sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
                 return;
             }
             try {
@@ -139,21 +139,22 @@ public class GatewayMessageExecutor {
             } catch (Exception e) {
                 logger.error("转发消息出错 " + message.getMessageId(), e);
                 SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                errorMessage.setRequestId(message.getRequestId());
+
                 errorMessage.setType(Constant.ERROR_SERVER_ERROR);
                 errorMessage.setId(message.getMessageId());
                 errorMessage.setMessage(MessageIdReader.read(message.getMessageId()) + "," + e.getMessage());
-                sendMessage2Client(errorMessage, message.getToken());
+                sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
             }
         });
     }
 
-    protected void sendMessage2Client(Message message, Long token) {
+    protected void sendMessage2Client(int requestId,Message message, Long token) {
         Channel clientChannel = tokenChannel.get(token);
         if (clientChannel == null) {
             logger.warn("没有找到channel token {}", token);
         } else {
             Server2GatewayMessage m = new Server2GatewayMessage();
+            m.setRequestId(requestId);
             ByteBuf buf = Unpooled.buffer(message.getSerializedSize());
             message.write(buf);
             byte data[] = new byte[message.getSerializedSize()];
@@ -167,7 +168,7 @@ public class GatewayMessageExecutor {
 
     public void init() {
         if (init) {
-            logger.warn("messageExecuter 已经初始化");
+            logger.warn("messageExecutor 已经初始化");
             return;
         }
         Assert.notNull(gateway, "gateway 配置文件不能为空");
@@ -528,12 +529,11 @@ public class GatewayMessageExecutor {
                             waitAskTask.getAskTimes(), waitAskTask.getAnswerTimes());
                     tokens.add(entry.getKey());
                     SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                    errorMessage.setRequestId(waitAskTask.getRequestId());
                     errorMessage.setType(Constant.ERROR_NOT_HANDLE_REQUEST);
                     errorMessage.setId(waitAskTask.getFromMessageId());
                     errorMessage.setMessage(MessageIdReader.read(waitAskTask.getFromMessageId()));
                     errorMessage.setValue(waitAskTask.getValue());
-                    sendMessage2Client(errorMessage, waitAskTask.getMessage().getToken());
+                    sendMessage2Client(waitAskTask.getRequestId(),errorMessage, waitAskTask.getMessage().getToken());
                 }
             }
         }
