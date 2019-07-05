@@ -27,4 +27,12 @@ public class MessageFrame {
     public void setMessage(Message message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "MessageFrame{" +
+                "requestId=" + requestId +
+                ", message=" + message +
+                '}';
+    }
 }

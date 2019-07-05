@@ -68,7 +68,7 @@ public class ConsumerMessageExecutor {
                         future.doReceived(result);
                     }
                 } else {
-                    logger.warn("远程服务器返回时间过长,服务器已经做了超时处理");
+                    logger.warn("远程服务器返回时间过长,服务器已经做了超时处理 {}",frame);
                 }
 
             }

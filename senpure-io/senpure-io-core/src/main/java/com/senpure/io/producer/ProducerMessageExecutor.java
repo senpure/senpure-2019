@@ -18,11 +18,11 @@ public class ProducerMessageExecutor {
 
     }
 
-    public  ScheduledExecutorService getService() {
+    public ScheduledExecutorService getService() {
         return service;
     }
 
-    public void setService( ScheduledExecutorService service) {
+    public void setService(ScheduledExecutorService service) {
         this.service = service;
     }
 
