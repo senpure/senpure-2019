@@ -29,4 +29,15 @@ public class Constant {
 
     public static String LUA_IMPL_SC_PREFIX = "Res_";
 
+
+
+    public static String JAVA_BEAN_TEMPLATE = "bean.ftl";
+    public static String jAVA_MESSAGE_TEMPLATE = "message.ftl";
+    public static String JAVA_MESSAGE_HANDLER_TEMPLATE = "messageHandler.ftl";
+
+
+    public static String JAVA_EVENT_TEMPLATE = "event.ftl";
+    public static String JAVA_ENUM_TEMPLATE = "enum.ftl";
+    public static String JAVA_EVENT_HANDLER_TEMPLATE = "eventHandler.ftl";
+
 }

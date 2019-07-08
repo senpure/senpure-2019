@@ -99,7 +99,7 @@ public class DefaultFuture implements ResponseFuture {
                 lock.unlock();
             }
             if (!isDone()) {
-                throw new RuntimeException("超时" + timeout);
+                throw new RuntimeException("ResponseFuture get() 超时" + timeout);
             }
         }
         return result;

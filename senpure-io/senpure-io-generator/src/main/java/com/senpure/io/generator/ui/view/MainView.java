@@ -1,4 +1,4 @@
-package com.senpure.io.ui.view;
+package com.senpure.io.generator.ui.view;
 
 import de.felixroske.jfxsupport.AbstractFxmlView;
 import de.felixroske.jfxsupport.FXMLView;

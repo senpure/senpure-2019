@@ -20,9 +20,9 @@ public class TemplateUtil {
         if (templateDir != null) {
             return templateDir;
         }
-        String root = AppEvn.getCallerRootPath();
+        String root = AppEvn.getClassRootPath();
 
-        if (AppEvn.callerInJar()) {
+        if (AppEvn.classInJar(AppEvn.getStartClass())) {
             templateDir = new File(root, "template");
         } else {
             templateDir = new File(root, "template");

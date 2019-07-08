@@ -1,7 +1,7 @@
-package com.senpure.io.ui;
+package com.senpure.io.generator.ui;
 
 import com.senpure.base.AppEvn;
-import com.senpure.io.ui.view.MainView;
+import com.senpure.io.generator.ui.view.MainView;
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
