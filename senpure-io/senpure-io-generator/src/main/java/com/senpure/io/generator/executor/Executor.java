@@ -39,7 +39,7 @@ public class Executor {
 
     public Executor(ExecutorContext context) {
         this.context = context;
-        CheckUtil.loadData(context.getJavaCodeRootPath());
+        CheckUtil.loadData(context.getJavaEventHandlerRootPath());
         cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         TemplateUtil.share(cfg);
     }
@@ -191,7 +191,7 @@ public class Executor {
                     continue;
                 }
             }
-            File file = new File(context.getJavaCodeRootPath(), FileUtil.fullFileEnd(message.getJavaHandlerPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
+            File file = new File(context.getJavaEventHandlerRootPath(), FileUtil.fullFileEnd(message.getJavaHandlerPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
                 if (!context.isJavaMessageHandlerCover()) {
@@ -242,7 +242,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Event event : context.getEvents()) {
-            File file = new File(context.getJavaCodeRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
+            File file = new File(context.getJavaEventHandlerRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
                 if (!context.isJavaEventHandlerCover()) {
@@ -287,7 +287,7 @@ public class Executor {
             context.addEvents(value.getEvents());
             context.addMessages(value.getMessages());
         }
-        context.setJavaCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
+        context.setJavaEventHandlerRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
         context.setJavaBeanCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
         Executor executer = new Executor(context);
         executer.generate();

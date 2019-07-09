@@ -30,6 +30,7 @@ public class HabitUtil {
         if (!save.exists()) {
             Habit habit = new Habit();
             ProjectConfig config = new ProjectConfig();
+
             configInitValue(config);
             habit.setUserProject(config.getProjectName());
             habit.getConfigs().add(config);
@@ -70,29 +71,54 @@ public class HabitUtil {
         return null;
     }
 
-    public static void configInitValue(ProjectConfig config) {
-        config.setProjectName(AppEvn.getClassRootPath());
-        config.setJavaCodeRootPath(AppEvn.getClassRootPath());
-        config.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
+    public static void configInitValue(ProjectConfig projectConfig) {
+
+        projectConfig.setIoFileChooserPath(AppEvn.getClassRootPath());
+        projectConfig.setIoDirectoryChooserPath(AppEvn.getClassRootPath());
+        projectConfig.setProjectName(AppEvn.getClassRootPath());
+
+        JavaConfig javaConfig = projectConfig.getJavaConfig();
+        javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
+        javaConfig.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setJavaBeanCodeRootChooserPath(new File(javaConfig.getJavaBeanCodeRootPath()).getParent());
+
+        javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
+
+        javaConfig.setJavaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).getParent());
     }
 
-    public static void checkConfig(ProjectConfig config) {
-
-        if (!new File(config.getJavaCodeRootPath()).exists()) {
-            config.setJavaCodeRootPath(AppEvn.getClassRootPath());
-            config.setJavaCodeRootChooserPath(new File(config.getJavaCodeRootPath()).getParent());
+    public static void checkConfig(ProjectConfig projectConfig) {
+        if (!new File(projectConfig.getIoFileChooserPath()).exists()) {
+            projectConfig.setIoFileChooserPath(AppEvn.getClassRootPath());
         }
-        if (!new File(config.getJavaBeanCodeRootPath()).exists()) {
-            config.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
-            config.setJavaBeanCodeRootChooserPath(new File(config.getJavaBeanCodeRootPath()).getParent());
+        if (!new File(projectConfig.getIoDirectoryChooserPath()).exists()) {
+            projectConfig.setIoDirectoryChooserPath(AppEvn.getClassRootPath());
         }
 
-        if (!new File(config.getMessageChooserPath()).exists()) {
-            config.setMessageChooserPath(AppEvn.getClassRootPath());
+
+        JavaConfig javaConfig = projectConfig.getJavaConfig();
+        if (!new File(javaConfig.getJavaEventHandlerCodeRootPath()).exists()) {
+            javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
+            javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
         }
-        if (!new File(config.getMessageDirectoryChooserPath()).exists()) {
-            config.setMessageDirectoryChooserPath(AppEvn.getClassRootPath());
+        if (!new File(javaConfig.getJavaBeanCodeRootPath()).exists()) {
+            javaConfig.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
+            javaConfig.setJavaBeanCodeRootChooserPath(new File(javaConfig.getJavaBeanCodeRootPath()).getParent());
         }
+
+        if (!new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).exists()) {
+            javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+            javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
+        }
+        if (!new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).exists()) {
+            javaConfig.setJavaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+            javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).getParent());
+        }
+
+
         //其他的 如模板路径 不用检查了
     }
 

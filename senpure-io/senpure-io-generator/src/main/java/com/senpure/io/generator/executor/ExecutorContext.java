@@ -31,7 +31,7 @@ public class ExecutorContext {
     private boolean generateJavaEvent = true;
     private boolean generateJavaEventHandler = true;
 
-    private String javaCodeRootPath;
+    private String javaEventHandlerRootPath;
 
 
     private String javaBeanCodeRootPath;
@@ -150,12 +150,12 @@ public class ExecutorContext {
         this.generateJavaEventHandler = generateJavaEventHandler;
     }
 
-    public String getJavaCodeRootPath() {
-        return javaCodeRootPath;
+    public String getJavaEventHandlerRootPath() {
+        return javaEventHandlerRootPath;
     }
 
-    public void setJavaCodeRootPath(String javaCodeRootPath) {
-        this.javaCodeRootPath = javaCodeRootPath;
+    public void setJavaEventHandlerRootPath(String javaEventHandlerRootPath) {
+        this.javaEventHandlerRootPath = javaEventHandlerRootPath;
     }
 
     public String getJavaBeanCodeRootPath() {
