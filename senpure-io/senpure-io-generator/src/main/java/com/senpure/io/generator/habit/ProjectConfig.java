@@ -1,5 +1,7 @@
 package com.senpure.io.generator.habit;
 
+import java.util.List;
+
 /**
  * ProjectConfig
  *
@@ -9,8 +11,12 @@ package com.senpure.io.generator.habit;
 public class ProjectConfig {
 
     private String projectName;
-    private String ioFileChooserPath;
-    private String ioDirectoryChooserPath;
+    private String protocolFileChooserPath;
+    private String protocolDirectoryChooserPath;
+
+    //字符串的写入json是一长串,不好手动修改
+    private List<ProtocolFile> protocolFiles;
+    private int tabPaneConfigIndex=0;
     private JavaConfig javaConfig = new JavaConfig();
 
     public String getProjectName() {
@@ -29,19 +35,36 @@ public class ProjectConfig {
         this.javaConfig = javaConfig;
     }
 
-    public String getIoFileChooserPath() {
-        return ioFileChooserPath;
+    public String getProtocolFileChooserPath() {
+        return protocolFileChooserPath;
     }
 
-    public void setIoFileChooserPath(String ioFileChooserPath) {
-        this.ioFileChooserPath = ioFileChooserPath;
+    public void setProtocolFileChooserPath(String protocolFileChooserPath) {
+        this.protocolFileChooserPath = protocolFileChooserPath;
     }
 
-    public String getIoDirectoryChooserPath() {
-        return ioDirectoryChooserPath;
+    public String getProtocolDirectoryChooserPath() {
+        return protocolDirectoryChooserPath;
     }
 
-    public void setIoDirectoryChooserPath(String ioDirectoryChooserPath) {
-        this.ioDirectoryChooserPath = ioDirectoryChooserPath;
+    public void setProtocolDirectoryChooserPath(String protocolDirectoryChooserPath) {
+        this.protocolDirectoryChooserPath = protocolDirectoryChooserPath;
+    }
+
+    public int getTabPaneConfigIndex() {
+        return tabPaneConfigIndex;
+    }
+
+    public void setTabPaneConfigIndex(int tabPaneConfigIndex) {
+        this.tabPaneConfigIndex = tabPaneConfigIndex;
+    }
+
+
+    public List<ProtocolFile> getProtocolFiles() {
+        return protocolFiles;
+    }
+
+    public void setProtocolFiles(List<ProtocolFile> protocolFiles) {
+        this.protocolFiles = protocolFiles;
     }
 }

@@ -1,13 +1,17 @@
 package com.senpure.io.generator.ui.view;
 
-import com.senpure.io.generator.habit.Habit;
-import com.senpure.io.generator.habit.HabitUtil;
-import com.senpure.io.generator.habit.JavaConfig;
-import com.senpure.io.generator.habit.ProjectConfig;
+import com.senpure.base.AppEvn;
+import com.senpure.io.generator.Constant;
+import com.senpure.io.generator.habit.*;
+import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.reader.IoProtocolReader;
+import com.senpure.io.generator.reader.IoReader;
 import com.senpure.io.generator.ui.UiContext;
+import com.senpure.io.generator.ui.appender.TextAreaAppender;
 import com.senpure.io.generator.ui.model.FileConverter;
 import com.senpure.io.generator.ui.model.FileData;
-import com.senpure.io.generator.ui.model.MessageData;
+import com.senpure.io.generator.ui.model.ProtocolData;
+import com.senpure.io.generator.util.NoteUtil;
 import com.senpure.io.generator.util.TemplateUtil;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.fxml.FXML;
@@ -38,7 +42,7 @@ public class MainController implements Initializable {
     private ChoiceBox<String> projectName;
 
     @FXML
-    private TableView<FileData> tableViewIoView;
+    private TableView<FileData> tableViewFileView;
 
     @FXML
     private TableColumn<FileData, String> tableName;
@@ -46,21 +50,28 @@ public class MainController implements Initializable {
     private TableColumn<FileData, String> tablePath;
 
     @FXML
-    private TableColumn<MessageData, String> tableMessageName;
-    @FXML
-    private TableColumn<MessageData, Boolean> tableMessageCheckBok;
-    @FXML
-    private TableColumn<MessageData, String> tableMessageType;
-    @FXML
-    private TableColumn<MessageData, String> tableMessageExplain;
+    private TableView<ProtocolData> tableViewProtocolView;
 
+    @FXML
+    private TableColumn<ProtocolData, String> tableProtocolName;
+    @FXML
+    private TableColumn<ProtocolData, Boolean> tableProtocolCheckBok;
+    @FXML
+    private TableColumn<ProtocolData, String> tableProtocolType;
+    @FXML
+    private TableColumn<ProtocolData, String> tableProtocolExplain;
+
+    @FXML
+    private TabPane tabPaneConfig;
 
     @FXML
     private Accordion accordionMessage;
     @FXML
-    private TitledPane titledPaneMessageConfig;
+    private TitledPane titledPaneProtocolConfig;
     @FXML
-    private TitledPane titledPaneMessageView;
+    private TitledPane titledPaneProtocolView;
+    @FXML
+    private TextArea textAreaLog;
 
     //java--↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     @FXML
@@ -127,15 +138,17 @@ public class MainController implements Initializable {
 
     private ProjectConfig config;
 
-    private Set<File> ioFiles = new HashSet<>();
+    private Set<File> protocolFiles = new HashSet<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        TextAreaAppender.setTextArea(textAreaLog);
         this.resources = resources;
         habit = HabitUtil.getHabit();
         config = HabitUtil.getUseConfig();
         javaConfig = config.getJavaConfig();
+
         intProjectName();
         initTableView();
         initTextFieldValue();
@@ -143,6 +156,7 @@ public class MainController implements Initializable {
         initTemplate();
 
         initPlane();
+        initProtocolFiles();
     }
 
     private void intProjectName() {
@@ -158,11 +172,11 @@ public class MainController implements Initializable {
         tableName.setCellValueFactory(param -> param.getValue().nameProperty());
         tablePath.setCellValueFactory(param -> param.getValue().pathProperty());
         //----
-        tableMessageName.setCellValueFactory(param -> param.getValue().nameProperty());
-        tableMessageCheckBok.setCellFactory(CheckBoxTableCell.forTableColumn(tableMessageCheckBok));
-        tableMessageCheckBok.setCellValueFactory(param -> param.getValue().generateProperty());
-        tableMessageType.setCellValueFactory(param -> param.getValue().typeProperty());
-        tableMessageExplain.setCellValueFactory(param -> param.getValue().explainProperty());
+        tableProtocolName.setCellValueFactory(param -> param.getValue().nameProperty());
+        tableProtocolCheckBok.setCellFactory(CheckBoxTableCell.forTableColumn(tableProtocolCheckBok));
+        tableProtocolCheckBok.setCellValueFactory(param -> param.getValue().generateProperty());
+        tableProtocolType.setCellValueFactory(param -> param.getValue().typeProperty());
+        tableProtocolExplain.setCellValueFactory(param -> param.getValue().explainProperty());
     }
 
     private void initTextFieldValue() {
@@ -177,9 +191,9 @@ public class MainController implements Initializable {
         fileChooserIoFile.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("io", "*.io")
         );
-        fileChooserIoFile.setInitialDirectory(new File(config.getIoFileChooserPath()));
+        fileChooserIoFile.setInitialDirectory(new File(config.getProtocolFileChooserPath()));
         directoryChooser = new DirectoryChooser();
-        // directoryChooserIoDirectory.setInitialDirectory(new File(config.getIoDirectoryChooserPath()));
+        // directoryChooserIoDirectory.setInitialDirectory(new File(config.getProtocolDirectoryChooserPath()));
 
 
 //        directoryChooserJavaEventHandlerCodeRootPath = new DirectoryChooser();
@@ -252,21 +266,36 @@ public class MainController implements Initializable {
         checkJavaSCMessageHandler.setSelected(javaConfig.isGenerateJavaSCMessageHandler());
         checkJavaEventHandler.setSelected(javaConfig.isGenerateJavaEventHandler());
 
-        checkJavaCSMessageHandlerCover.setSelected(javaConfig.isJavaCSMessageHandlerCover());
-        checkJavaSCMessageHandlerCover.setSelected(javaConfig.isJavaSCMessageHandlerCover());
-        checkJavaEventHandlerCover.setSelected(javaConfig.isJavaEventHandlerCover());
+        // checkJavaCSMessageHandlerCover.setSelected(javaConfig.isJavaCSMessageHandlerCover());
+        // checkJavaSCMessageHandlerCover.setSelected(javaConfig.isJavaSCMessageHandlerCover());
+        // checkJavaEventHandlerCover.setSelected(javaConfig.isJavaEventHandlerCover());
     }
 
     private void initPlane() {
-        accordionMessage.setExpandedPane(titledPaneMessageConfig);
+        accordionMessage.setExpandedPane(titledPaneProtocolConfig);
+        //accordionMessage.setExpandedPane(titledPaneProtocolView);
+        tabPaneConfig.getSelectionModel().select(config.getTabPaneConfigIndex());
     }
 
-    public void addIoFile() {
-        logger.debug("增加io文件");
+    private void initProtocolFiles() {
+        if (config.getProtocolFiles() != null) {
+            for (ProtocolFile protocolFile : config.getProtocolFiles()) {
+                File file = new File(protocolFile.getPath());
+                if (file.getName().endsWith(".io")) {
+                    if (file.exists()) {
+                        addFileToView(file);
+                    }
+                }
+            }
+        }
+    }
+
+    public void addProtocolFile() {
+        logger.debug("增加协议文件");
         List<File> files = fileChooserIoFile.showOpenMultipleDialog(UiContext.getPrimaryStage());
         if (files != null) {
             fileChooserIoFile.setInitialDirectory(files.get(0).getParentFile());
-            config.setIoFileChooserPath(files.get(0).getParentFile().toString());
+            config.setProtocolFileChooserPath(files.get(0).getParentFile().toString());
 
             files.forEach(file ->
                     {
@@ -282,12 +311,12 @@ public class MainController implements Initializable {
 
     }
 
-    public void addIoDirectory() {
-        logger.debug("增加io文件夹");
-        directoryChooser.setInitialDirectory(new File(config.getIoDirectoryChooserPath()));
+    public void addProtocolDirectory() {
+        logger.debug("增加协议文件夹");
+        directoryChooser.setInitialDirectory(new File(config.getProtocolDirectoryChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            config.setIoDirectoryChooserPath(file.getParent());
+            config.setProtocolDirectoryChooserPath(file.getParent());
             int count = addDirectoryToView(file);
             if (count == 0) {
                 logger.debug("没有符合条件的文件");
@@ -316,14 +345,135 @@ public class MainController implements Initializable {
     }
 
     private void addFileToView(File file) {
-        if (ioFiles.add(file)) {
+        if (protocolFiles.add(file)) {
             FileData fileData = new FileData(file);
-            tableViewIoView.getItems().add(fileData);
+            tableViewFileView.getItems().add(fileData);
         } else {
             logger.warn("已经存在{}->{}", file.getName(), file.getAbsolutePath());
         }
+    }
+
+    public void removeFile() {
+        int index = tableViewFileView.getSelectionModel().getFocusedIndex();
+
+        if (index > -1) {
+            FileData fileData = tableViewFileView.getItems().remove(index);
+            protocolFiles.remove(fileData.getFile());
+            logger.debug("移除 {} -> {}", fileData.getName(), fileData.getPath());
+        } else {
+            logger.warn("没有选择任何文件");
+        }
+    }
+
+    public void removeAllFile() {
+        tableViewFileView.getItems().clear();
+        protocolFiles.clear();
+    }
 
 
+    public void protocolView() {
+
+        if (protocolFiles.size() == 0) {
+            logger.warn("没有选择协议文件");
+            return;
+        }
+        tableViewProtocolView.getItems().clear();
+        IoReader.getInstance().getIoProtocolReaderMap().clear();
+
+        List<ProtocolData> protocolDatas = new ArrayList<>();
+        boolean error = false;
+        for (File file : protocolFiles) {
+            IoProtocolReader ioProtocolReader;
+            try {
+                ioProtocolReader = IoReader.getInstance().read(file);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                error = true;
+                continue;
+            }
+            if (ioProtocolReader.isHasError()) {
+                logger.error("{} 出现语法错误", ioProtocolReader.getFilePath());
+                error = true;
+                continue;
+            }
+            for (Bean bean : ioProtocolReader.getEnums()) {
+                ProtocolData protocolData = new ProtocolData(bean, "enum");
+                protocolDatas.add(protocolData);
+            }
+            for (Bean bean : ioProtocolReader.getBeans()) {
+                ProtocolData protocolData = new ProtocolData(bean, "bean");
+                protocolDatas.add(protocolData);
+            }
+            for (Bean bean : ioProtocolReader.getMessages()) {
+                if (bean.getType().equals(Constant.ENTITY_TYPE_CS_MESSAGE)) {
+                    ProtocolData protocolData = new ProtocolData(bean, "csMessage");
+                    protocolDatas.add(protocolData);
+                } else {
+                    ProtocolData protocolData = new ProtocolData(bean, "scMessage");
+                    protocolDatas.add(protocolData);
+                }
+
+            }
+            for (Bean bean : ioProtocolReader.getEvents()) {
+                ProtocolData protocolData = new ProtocolData(bean, "event");
+                protocolDatas.add(protocolData);
+            }
+
+        }
+
+        if (error) {
+            logger.error("协议文件语法或格式不对请仔细检查修改");
+            return;
+        }
+        if (protocolDatas.size() == 0) {
+            logger.warn("没有可读消息");
+            return;
+        }
+        accordionMessage.setExpandedPane(titledPaneProtocolView);
+        for (ProtocolData protocolData : protocolDatas) {
+            if (tableViewProtocolView.getItems().contains(protocolData)) {
+                protocolData.getBean().setGenerate(false);
+            } else {
+                tableViewProtocolView.getItems().add(protocolData);
+            }
+        }
+
+    }
+
+    public void choiceJavaBeanCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaBeanCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            javaConfig.setJavaBeanCodeRootChooserPath(file.getParent());
+            textFieldJavaBeanCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void choiceJavaCSMessageHandlerCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaCSMessageHandlerCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(file.getParent());
+            textFieldJavaCSMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void choiceJavaSCMessageHandlerCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaSCMessageHandlerCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(file.getParent());
+            textFieldJavaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void choiceJavaEventHandlerCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaEventHandlerCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            javaConfig.setJavaEventHandlerCodeRootChooserPath(file.getParent());
+            textFieldJavaEventHandlerCodeRootPath.setText(file.getAbsolutePath());
+        }
     }
 
     public void updateProjectName() {
@@ -348,7 +498,37 @@ public class MainController implements Initializable {
         }
     }
 
+    public void clearLog() {
+        textAreaLog.clear();
+
+    }
+
+    public void openLog() {
+        File logFile = new File(AppEvn.getClassRootPath(), "generator.log");
+        if (!AppEvn.classInJar(getClass())) {
+            logFile = new File(System.getProperty("user.dir"), "generator.log");
+        }
+        if (AppEvn.isWindowsOS()) {
+
+            NoteUtil.openNote(logFile, 12);
+        } else {
+            logger.debug("日志文件路径{} ", logFile.getAbsoluteFile());
+        }
+    }
+
     public void updateConfig() {
+
+        config.setTabPaneConfigIndex(tabPaneConfig.getSelectionModel().getSelectedIndex());
+
+        List<ProtocolFile> protocolFiles = new ArrayList<>();
+        for (FileData item : tableViewFileView.getItems()) {
+            ProtocolFile protocolFile = new ProtocolFile();
+            protocolFile.setName(item.getFile().getName());
+            protocolFile.setPath(item.getFile().getAbsolutePath());
+            protocolFiles.add(protocolFile);
+        }
+        config.setProtocolFiles(protocolFiles);
+
         //java
         javaConfig.setJavaEventHandlerCodeRootPath(textFieldJavaEventHandlerCodeRootPath.getText());
         javaConfig.setJavaBeanCodeRootPath(textFieldJavaBeanCodeRootPath.getText());
@@ -361,9 +541,11 @@ public class MainController implements Initializable {
         javaConfig.setJavaCSMessageHandlerTemplate(choiceJavaCSMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaSCMessageHandlerTemplate(choiceJavaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaEventHandlerTemplate(choiceJavaEventHandler.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
-        javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
-        javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
+
+        //覆盖操作不保存
+        //javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
+        //javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
+        // javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
 
 
         javaConfig.setGenerateJavaBean(checkJavaBean.isSelected());

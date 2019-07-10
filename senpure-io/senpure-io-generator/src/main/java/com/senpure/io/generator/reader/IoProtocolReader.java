@@ -58,7 +58,7 @@ public class IoProtocolReader extends IoBaseListener {
     protected List<String> importIos = new ArrayList<>();
     protected List<String> importKeys = new ArrayList<>();
 
-    protected StringBuilder errorBuiler = new StringBuilder();
+    protected StringBuilder errorBuilder = new StringBuilder();
 
     public boolean isHasError() {
         return ioErrorListener.isHasError();
@@ -66,8 +66,8 @@ public class IoProtocolReader extends IoBaseListener {
 
 
     protected void checkErrorBuilder() {
-        if (errorBuiler.length() > 0) {
-            errorBuiler.append("\n");
+        if (errorBuilder.length() > 0) {
+            errorBuilder.append("\n");
         }
     }
 
@@ -100,7 +100,7 @@ public class IoProtocolReader extends IoBaseListener {
         } else {
             //  Assert.error(filePath + " 引用文件 不存在 " + path);
             checkErrorBuilder();
-            errorBuiler.append(filePath).append("引用文件 不存在 ").append(path);
+            errorBuilder.append(filePath).append("引用文件 不存在 ").append(path);
         }
 
 
@@ -240,7 +240,7 @@ public class IoProtocolReader extends IoBaseListener {
         }
         if (field.getIndex() < 0) {
             checkErrorBuilder();
-            errorBuiler.append(filePath).append(field.getNameLocation()).append(" ")
+            errorBuilder.append(filePath).append(field.getNameLocation()).append(" ")
                     .append(field.getName()).append("index 为负数");
             // Assert.error(field.getNameLocation().toString() + " " + field.getName() + "index 为负数");
         }
@@ -248,19 +248,19 @@ public class IoProtocolReader extends IoBaseListener {
             Field f = bean.getFields().get(i);
             if (f.getIndex() == field.getIndex()) {
                 checkErrorBuilder();
-                errorBuiler.append(filePath).append(":");
-                errorBuiler.append(bean.getName()).append(" field index 相同 [").append(f.getIndex()).append("] ");
-                errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
-                errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
+                errorBuilder.append(filePath).append(":");
+                errorBuilder.append(bean.getName()).append(" field index 相同 [").append(f.getIndex()).append("] ");
+                errorBuilder.append(f.getNameLocation()).append(" ").append(f.getName());
+                errorBuilder.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
                 //Assert.error(bean.getName() + " field index 相同 " + f.getNameLocation().toString() + " " + f.getName() +
                 //      "," + field.getNameLocation().toString() + " " + field.getIndex());
             }
             if (f.getName().equals(field.getName())) {
                 checkErrorBuilder();
-                errorBuiler.append(filePath).append(":");
-                errorBuiler.append(bean.getName()).append("  field name 相同");
-                errorBuiler.append(f.getNameLocation()).append(" ").append(f.getName());
-                errorBuiler.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
+                errorBuilder.append(filePath).append(":");
+                errorBuilder.append(bean.getName()).append("  field name 相同");
+                errorBuilder.append(f.getNameLocation()).append(" ").append(f.getName());
+                errorBuilder.append(",").append(field.getNameLocation()).append(" ").append(field.getName());
                 // Assert.error(bean.getName() + " field name 相同 " + f.getNameLocation().toString() + " " + f.getName() +
                 //        "," + field.getNameLocation().toString() + " " + field.getName());
             }
@@ -343,7 +343,7 @@ public class IoProtocolReader extends IoBaseListener {
     public void exitEnumSymbol(IoParser.EnumSymbolContext ctx) {
         if (anEnum.getDefaultField().getIndex() != 1) {
             checkErrorBuilder();
-            errorBuiler.append(filePath).append(": 枚举第一个字段index必须为一 ").append(anEnum.getName());
+            errorBuilder.append(filePath).append(": 枚举第一个字段index必须为一 ").append(anEnum.getName());
         }
     }
 
@@ -377,8 +377,8 @@ public class IoProtocolReader extends IoBaseListener {
     public void exitProtocol(IoParser.ProtocolContext ctx) {
         check();
         findBenAndAssignment();
-        if (errorBuiler.length() > 0) {
-            Assert.error("校验不合法\n" + errorBuiler.toString());
+        if (errorBuilder.length() > 0) {
+            Assert.error("校验不合法\n" + errorBuilder.toString());
         }
     }
 
@@ -386,17 +386,17 @@ public class IoProtocolReader extends IoBaseListener {
         if (aName.equals(bName)&&a.getNamespace().equals(b.getNamespace())) {
 
             checkErrorBuilder();
-            errorBuiler.append(filePath).append(": 同有命名空间name重复 ").append(aName);
-            errorBuiler.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
+            errorBuilder.append(filePath).append(": 同有命名空间name重复 ").append(aName);
+            errorBuilder.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
         }
     }
 
     private void checkId(Bean a, Bean b, String aName, String bName, int aId, int bId) {
         if (aId == bId) {
             checkErrorBuilder();
-            errorBuiler.append(filePath).append(": Id重复 ").append(aId);
-            errorBuiler.append(" ");
-            errorBuiler.append(a.getNameLocation()).append(aName)
+            errorBuilder.append(filePath).append(": Id重复 ").append(aId);
+            errorBuilder.append(" ");
+            errorBuilder.append(a.getNameLocation()).append(aName)
                     .append(" <--> ").append(b.getNameLocation()).append(bName);
         }
     }
@@ -477,13 +477,13 @@ public class IoProtocolReader extends IoBaseListener {
                         field.setBean(b);
                     } else {
                         checkErrorBuilder();
-                        errorBuiler.append(filePath)
+                        errorBuilder.append(filePath)
                                 .append(" ")
                                 .append(field.getTypeLocation()).append(" ")
                                 .append(bean.getType());
-                        errorBuiler.append(bean.getName()).append(".").append(field.getName());
-                        errorBuiler.append("[");
-                        errorBuiler.append(field.getClassType())
+                        errorBuilder.append(bean.getName()).append(".").append(field.getName());
+                        errorBuilder.append("[");
+                        errorBuilder.append(field.getClassType())
                                 .append("] Type,未定义，或未引用 ");
                         // Assert.error(filePath + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
                         //      + "[" + field.getClassType() + "] Type,未定义，或未引用");

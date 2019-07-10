@@ -7,31 +7,22 @@ package com.senpure.io.generator.habit;
  * @time 2019-07-09 17:00:01
  */
 public class JavaConfig {
-    private String javaEventHandlerCodeRootPath;
-    private String javaEventHandlerCodeRootChooserPath;
-
+    private String javaBeanCodeRootPath;
+    private String javaBeanCodeRootChooserPath;
     private String javaCSMessageHandlerCodeRootPath;
     private String javaCSMessageHandlerCodeRootChooserPath;
     private String javaSCMessageHandlerCodeRootPath;
     private String javaSCMessageHandlerCodeRootChooserPath;
+    private String javaEventHandlerCodeRootPath;
+    private String javaEventHandlerCodeRootChooserPath;
 
-    private String javaBeanCodeRootPath;
-    private String javaBeanCodeRootChooserPath;
-
-
+    private String javaEnumTemplate = "enum.ftl";
     private String javaBeanTemplate = "bean.ftl";
     private String javaMessageTemplate = "message.ftl";
-
-    private String javaCSMessageHandlerTemplate = "messageHandler.ftl";
-    private boolean javaCSMessageHandlerCover = false;
-
-    private String javaSCMessageHandlerTemplate = "consumerMessageHandler.ftl";
-    private boolean javaSCMessageHandlerCover = false;
-
     private String javaEventTemplate = "event.ftl";
-    private String javaEnumTemplate = "enum.ftl";
+    private String javaCSMessageHandlerTemplate = "messageHandler.ftl";
+    private String javaSCMessageHandlerTemplate = "consumerMessageHandler.ftl";
     private String javaEventHandlerTemplate = "eventHandler.ftl";
-    private boolean javaEventHandlerCover = false;
 
     private boolean generateJavaEnum = true;
     private boolean generateJavaBean = true;
@@ -40,6 +31,10 @@ public class JavaConfig {
     private boolean generateJavaEventHandler = true;
     private boolean generateJavaCSMessageHandler = true;
     private boolean generateJavaSCMessageHandler = false;
+
+    private boolean javaCSMessageHandlerCover = false;
+    private boolean javaSCMessageHandlerCover = false;
+    private boolean javaEventHandlerCover = false;
 
     public String getJavaEventHandlerCodeRootPath() {
         return javaEventHandlerCodeRootPath;

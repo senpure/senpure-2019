@@ -20,27 +20,21 @@ public class HabitUtil {
 
     private static Logger logger = LoggerFactory.getLogger(HabitUtil.class);
 
-    public static ProjectConfig useConfig;
-    public static Habit habit;
+    private static ProjectConfig useConfig;
+    private static Habit habit;
 
     private static Habit loadHabit() {
         File save = new File(AppEvn.getClassRootPath(), "config/habit.json");
-
         logger.debug("行为配置文件路径{}", save.getAbsolutePath());
         if (!save.exists()) {
-            Habit habit = new Habit();
-            ProjectConfig config = new ProjectConfig();
-
-            configInitValue(config);
-            habit.setUserProject(config.getProjectName());
-            habit.getConfigs().add(config);
-            HabitUtil.useConfig = config;
-            HabitUtil.habit = habit;
-            return habit;
+            return newHabit();
         }
         try {
             String config = FileUtils.readFileToString(save);
             Habit habit = JSON.parseObject(config, Habit.class);
+            if (habit == null) {
+                return newHabit();
+            }
             HabitUtil.habit = habit;
             checkConfig(getUseConfig());
             return habit;
@@ -49,6 +43,18 @@ public class HabitUtil {
         }
 
         return null;
+    }
+
+    private static Habit newHabit() {
+        Habit habit = new Habit();
+        ProjectConfig config = new ProjectConfig();
+
+        configInitValue(config);
+        habit.setUserProject(config.getProjectName());
+        habit.getConfigs().add(config);
+        HabitUtil.useConfig = config;
+        HabitUtil.habit = habit;
+        return habit;
     }
 
     public static Habit getHabit() {
@@ -65,7 +71,8 @@ public class HabitUtil {
         }
         for (ProjectConfig config : habit.getConfigs()) {
             if (Objects.equals(config.getProjectName(), habit.getUserProject())) {
-                return config;
+                useConfig = config;
+                return useConfig;
             }
         }
         return null;
@@ -73,8 +80,8 @@ public class HabitUtil {
 
     public static void configInitValue(ProjectConfig projectConfig) {
 
-        projectConfig.setIoFileChooserPath(AppEvn.getClassRootPath());
-        projectConfig.setIoDirectoryChooserPath(AppEvn.getClassRootPath());
+        projectConfig.setProtocolFileChooserPath(AppEvn.getClassRootPath());
+        projectConfig.setProtocolDirectoryChooserPath(AppEvn.getClassRootPath());
         projectConfig.setProjectName(AppEvn.getClassRootPath());
 
         JavaConfig javaConfig = projectConfig.getJavaConfig();
@@ -91,14 +98,12 @@ public class HabitUtil {
     }
 
     public static void checkConfig(ProjectConfig projectConfig) {
-        if (!new File(projectConfig.getIoFileChooserPath()).exists()) {
-            projectConfig.setIoFileChooserPath(AppEvn.getClassRootPath());
+        if (!new File(projectConfig.getProtocolFileChooserPath()).exists()) {
+            projectConfig.setProtocolFileChooserPath(AppEvn.getClassRootPath());
         }
-        if (!new File(projectConfig.getIoDirectoryChooserPath()).exists()) {
-            projectConfig.setIoDirectoryChooserPath(AppEvn.getClassRootPath());
+        if (!new File(projectConfig.getProtocolDirectoryChooserPath()).exists()) {
+            projectConfig.setProtocolDirectoryChooserPath(AppEvn.getClassRootPath());
         }
-
-
         JavaConfig javaConfig = projectConfig.getJavaConfig();
         if (!new File(javaConfig.getJavaEventHandlerCodeRootPath()).exists()) {
             javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
@@ -108,7 +113,6 @@ public class HabitUtil {
             javaConfig.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaBeanCodeRootChooserPath(new File(javaConfig.getJavaBeanCodeRootPath()).getParent());
         }
-
         if (!new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).exists()) {
             javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
@@ -118,7 +122,6 @@ public class HabitUtil {
             javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).getParent());
         }
 
-
         //其他的 如模板路径 不用检查了
     }
 
@@ -126,8 +129,11 @@ public class HabitUtil {
         logger.debug("save habit");
         String json = JSON.toJSONString(habit, true);
         File save = new File(AppEvn.getClassRootPath(), "config/habit.json");
-        if (!save.getParentFile().exists()) {
-            save.getParentFile().mkdirs();
+        File parent = save.getParentFile();
+        if (!parent.exists()) {
+            if (!parent.mkdirs()) {
+                return;
+            }
         }
         try {
             FileUtils.writeStringToFile(save, json);
