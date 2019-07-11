@@ -2,8 +2,14 @@ package com.senpure.io.generator.ui.view;
 
 import com.senpure.base.AppEvn;
 import com.senpure.io.generator.Constant;
+import com.senpure.io.generator.executor.CheckException;
+import com.senpure.io.generator.executor.Executor;
+import com.senpure.io.generator.executor.ExecutorContext;
 import com.senpure.io.generator.habit.*;
 import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.model.Enum;
+import com.senpure.io.generator.model.Event;
+import com.senpure.io.generator.model.Message;
 import com.senpure.io.generator.reader.IoProtocolReader;
 import com.senpure.io.generator.reader.IoReader;
 import com.senpure.io.generator.ui.UiContext;
@@ -11,15 +17,25 @@ import com.senpure.io.generator.ui.appender.TextAreaAppender;
 import com.senpure.io.generator.ui.model.FileConverter;
 import com.senpure.io.generator.ui.model.FileData;
 import com.senpure.io.generator.ui.model.ProtocolData;
+import com.senpure.io.generator.util.CheckUtil;
 import com.senpure.io.generator.util.NoteUtil;
 import com.senpure.io.generator.util.TemplateUtil;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.animation.PathTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +88,8 @@ public class MainController implements Initializable {
     private TitledPane titledPaneProtocolView;
     @FXML
     private TextArea textAreaLog;
+    @FXML
+    private Button btnDelRecord;
 
     //java--↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     @FXML
@@ -139,6 +157,11 @@ public class MainController implements Initializable {
     private ProjectConfig config;
 
     private Set<File> protocolFiles = new HashSet<>();
+
+    private List<Enum> enums = new ArrayList<>();
+    private List<Bean> beans = new ArrayList<>();
+    private List<Event> events = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -266,6 +289,7 @@ public class MainController implements Initializable {
         checkJavaSCMessageHandler.setSelected(javaConfig.isGenerateJavaSCMessageHandler());
         checkJavaEventHandler.setSelected(javaConfig.isGenerateJavaEventHandler());
 
+        //覆盖操作不读取
         // checkJavaCSMessageHandlerCover.setSelected(javaConfig.isJavaCSMessageHandlerCover());
         // checkJavaSCMessageHandlerCover.setSelected(javaConfig.isJavaSCMessageHandlerCover());
         // checkJavaEventHandlerCover.setSelected(javaConfig.isJavaEventHandlerCover());
@@ -378,6 +402,10 @@ public class MainController implements Initializable {
             return;
         }
         tableViewProtocolView.getItems().clear();
+        enums.clear();
+        beans.clear();
+        messages.clear();
+        events.clear();
         IoReader.getInstance().getIoProtocolReaderMap().clear();
 
         List<ProtocolData> protocolDatas = new ArrayList<>();
@@ -392,10 +420,14 @@ public class MainController implements Initializable {
                 continue;
             }
             if (ioProtocolReader.isHasError()) {
-                logger.error("{} 出现语法错误", ioProtocolReader.getFilePath());
+                logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
                 error = true;
                 continue;
             }
+            enums.addAll(ioProtocolReader.getEnums());
+            beans.addAll(ioProtocolReader.getBeans());
+            messages.addAll(ioProtocolReader.getMessages());
+            events.addAll(ioProtocolReader.getEvents());
             for (Bean bean : ioProtocolReader.getEnums()) {
                 ProtocolData protocolData = new ProtocolData(bean, "enum");
                 protocolDatas.add(protocolData);
@@ -422,7 +454,7 @@ public class MainController implements Initializable {
         }
 
         if (error) {
-            logger.error("协议文件语法或格式不对请仔细检查修改");
+            //  logger.error("协议文件语法或格式不对请仔细检查修改");
             return;
         }
         if (protocolDatas.size() == 0) {
@@ -476,10 +508,11 @@ public class MainController implements Initializable {
         }
     }
 
+
     public void updateProjectName() {
         TextInputDialog dialog = new TextInputDialog(projectName.getSelectionModel().getSelectedItem());
-        // dialog.setTitle("Text Input Dialog");
-        dialog.setHeaderText("Look, a Text Input Dialog");
+        dialog.setTitle("修改操作");
+        dialog.setHeaderText("修改项目名 ");
         dialog.setContentText(resources.getString("label.input.project.name"));
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
@@ -490,7 +523,7 @@ public class MainController implements Initializable {
     public void createProject() {
         TextInputDialog dialog = new TextInputDialog("walter");
         dialog.setTitle("Text Input Dialog");
-        dialog.setHeaderText("Look, a Text Input Dialog");
+        dialog.setHeaderText("Look, animation Text Input Dialog");
         dialog.setContentText("Please enter your name:");
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
@@ -500,7 +533,9 @@ public class MainController implements Initializable {
 
     public void clearLog() {
         textAreaLog.clear();
-
+        //  btnDelRecord.setVisible(true);
+        // animation(textAreaLog);
+        // animation(btnDelRecord);
     }
 
     public void openLog() {
@@ -516,10 +551,141 @@ public class MainController implements Initializable {
         }
     }
 
+
+    public void generateJavaCode() {
+        ExecutorContext executorContext;
+        if (tableViewProtocolView.getItems().size() == 0) {
+            if (protocolFiles.size() == 0) {
+                logger.warn("没有选择协议文件");
+                return;
+            }
+            IoReader.getInstance().getIoProtocolReaderMap().clear();
+            boolean error = false;
+            for (File file : protocolFiles) {
+                IoProtocolReader ioProtocolReader;
+                try {
+                    ioProtocolReader = IoReader.getInstance().read(file);
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    error = true;
+                    continue;
+                }
+                if (ioProtocolReader.isHasError()) {
+                    error = true;
+                    logger.error("{} 语法错误", ioProtocolReader.getFilePath());
+                }
+            }
+            if (error) {
+                return;
+            }
+            JavaConfig javaConfig = new JavaConfig();
+            javaConfigValue(javaConfig, false);
+            executorContext = new ExecutorContext();
+            executorContext.setProjectName(config.getProjectName());
+            executorContext.setJavaConfig(javaConfig);
+            Map<String, IoProtocolReader> ioProtocolReaderMap = IoReader.getInstance().getIoProtocolReaderMap();
+            for (IoProtocolReader ioProtocolReader : ioProtocolReaderMap.values()) {
+                executorContext.getEnums().addAll(ioProtocolReader.getEnums());
+                executorContext.getBeans().addAll(ioProtocolReader.getBeans());
+                executorContext.getMessages().addAll(ioProtocolReader.getMessages());
+                executorContext.getEvents().addAll(ioProtocolReader.getEvents());
+            }
+
+
+        } else {
+            JavaConfig javaConfig = new JavaConfig();
+            javaConfigValue(javaConfig, false);
+            executorContext = new ExecutorContext();
+            executorContext.setProjectName(config.getProjectName());
+            executorContext.setJavaConfig(javaConfig);
+            for (Enum anEnum : enums) {
+                if (anEnum.isGenerate()) {
+                    executorContext.getEnums().add(anEnum);
+                }
+            }
+            for (Bean bean : beans) {
+                if (bean.isGenerate()) {
+                    executorContext.getBeans().add(bean);
+                }
+            }
+            for (Message message : messages) {
+                if (message.isGenerate()) {
+                    executorContext.getMessages().add(message);
+                }
+            }
+            for (Event event : events) {
+                if (event.isGenerate()) {
+                    executorContext.getEvents().add(event);
+                }
+            }
+
+
+        }
+        Executor executor = new Executor(executorContext);
+
+        try {
+            executor.generate();
+            logger.info("代码生成完成");
+        } catch (CheckException e) {
+
+            Platform.runLater(() -> {
+                btnDelRecord.setVisible(true);
+                btnDelRecord.requestFocus();
+                animation(btnDelRecord);
+
+            });
+
+
+            logger.error("代码检查不通过");
+        } catch (Exception e) {
+            logger.error("代码生成失败", e);
+        }
+    }
+
+    private void animation(Node node) {
+        Path path = new Path();//创建一个路径对象
+        double x;
+        double y;
+        x = 50;
+        y = 10;
+        //logger.debug("x = {} y ={}",x,y);
+        int value = 5;
+        path.getElements().add(new MoveTo(x, y));//从哪个位置开始动画，一般来说给组件的默认位置就行
+        path.getElements().add(new LineTo(x - value, y + value));//添加一个向左移动的路径
+        path.getElements().add(new LineTo(x + value, y + value));//添加一个向右移动的路径  这样就完成第一遍摇头
+        path.getElements().add(new LineTo(x - value, y + value));//添加一个向左移动的路径 第二遍
+        path.getElements().add(new LineTo(x + value, y + value));//添加一个向右移动的路径  这样就完成第二遍摇头
+
+        path.getElements().add(new LineTo(x, y + value));//最后移动到原来的位置
+        PathTransition pathTransition = new PathTransition();//创建一个动画对象
+        pathTransition.setDuration(Duration.seconds(1.2));//动画持续时间 0.5秒
+        pathTransition.setPath(path);//把我们设置好的动画路径放入里面
+        pathTransition.setNode(node);//给动画添加组件，让某个组件来完成这个动画
+        pathTransition.setCycleCount(1);//执行1遍
+        pathTransition.play();//执行动画
+    }
+
+    public void btnDelRecordKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            delRecordFile();
+        }
+    }
+
+    public void delRecordFile() {
+        CheckUtil.closeCheck();
+        File file = CheckUtil.getProjectNameFile(config.getProjectName());
+        if (file.exists()) {
+            if (file.delete()) {
+                logger.info("删除记录文件 {}", file.getAbsoluteFile());
+            } else {
+                logger.info("删除记录文件失败 {}", file.getAbsoluteFile());
+            }
+        }
+        btnDelRecord.setVisible(false);
+    }
+
     public void updateConfig() {
-
         config.setTabPaneConfigIndex(tabPaneConfig.getSelectionModel().getSelectedIndex());
-
         List<ProtocolFile> protocolFiles = new ArrayList<>();
         for (FileData item : tableViewFileView.getItems()) {
             ProtocolFile protocolFile = new ProtocolFile();
@@ -530,6 +696,12 @@ public class MainController implements Initializable {
         config.setProtocolFiles(protocolFiles);
 
         //java
+        javaConfigValue(javaConfig, true);
+        //java
+
+    }
+
+    private void javaConfigValue(JavaConfig javaConfig, boolean save) {
         javaConfig.setJavaEventHandlerCodeRootPath(textFieldJavaEventHandlerCodeRootPath.getText());
         javaConfig.setJavaBeanCodeRootPath(textFieldJavaBeanCodeRootPath.getText());
         javaConfig.setJavaCSMessageHandlerCodeRootPath(textFieldJavaCSMessageHandlerCodeRootPath.getText());
@@ -541,13 +713,15 @@ public class MainController implements Initializable {
         javaConfig.setJavaCSMessageHandlerTemplate(choiceJavaCSMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaSCMessageHandlerTemplate(choiceJavaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaEventHandlerTemplate(choiceJavaEventHandler.getSelectionModel().getSelectedItem().getName());
-
-        //覆盖操作不保存
-        //javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
-        //javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
-        // javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
-
-
+        if (save) {
+            javaConfig.setJavaEventHandlerCover(false);
+            javaConfig.setJavaCSMessageHandlerCover(false);
+            javaConfig.setJavaSCMessageHandlerCover(false);
+        } else {
+            javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
+            javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
+            javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
+        }
         javaConfig.setGenerateJavaBean(checkJavaBean.isSelected());
         javaConfig.setGenerateJavaEnum(checkJavaEnum.isSelected());
         javaConfig.setGenerateJavaEvent(checkJavaEvent.isSelected());
@@ -555,7 +729,5 @@ public class MainController implements Initializable {
         javaConfig.setGenerateJavaEventHandler(checkJavaEventHandler.isSelected());
         javaConfig.setGenerateJavaCSMessageHandler(checkJavaCSMessageHandler.isSelected());
         javaConfig.setGenerateJavaSCMessageHandler(checkJavaSCMessageHandler.isSelected());
-        //java
-
     }
 }

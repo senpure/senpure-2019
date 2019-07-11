@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="741.0" prefWidth="781.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senpure.io.generator.ui.view.MainController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="802.0" prefWidth="781.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senpure.io.generator.ui.view.MainController">
     <children>
         <SplitPane prefHeight="54.0" prefWidth="781.0">
             <items>
@@ -23,7 +23,7 @@
                 </AnchorPane>
             </items>
         </SplitPane>
-        <SplitPane dividerPositions="0.8369704749679076" prefHeight="176.0" prefWidth="781.0">
+        <SplitPane dividerPositions="0.8" prefHeight="176.0" prefWidth="781.0">
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="193.0" prefWidth="472.0">
                     <children>
@@ -39,8 +39,8 @@
                     <children>
                         <Button layoutX="16.0" layoutY="10.0" mnemonicParsing="false" onAction="#addProtocolFile" prefHeight="23.0" prefWidth="101.0" text="增加文件" />
                         <Button layoutX="16.0" layoutY="40.0" mnemonicParsing="false" onAction="#addProtocolDirectory" prefHeight="23.0" prefWidth="101.0" text="增加文件夹" />
-                        <Button layoutX="16.0" layoutY="70.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="101.0" text="删除文件" />
-                        <Button layoutX="16.0" layoutY="100.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="101.0" text="清空文件" />
+                        <Button layoutX="16.0" layoutY="70.0" mnemonicParsing="false" onAction="#removeFile" prefHeight="23.0" prefWidth="101.0" text="删除文件" />
+                        <Button layoutX="16.0" layoutY="100.0" mnemonicParsing="false" onAction="#removeAllFile" prefHeight="23.0" prefWidth="101.0" text="清空文件" />
                         <Button layoutX="16.0" layoutY="130.0" mnemonicParsing="false" onAction="#protocolView" prefHeight="23.0" prefWidth="101.0" text="预览协议" />
                     </children>
                 </AnchorPane>
@@ -50,7 +50,7 @@
             <panes>
                 <TitledPane fx:id="titledPaneProtocolView" animated="false" text="message预览">
                     <content>
-                        <SplitPane dividerPositions="0.8348271446862996" prefHeight="193.0" prefWidth="781.0">
+                        <SplitPane dividerPositions="0.8" prefHeight="193.0" prefWidth="781.0">
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="516.0">
                                     <children>
@@ -84,7 +84,7 @@
                                     <content>
                                         <VBox prefHeight="302.0" prefWidth="781.0">
                                             <children>
-                                                <SplitPane dividerPositions="0.8382541720154044" prefHeight="295.0" prefWidth="781.0">
+                                                <SplitPane dividerPositions="0.8" prefHeight="295.0" prefWidth="781.0">
                                                     <items>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="290.0" prefWidth="650.0">
                                                             <children>
@@ -156,7 +156,7 @@
                                                                 <Button layoutX="14.0" layoutY="28.0" mnemonicParsing="false" onAction="#choiceJavaCSMessageHandlerCodeRootPath" prefHeight="23.0" prefWidth="109.0" text="选择路径" />
                                                                <Button layoutX="14.0" layoutY="54.0" mnemonicParsing="false" onAction="#choiceJavaSCMessageHandlerCodeRootPath" prefHeight="23.0" prefWidth="109.0" text="选择路径" />
                                                                 <Button layoutX="14.0" layoutY="80.0" mnemonicParsing="false" onAction="#choiceJavaEventHandlerCodeRootPath" prefHeight="23.0" prefWidth="109.0" text="选择路径" />
-                                                                <Button layoutX="14.0" layoutY="114.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="109.0" text="生成代码" />
+                                                                <Button layoutX="14.0" layoutY="114.0" mnemonicParsing="false" onAction="#generateJavaCode" prefHeight="23.0" prefWidth="109.0" text="生成代码" />
                                                             </children>
                                                         </AnchorPane>
                                                     </items>
@@ -167,7 +167,7 @@
                                 </Tab>
                                 <Tab text="lua     ">
                                     <content>
-                                        <SplitPane dividerPositions="0.7925736235595391" prefHeight="160.0" prefWidth="200.0">
+                                        <SplitPane dividerPositions="0.8" prefHeight="160.0" prefWidth="200.0">
                                             <items>
                                                 <Accordion prefHeight="328.0" prefWidth="517.0">
                                                     <panes>
@@ -302,17 +302,18 @@
                 </TitledPane>
             </panes>
         </Accordion>
-        <SplitPane dividerPositions="0.8395378690629012" prefHeight="146.0" prefWidth="781.0">
+        <SplitPane dividerPositions="0.8" prefHeight="200.0" prefWidth="781.0">
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="148.0" prefWidth="657.0">
                     <children>
-                        <TextArea fx:id="textAreaLog" layoutY="6.0" prefHeight="121.0" prefWidth="626.0" />
+                        <TextArea fx:id="textAreaLog" layoutY="6.0" prefHeight="186.0" prefWidth="641.0" />
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                     <children>
                         <Button layoutX="11.0" layoutY="14.0" mnemonicParsing="false" onAction="#openLog" prefHeight="23.0" prefWidth="101.0" text="查看详细日志" />
                         <Button layoutX="11.0" layoutY="106.0" mnemonicParsing="false" onAction="#clearLog" prefHeight="23.0" prefWidth="101.0" text="清空日志" />
+                  <Button fx:id="btnDelRecord" layoutX="11.0" layoutY="161.0" mnemonicParsing="false" onAction="#delRecordFile" onKeyReleased="#btnDelRecordKeyRelease" prefHeight="23.0" prefWidth="101.0" text="删除记录文件" visible="false" />
                     </children>
                 </AnchorPane>
             </items>

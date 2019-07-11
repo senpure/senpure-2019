@@ -1,5 +1,6 @@
 package com.senpure.io.generator.executor;
 
+import com.senpure.io.generator.habit.JavaConfig;
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Event;
@@ -21,29 +22,10 @@ public class ExecutorContext {
     private List<Event> events = new ArrayList<>(128);
     private List<Enum> enums = new ArrayList<>(128);
 
+    private String projectName;
     private String javaTemplateDir = "java";
-    private boolean generateJavaBean = true;
-    private boolean generateJavaMessage = true;
+    private JavaConfig javaConfig;
 
-    private boolean generateJavaMessageHandler = true;
-    private boolean generateJavaCSMessageHandler = true;
-    private boolean generateJavaSCMessageHandler = false;
-    private boolean generateJavaEvent = true;
-    private boolean generateJavaEventHandler = true;
-
-    private String javaEventHandlerRootPath;
-
-
-    private String javaBeanCodeRootPath;
-    private String javaBeanTemplate = "bean.ftl";
-    private String javaMessageTemplate = "message.ftl";
-    private String javaMessageHandlerTemplate = "messageHandler.ftl";
-    private boolean javaMessageHandlerCover = false;
-
-    private String javaEventTemplate = "event.ftl";
-    private String javaEnumTemplate = "enum.ftl";
-    private String javaEventHandlerTemplate = "eventHandler.ftl";
-    private boolean javaEventHandlerCover = false;
 
 
     public void addBean(Bean bean) {
@@ -110,125 +92,6 @@ public class ExecutorContext {
         this.enums = enums;
     }
 
-    public boolean isGenerateJavaBean() {
-        return generateJavaBean;
-    }
-
-    public void setGenerateJavaBean(boolean generateJavaBean) {
-        this.generateJavaBean = generateJavaBean;
-    }
-
-    public boolean isGenerateJavaMessage() {
-        return generateJavaMessage;
-    }
-
-    public void setGenerateJavaMessage(boolean generateJavaMessage) {
-        this.generateJavaMessage = generateJavaMessage;
-    }
-
-    public boolean isGenerateJavaMessageHandler() {
-        return generateJavaMessageHandler;
-    }
-
-    public void setGenerateJavaMessageHandler(boolean generateJavaMessageHandler) {
-        this.generateJavaMessageHandler = generateJavaMessageHandler;
-    }
-
-    public boolean isGenerateJavaEvent() {
-        return generateJavaEvent;
-    }
-
-    public void setGenerateJavaEvent(boolean generateJavaEvent) {
-        this.generateJavaEvent = generateJavaEvent;
-    }
-
-    public boolean isGenerateJavaEventHandler() {
-        return generateJavaEventHandler;
-    }
-
-    public void setGenerateJavaEventHandler(boolean generateJavaEventHandler) {
-        this.generateJavaEventHandler = generateJavaEventHandler;
-    }
-
-    public String getJavaEventHandlerRootPath() {
-        return javaEventHandlerRootPath;
-    }
-
-    public void setJavaEventHandlerRootPath(String javaEventHandlerRootPath) {
-        this.javaEventHandlerRootPath = javaEventHandlerRootPath;
-    }
-
-    public String getJavaBeanCodeRootPath() {
-        return javaBeanCodeRootPath;
-    }
-
-    public void setJavaBeanCodeRootPath(String javaBeanCodeRootPath) {
-        this.javaBeanCodeRootPath = javaBeanCodeRootPath;
-    }
-
-    public String getJavaBeanTemplate() {
-        return javaBeanTemplate;
-    }
-
-    public void setJavaBeanTemplate(String javaBeanTemplate) {
-        this.javaBeanTemplate = javaBeanTemplate;
-    }
-
-    public String getJavaMessageTemplate() {
-        return javaMessageTemplate;
-    }
-
-    public void setJavaMessageTemplate(String javaMessageTemplate) {
-        this.javaMessageTemplate = javaMessageTemplate;
-    }
-
-    public String getJavaMessageHandlerTemplate() {
-        return javaMessageHandlerTemplate;
-    }
-
-    public void setJavaMessageHandlerTemplate(String javaMessageHandlerTemplate) {
-        this.javaMessageHandlerTemplate = javaMessageHandlerTemplate;
-    }
-
-    public boolean isJavaMessageHandlerCover() {
-        return javaMessageHandlerCover;
-    }
-
-    public String getJavaEnumTemplate() {
-        return javaEnumTemplate;
-    }
-
-    public void setJavaEnumTemplate(String javaEnumTemplate) {
-        this.javaEnumTemplate = javaEnumTemplate;
-    }
-
-    public void setJavaMessageHandlerCover(boolean javaMessageHandlerCover) {
-        this.javaMessageHandlerCover = javaMessageHandlerCover;
-    }
-
-    public String getJavaEventTemplate() {
-        return javaEventTemplate;
-    }
-
-    public void setJavaEventTemplate(String javaEventTemplate) {
-        this.javaEventTemplate = javaEventTemplate;
-    }
-
-    public String getJavaEventHandlerTemplate() {
-        return javaEventHandlerTemplate;
-    }
-
-    public void setJavaEventHandlerTemplate(String javaEventHandlerTemplate) {
-        this.javaEventHandlerTemplate = javaEventHandlerTemplate;
-    }
-
-    public boolean isJavaEventHandlerCover() {
-        return javaEventHandlerCover;
-    }
-
-    public void setJavaEventHandlerCover(boolean javaEventHandlerCover) {
-        this.javaEventHandlerCover = javaEventHandlerCover;
-    }
 
     public String getJavaTemplateDir() {
         return javaTemplateDir;
@@ -238,19 +101,19 @@ public class ExecutorContext {
         this.javaTemplateDir = javaTemplateDir;
     }
 
-    public boolean isGenerateJavaCSMessageHandler() {
-        return generateJavaCSMessageHandler;
+    public JavaConfig getJavaConfig() {
+        return javaConfig;
     }
 
-    public void setGenerateJavaCSMessageHandler(boolean generateJavaCSMessageHandler) {
-        this.generateJavaCSMessageHandler = generateJavaCSMessageHandler;
+    public void setJavaConfig(JavaConfig javaConfig) {
+        this.javaConfig = javaConfig;
     }
 
-    public boolean isGenerateJavaSCMessageHandler() {
-        return generateJavaSCMessageHandler;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setGenerateJavaSCMessageHandler(boolean generateJavaSCMessageHandler) {
-        this.generateJavaSCMessageHandler = generateJavaSCMessageHandler;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 }

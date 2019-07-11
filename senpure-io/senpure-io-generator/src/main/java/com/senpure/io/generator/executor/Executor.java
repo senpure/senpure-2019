@@ -2,6 +2,7 @@ package com.senpure.io.generator.executor;
 
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
+import com.senpure.io.generator.habit.JavaConfig;
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Event;
@@ -36,10 +37,12 @@ public class Executor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ExecutorContext context;
+    private JavaConfig javaConfig;
 
     public Executor(ExecutorContext context) {
         this.context = context;
-        CheckUtil.loadData(context.getJavaEventHandlerRootPath());
+        this.javaConfig = context.getJavaConfig();
+        CheckUtil.loadData(context.getProjectName());
         cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         TemplateUtil.share(cfg);
     }
@@ -53,36 +56,30 @@ public class Executor {
         }
     }
 
-    private boolean check() {
+    public  boolean check() {
         boolean check = true;
-        if (context.isGenerateJavaBean()) {
-            for (Bean bean : context.getBeans()) {
-                boolean temp = CheckUtil.check(bean);
-                if (!temp) {
-                    check = temp;
-                }
-            }
-            for (Enum anEnum : context.getEnums()) {
-                boolean temp = CheckUtil.check(anEnum);
-                if (!temp) {
-                    check = temp;
-                }
+        for (Bean bean : context.getBeans()) {
+            boolean temp = CheckUtil.check(bean);
+            if (!temp) {
+                check =false;
             }
         }
-        if (context.isGenerateJavaMessage() || context.isGenerateJavaMessageHandler()) {
-            for (Message message : context.getMessages()) {
-                boolean temp = CheckUtil.check(message);
-                if (!temp) {
-                    check = temp;
-                }
+        for (Enum anEnum : context.getEnums()) {
+            boolean temp = CheckUtil.check(anEnum);
+            if (!temp) {
+                check = false;
             }
         }
-        if (context.isGenerateJavaEvent() || context.isGenerateJavaEventHandler()) {
-            for (Event event : context.getEvents()) {
-                boolean temp = CheckUtil.check(event);
-                if (!temp) {
-                    check = temp;
-                }
+        for (Message message : context.getMessages()) {
+            boolean temp = CheckUtil.check(message);
+            if (!temp) {
+                check = false;
+            }
+        }
+        for (Event event : context.getEvents()) {
+            boolean temp = CheckUtil.check(event);
+            if (!temp) {
+                check = false;
             }
         }
         return check;
@@ -90,24 +87,29 @@ public class Executor {
 
     public void generate() {
         if (!check()) {
-            logger.error("校验不合法不生成");
-            return;
+            CheckUtil.closeCheck();
+            throw new CheckException("检查不通过");
         }
-        if (context.isGenerateJavaBean()) {
-            generateJavaBean();
-            generateJavaEnum();
-        }
-        if (context.isGenerateJavaMessage()) {
-            generateJavaMessage();
-        }
-        if (context.isGenerateJavaMessageHandler()) {
-            generateJavaMessageHandler();
-        }
-        if (context.isGenerateJavaEvent()) {
-            generateJavaEvent();
-        }
-        if (context.isGenerateJavaEventHandler()) {
-            generateJavaEventHandler();
+        if (javaConfig != null) {
+            if (javaConfig.isGenerateJavaBean()) {
+                generateJavaBean();
+                generateJavaEnum();
+            }
+            if (javaConfig.isGenerateJavaMessage()) {
+                generateJavaMessage();
+            }
+            if (javaConfig.isGenerateJavaCSMessageHandler()) {
+                generateJavaCSMessageHandler();
+            }
+            if (javaConfig.isGenerateJavaSCMessageHandler()) {
+                generateJavaSCMessageHandler();
+            }
+            if (javaConfig.isGenerateJavaEvent()) {
+                generateJavaEvent();
+            }
+            if (javaConfig.isGenerateJavaEventHandler()) {
+                generateJavaEventHandler();
+            }
         }
     }
 
@@ -121,15 +123,15 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(context.getJavaBeanTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaBeanTemplate());
         } catch (IOException e) {
             Assert.error(e);
         }
         for (Bean bean : context.getBeans()) {
-            File file = new File(context.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
-            logger.debug("生成 bean {} {}", file.getName(), file.getAbsoluteFile());
+            logger.info("生成 bean {} {}", file.getName(), file.getAbsoluteFile());
             Generator.generate(bean, template, file);
         }
 
@@ -139,15 +141,15 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(context.getJavaEnumTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaEnumTemplate());
         } catch (IOException e) {
             Assert.error(e);
         }
         for (Bean bean : context.getEnums()) {
-            File file = new File(context.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
-            logger.debug("生成 enum {} {}", file.getName(), file.getAbsoluteFile());
+            logger.info("生成 enum {} {}", file.getName(), file.getAbsoluteFile());
             Generator.generate(bean, template, file);
         }
 
@@ -158,76 +160,81 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(context.getJavaMessageTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaMessageTemplate());
         } catch (IOException e) {
             Assert.error(e);
         }
         for (Bean bean : context.getMessages()) {
-            File file = new File(context.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
-            logger.debug("生成 message {} {}", file.getName(), file.getAbsoluteFile());
+            logger.info("生成 message {} {}", file.getName(), file.getAbsoluteFile());
             Generator.generate(bean, template, file);
         }
 
     }
 
-
-    private void generateJavaMessageHandler() {
+    private void generateJavaMessageHandler(String type, String templateName, String codeRootPath, boolean fileCover) {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(context.getJavaMessageHandlerTemplate());
+            template = cfg.getTemplate(templateName);
         } catch (IOException e) {
             Assert.error(e);
         }
         for (Message message : context.getMessages()) {
-            if (message.getType().equals("CS")) {
-                if (!context.isGenerateJavaCSMessageHandler()) {
-                    continue;
+            if (message.getType().equals(type)) {
+                File file = new File(codeRootPath, FileUtil.fullFileEnd(message.getJavaHandlerPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
+                boolean cover = false;
+                if (file.exists()) {
+                    if (!fileCover) {
+                        logger.warn("messageHandler 存在不能生成 {} {}", file.getName(), file.getAbsoluteFile());
+                        continue;
+                    } else {
+                        cover = true;
+                    }
                 }
-            } else if (message.getType().equals("SC")) {
-                if (!context.isGenerateJavaSCMessageHandler()) {
-                    continue;
-                }
-            }
-            File file = new File(context.getJavaEventHandlerRootPath(), FileUtil.fullFileEnd(message.getJavaHandlerPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
-            boolean cover = false;
-            if (file.exists()) {
-                if (!context.isJavaMessageHandlerCover()) {
-                    logger.warn("messageHandler 存在不能生成 {} {}", file.getName(), file.getAbsoluteFile());
-                    continue;
+                checkFile(file);
+                message.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
+                if (cover) {
+                    logger.info("覆盖生成 messageHandler {} {}", file.getName(), file.getAbsoluteFile());
                 } else {
-                    cover = true;
+                    logger.info("生成 messageHandler {} {}", file.getName(), file.getAbsoluteFile());
                 }
-
+                Generator.generate(message, template, file);
             }
-            checkFile(file);
-            message.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
-            if (cover) {
-                logger.debug("覆盖生成 messageHandler {} {}", file.getName(), file.getAbsoluteFile());
-            } else {
-                logger.debug("生成 messageHandler {} {}", file.getName(), file.getAbsoluteFile());
-            }
-
-            Generator.generate(message, template, file);
         }
+    }
 
+    private void generateJavaCSMessageHandler() {
+
+        generateJavaMessageHandler("CS",
+                javaConfig.getJavaCSMessageHandlerTemplate(),
+                javaConfig.getJavaCSMessageHandlerCodeRootPath(),
+                javaConfig.isJavaCSMessageHandlerCover());
+    }
+
+    private void generateJavaSCMessageHandler() {
+
+        generateJavaMessageHandler("SC",
+                javaConfig.getJavaSCMessageHandlerTemplate(),
+                javaConfig.getJavaSCMessageHandlerCodeRootPath(),
+                javaConfig.isJavaSCMessageHandlerCover());
     }
 
     private void generateJavaEvent() {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(context.getJavaEventTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaEventTemplate());
         } catch (IOException e) {
             Assert.error(e);
         }
         for (Bean bean : context.getEvents()) {
-            File file = new File(context.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
-            logger.debug("生成 event {} {}", file.getName(), file.getAbsoluteFile());
+            logger.info("生成 event {} {}", file.getName(), file.getAbsoluteFile());
             Generator.generate(bean, template, file);
         }
 
@@ -237,15 +244,15 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(context.getJavaEventHandlerTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaEventHandlerTemplate());
         } catch (IOException e) {
             Assert.error(e);
         }
         for (Event event : context.getEvents()) {
-            File file = new File(context.getJavaEventHandlerRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
+            File file = new File(javaConfig.getJavaEventHandlerCodeRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
-                if (!context.isJavaEventHandlerCover()) {
+                if (!javaConfig.isJavaEventHandlerCover()) {
                     logger.warn("eventHandler 存在不能生成 {} {}", file.getName(), file.getAbsoluteFile());
                     continue;
                 } else {
@@ -256,9 +263,9 @@ public class Executor {
             checkFile(file);
             event.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             if (cover) {
-                logger.debug("覆盖生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
+                logger.info("覆盖生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
             } else {
-                logger.debug("生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
+                logger.info("生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
             }
 
             Generator.generate(event, template, file);
@@ -272,8 +279,8 @@ public class Executor {
 
         List<String> paths = new ArrayList<>();
         //paths.add("hello.io");
-       // paths.add("hello3.io");
-         paths.add("ioMessage.io");
+        // paths.add("hello3.io");
+        paths.add("ioMessage.io");
         for (String path : paths) {
             IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), path));
         }
@@ -287,8 +294,8 @@ public class Executor {
             context.addEvents(value.getEvents());
             context.addMessages(value.getMessages());
         }
-        context.setJavaEventHandlerRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
-        context.setJavaBeanCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
+        // context.setJavaEventHandlerRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
+        // context.setJavaBeanCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
         Executor executer = new Executor(context);
         executer.generate();
     }
