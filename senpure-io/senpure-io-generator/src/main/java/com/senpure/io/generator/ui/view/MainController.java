@@ -168,21 +168,33 @@ public class MainController implements Initializable {
 
         TextAreaAppender.setTextArea(textAreaLog);
         this.resources = resources;
-        habit = HabitUtil.getHabit();
-        config = HabitUtil.getUseConfig();
-        javaConfig = config.getJavaConfig();
-
-        intProjectName();
+        configValue();
         initTableView();
-        initTextFieldValue();
         initChooser();
-        initTemplate();
 
+        initValue();
+
+        projectName.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> switchProject(newValue));
+
+    }
+
+    private void initValue() {
+        intProjectName();
+        initTextFieldValue();
+        initTemplate();
         initPlane();
         initProtocolFiles();
     }
 
+    private void configValue() {
+        habit = HabitUtil.getHabit();
+        config = HabitUtil.getUseConfig();
+        javaConfig = config.getJavaConfig();
+
+    }
+
     private void intProjectName() {
+        projectName.getItems().clear();
         for (ProjectConfig habitConfig : habit.getConfigs()) {
             projectName.getItems().add(habitConfig.getProjectName());
             if (habitConfig.getProjectName().equals(config.getProjectName())) {
@@ -214,7 +226,7 @@ public class MainController implements Initializable {
         fileChooserIoFile.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("io", "*.io")
         );
-        fileChooserIoFile.setInitialDirectory(new File(config.getProtocolFileChooserPath()));
+
         directoryChooser = new DirectoryChooser();
         // directoryChooserIoDirectory.setInitialDirectory(new File(config.getProtocolDirectoryChooserPath()));
 
@@ -302,6 +314,8 @@ public class MainController implements Initializable {
     }
 
     private void initProtocolFiles() {
+        protocolFiles.clear();
+        tableViewFileView.getItems().clear();
         if (config.getProtocolFiles() != null) {
             for (ProtocolFile protocolFile : config.getProtocolFiles()) {
                 File file = new File(protocolFile.getPath());
@@ -316,6 +330,7 @@ public class MainController implements Initializable {
 
     public void addProtocolFile() {
         logger.debug("增加协议文件");
+        fileChooserIoFile.setInitialDirectory(new File(config.getProtocolFileChooserPath()));
         List<File> files = fileChooserIoFile.showOpenMultipleDialog(UiContext.getPrimaryStage());
         if (files != null) {
             fileChooserIoFile.setInitialDirectory(files.get(0).getParentFile());
@@ -516,19 +531,180 @@ public class MainController implements Initializable {
         dialog.setContentText(resources.getString("label.input.project.name"));
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
-            System.out.println("Your name: " + result.get());
+            updateProjectName(result.get());
+        } else {
+            logger.warn("请输入项目名");
+        }
+    }
+
+    public void updateProjectNameByChose() {
+        File temp = new File(projectName.getSelectionModel().getSelectedItem());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp.getParentFile());
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            updateProjectName(file.getName());
+            fileVale(file, config);
+            initValue();
+        }
+    }
+
+    private void updateProjectName(String value) {
+        value = value.trim();
+        if (value.length() == 0) {
+            logger.warn("请输入项目名");
+            return;
+        }
+        for (ProjectConfig habitConfig : habit.getConfigs()) {
+            if (Objects.equals(habitConfig.getProjectName(), value)) {
+                logger.warn("{} 项目名存在,请重新更换一个", value);
+                return;
+            }
+        }
+        String old = projectName.getSelectionModel().getSelectedItem();
+        projectName.getItems().remove(old);
+        projectName.getItems().add(value);
+        projectName.getSelectionModel().select(value);
+        File file = CheckUtil.getProjectNameFile(old);
+        if (file.exists()) {
+            file.renameTo(CheckUtil.getProjectNameFile(value));
+        }
+        config.setProjectName(value);
+        habit.setUserProject(value);
+    }
+
+    public void createProjectByChose() {
+        File temp = new File(projectName.getSelectionModel().getSelectedItem());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp.getParentFile());
+        } else {
+            directoryChooser.setInitialDirectory(new File(AppEvn.getClassRootPath()));
+        }
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            ProjectConfig projectConfig = createProject(file.getName());
+            if (projectConfig != null) {
+                fileVale(file, projectConfig);
+                switchProject(file.getName());
+            }
         }
     }
 
     public void createProject() {
-        TextInputDialog dialog = new TextInputDialog("walter");
-        dialog.setTitle("Text Input Dialog");
-        dialog.setHeaderText("Look, animation Text Input Dialog");
-        dialog.setContentText("Please enter your name:");
+        String name = "myProject";
+        int value = 0;
+        boolean next = true;
+        do {
+            if (value > 0) {
+                name = name + value;
+            }
+            boolean notFind = true;
+            for (ProjectConfig habitConfig : habit.getConfigs()) {
+                if (Objects.equals(habitConfig.getProjectName(), name)) {
+                    value++;
+                    notFind = false;
+                    break;
+                }
+            }
+            if (notFind) {
+                next = false;
+            }
+
+        } while (next);
+
+        TextInputDialog dialog = new TextInputDialog(name);
+        dialog.setTitle("新建项目");
+        dialog.setHeaderText("新建项目名 ");
+        dialog.setContentText(resources.getString("label.input.project.name"));
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
-            System.out.println("Your name: " + result.get());
+            String projectName = result.get().trim();
+            if (projectName.length() > 0) {
+                ProjectConfig projectConfig = createProject(name);
+                if (projectConfig != null) {
+                    switchProject(name);
+                }
+            } else {
+                logger.warn("请输入项目名");
+            }
+
+        } else {
+            logger.warn("请输入项目名");
         }
+
+    }
+
+    private ProjectConfig createProject(String name) {
+        for (ProjectConfig habitConfig : habit.getConfigs()) {
+            if (Objects.equals(habitConfig.getProjectName(), name)) {
+                logger.warn("{} 项目名存在,请重新更换一个", name);
+                return null;
+            }
+        }
+        ProjectConfig projectConfig = new ProjectConfig();
+        HabitUtil.configInitValue(projectConfig);
+
+        projectConfig.setProjectName(name);
+        habit.getConfigs().add(projectConfig);
+        return projectConfig;
+    }
+
+    public void deleteProject() {
+        if (habit.getConfigs().size() <= 1) {
+            logger.warn("至少需要保留一个项目,请使用修改功能");
+            return;
+        }
+
+        boolean remove = false;
+        for (int i = 0; i < habit.getConfigs().size(); i++) {
+            ProjectConfig projectConfig = habit.getConfigs().get(i);
+            if (Objects.equals(projectConfig.getProjectName(), config.getProjectName())) {
+                habit.getConfigs().remove(i);
+                remove = true;
+
+            }
+        }
+        if (remove) {
+            habit.setUserProject(habit.getConfigs().get(0).getProjectName());
+            configValue();
+            logger.debug("切换到项目 {}", config.getProjectName());
+            switchProject(config.getProjectName());
+
+        } else {
+            logger.error("删除项目失败");
+        }
+
+    }
+
+
+
+    private void switchProject(String name) {
+        logger.info("切换项目----------");
+        habit.setUserProject(name);
+        configValue();
+        initValue();
+
+    }
+
+    private void fileVale(File file, ProjectConfig config) {
+        config.setProtocolFileChooserPath(file.getAbsolutePath());
+        config.setProtocolDirectoryChooserPath(file.getAbsolutePath());
+        config.setProjectName(file.getName());
+
+        JavaConfig javaConfig = config.getJavaConfig();
+        File codeFile = new File(file, "src/main/java");
+        javaConfig.setJavaBeanCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setJavaBeanCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setJavaCSMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setJavaSCMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setJavaEventHandlerCodeRootPath(file.getAbsolutePath());
+        javaConfig.setJavaEventHandlerCodeRootChooserPath(file.getAbsolutePath());
+
     }
 
     public void clearLog() {

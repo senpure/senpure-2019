@@ -20,7 +20,7 @@ public class HabitUtil {
 
     private static Logger logger = LoggerFactory.getLogger(HabitUtil.class);
 
-    private static ProjectConfig useConfig;
+
     private static Habit habit;
 
     private static Habit loadHabit() {
@@ -52,7 +52,6 @@ public class HabitUtil {
         configInitValue(config);
         habit.setUserProject(config.getProjectName());
         habit.getConfigs().add(config);
-        HabitUtil.useConfig = config;
         HabitUtil.habit = habit;
         return habit;
     }
@@ -66,24 +65,20 @@ public class HabitUtil {
     }
 
     public static ProjectConfig getUseConfig() {
-        if (useConfig != null) {
-            return useConfig;
-        }
+
         for (ProjectConfig config : habit.getConfigs()) {
             if (Objects.equals(config.getProjectName(), habit.getUserProject())) {
-                useConfig = config;
-                return useConfig;
+                return config;
             }
         }
-        return null;
+        return habit.getConfigs().get(0);
     }
 
     public static void configInitValue(ProjectConfig projectConfig) {
 
         projectConfig.setProtocolFileChooserPath(AppEvn.getClassRootPath());
         projectConfig.setProtocolDirectoryChooserPath(AppEvn.getClassRootPath());
-        projectConfig.setProjectName(AppEvn.getClassRootPath());
-
+        projectConfig.setProjectName("myProject");
         JavaConfig javaConfig = projectConfig.getJavaConfig();
         javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
         javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
