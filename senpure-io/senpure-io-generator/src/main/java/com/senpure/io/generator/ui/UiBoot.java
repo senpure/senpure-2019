@@ -39,7 +39,10 @@ public class UiBoot extends AbstractJavaFxApplicationSupport {
         AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
 
-        launch(UiBoot.class, MainView.class, args);
+        launch(UiBoot.class, MainView.class,
+                args
+
+        );
     }
 
     @Override

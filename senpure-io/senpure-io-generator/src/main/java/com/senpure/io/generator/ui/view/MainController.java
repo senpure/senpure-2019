@@ -635,7 +635,7 @@ public class MainController implements Initializable {
 
         TextInputDialog dialog = new TextInputDialog(name);
         dialog.setTitle("新建项目");
-        dialog.setHeaderText("新建项目名 ");
+        dialog.setHeaderText("新建项目 ");
         dialog.setContentText(resources.getString("label.input.project.name"));
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
