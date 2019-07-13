@@ -101,19 +101,19 @@ public class HabitUtil {
         }
         JavaConfig javaConfig = projectConfig.getJavaConfig();
         if (!new File(javaConfig.getJavaEventHandlerCodeRootPath()).exists()) {
-            javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
+           // javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
         }
         if (!new File(javaConfig.getJavaBeanCodeRootPath()).exists()) {
-            javaConfig.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
+            //javaConfig.setJavaBeanCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaBeanCodeRootChooserPath(new File(javaConfig.getJavaBeanCodeRootPath()).getParent());
         }
         if (!new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).exists()) {
-            javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+           // javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
         }
         if (!new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).exists()) {
-            javaConfig.setJavaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+            //javaConfig.setJavaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).getParent());
         }
 

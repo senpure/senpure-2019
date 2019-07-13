@@ -48,6 +48,10 @@ public class IoReader {
         return null;
     }
 
+    public void clear() {
+        ioProtocolReaderMap.clear();
+    }
+
     public void replace(String key, IoProtocolReader ioProtocolReader) {
         ioProtocolReaderMap.put(key, ioProtocolReader);
     }

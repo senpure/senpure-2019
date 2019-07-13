@@ -171,20 +171,12 @@ public class MainController implements Initializable {
         configValue();
         initTableView();
         initChooser();
-
-        initValue();
-
-        projectName.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> switchProject(newValue));
-
-    }
-
-    private void initValue() {
         intProjectName();
-        initTextFieldValue();
-        initTemplate();
-        initPlane();
-        initProtocolFiles();
+        loadValueByConfig();
+        projectName.getSelectionModel().selectedItemProperty().
+                addListener((observable, oldValue, newValue) -> switchProject(newValue));
     }
+
 
     private void configValue() {
         habit = HabitUtil.getHabit();
@@ -195,12 +187,21 @@ public class MainController implements Initializable {
 
     private void intProjectName() {
         projectName.getItems().clear();
+
         for (ProjectConfig habitConfig : habit.getConfigs()) {
             projectName.getItems().add(habitConfig.getProjectName());
             if (habitConfig.getProjectName().equals(config.getProjectName())) {
                 projectName.getSelectionModel().select(habitConfig.getProjectName());
             }
         }
+
+    }
+
+    private void loadValueByConfig() {
+        initTextFieldValue();
+        initTemplate();
+        initPlane();
+        initProtocolFiles();
     }
 
     private void initTableView() {
@@ -326,6 +327,7 @@ public class MainController implements Initializable {
                 }
             }
         }
+        protocolViewClear();
     }
 
     public void addProtocolFile() {
@@ -410,17 +412,22 @@ public class MainController implements Initializable {
     }
 
 
+    private void protocolViewClear() {
+        tableViewProtocolView.getItems().clear();
+        enums.clear();
+        beans.clear();
+        messages.clear();
+        events.clear();
+    }
+
     public void protocolView() {
 
         if (protocolFiles.size() == 0) {
             logger.warn("没有选择协议文件");
             return;
         }
-        tableViewProtocolView.getItems().clear();
-        enums.clear();
-        beans.clear();
-        messages.clear();
-        events.clear();
+
+        protocolViewClear();
         IoReader.getInstance().getIoProtocolReaderMap().clear();
 
         List<ProtocolData> protocolDatas = new ArrayList<>();
@@ -531,7 +538,11 @@ public class MainController implements Initializable {
         dialog.setContentText(resources.getString("label.input.project.name"));
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
-            updateProjectName(result.get());
+            String value = result.get().trim();
+            if (checkProjectName(value)) {
+                updateProjectName(value);
+            }
+
         } else {
             logger.warn("请输入项目名");
         }
@@ -546,24 +557,31 @@ public class MainController implements Initializable {
         }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            updateProjectName(file.getName());
-            fileVale(file, config);
-            initValue();
+            if (checkProjectName(file.getName())) {
+                fileVale(file, config);
+                updateProjectName(config.getProjectName());
+            }
         }
     }
 
-    private void updateProjectName(String value) {
+    private boolean checkProjectName(String value) {
         value = value.trim();
         if (value.length() == 0) {
             logger.warn("请输入项目名");
-            return;
+            return false;
         }
         for (ProjectConfig habitConfig : habit.getConfigs()) {
             if (Objects.equals(habitConfig.getProjectName(), value)) {
                 logger.warn("{} 项目名存在,请重新更换一个", value);
-                return;
+                return false;
             }
         }
+        return true;
+    }
+
+    private void updateProjectName(String value) {
+        config.setProjectName(value);
+        habit.setUserProject(value);
         String old = projectName.getSelectionModel().getSelectedItem();
         projectName.getItems().remove(old);
         projectName.getItems().add(value);
@@ -572,8 +590,7 @@ public class MainController implements Initializable {
         if (file.exists()) {
             file.renameTo(CheckUtil.getProjectNameFile(value));
         }
-        config.setProjectName(value);
-        habit.setUserProject(value);
+
     }
 
     public void createProjectByChose() {
@@ -581,14 +598,15 @@ public class MainController implements Initializable {
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp.getParentFile());
         } else {
-            directoryChooser.setInitialDirectory(new File(AppEvn.getClassRootPath()));
+            directoryChooser.setInitialDirectory(null);
         }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             ProjectConfig projectConfig = createProject(file.getName());
             if (projectConfig != null) {
                 fileVale(file, projectConfig);
-                switchProject(file.getName());
+                projectName.getItems().add(projectConfig.getProjectName());
+                projectName.getSelectionModel().select(projectConfig.getProjectName());
             }
         }
     }
@@ -625,7 +643,8 @@ public class MainController implements Initializable {
             if (projectName.length() > 0) {
                 ProjectConfig projectConfig = createProject(name);
                 if (projectConfig != null) {
-                    switchProject(name);
+                    this.projectName.getItems().add(name);
+                    this.projectName.getSelectionModel().select(name);
                 }
             } else {
                 logger.warn("请输入项目名");
@@ -659,9 +678,11 @@ public class MainController implements Initializable {
         }
 
         boolean remove = false;
+        String value = null;
         for (int i = 0; i < habit.getConfigs().size(); i++) {
             ProjectConfig projectConfig = habit.getConfigs().get(i);
             if (Objects.equals(projectConfig.getProjectName(), config.getProjectName())) {
+                value = config.getProjectName();
                 habit.getConfigs().remove(i);
                 remove = true;
 
@@ -669,9 +690,8 @@ public class MainController implements Initializable {
         }
         if (remove) {
             habit.setUserProject(habit.getConfigs().get(0).getProjectName());
-            configValue();
-            logger.debug("切换到项目 {}", config.getProjectName());
-            switchProject(config.getProjectName());
+            projectName.getItems().remove(value);
+            projectName.getSelectionModel().select(habit.getUserProject());
 
         } else {
             logger.error("删除项目失败");
@@ -680,12 +700,12 @@ public class MainController implements Initializable {
     }
 
 
-
     private void switchProject(String name) {
-        logger.info("切换项目----------");
+        //   logger.info("切换项目----------");
+        updateConfig();
         habit.setUserProject(name);
         configValue();
-        initValue();
+        loadValueByConfig();
 
     }
 
@@ -702,7 +722,7 @@ public class MainController implements Initializable {
         javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
         javaConfig.setJavaSCMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
         javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
-        javaConfig.setJavaEventHandlerCodeRootPath(file.getAbsolutePath());
+        javaConfig.setJavaEventHandlerCodeRootPath(codeFile.getAbsolutePath());
         javaConfig.setJavaEventHandlerCodeRootChooserPath(file.getAbsolutePath());
 
     }
