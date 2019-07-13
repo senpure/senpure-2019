@@ -14,8 +14,8 @@
             <PatternLayout pattern="%d{HH:mm:ss} [%-5level] - %msg%n"/>
             <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
         </TextArea>
-        <RollingFile name="ROLLING" fileName="generator.log"
-                     filePattern="generator.%d{yyyy-MM-dd}_%i.log">
+        <RollingFile name="ROLLING" fileName="logs/generator.log"
+                     filePattern="logs/generator.%d{yyyy-MM-dd}_%i.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy modulate="true" interval="1"/>

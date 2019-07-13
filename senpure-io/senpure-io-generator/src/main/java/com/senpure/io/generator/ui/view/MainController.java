@@ -476,6 +476,7 @@ public class MainController implements Initializable {
         }
 
         if (error) {
+            protocolViewClear();
             //  logger.error("协议文件语法或格式不对请仔细检查修改");
             return;
         }
@@ -735,9 +736,9 @@ public class MainController implements Initializable {
     }
 
     public void openLog() {
-        File logFile = new File(AppEvn.getClassRootPath(), "generator.log");
+        File logFile = new File(AppEvn.getClassRootPath(), "logs/generator.log");
         if (!AppEvn.classInJar(getClass())) {
-            logFile = new File(System.getProperty("user.dir"), "generator.log");
+            logFile = new File(System.getProperty("user.dir"), "logs/generator.log");
         }
         if (AppEvn.isWindowsOS()) {
 
@@ -774,8 +775,8 @@ public class MainController implements Initializable {
             if (error) {
                 return;
             }
-            JavaConfig javaConfig = new JavaConfig();
-            javaConfigValue(javaConfig, false);
+           // JavaConfig javaConfig = new JavaConfig();
+            javaConfigValue(javaConfig);
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
             executorContext.setJavaConfig(javaConfig);
@@ -789,8 +790,8 @@ public class MainController implements Initializable {
 
 
         } else {
-            JavaConfig javaConfig = new JavaConfig();
-            javaConfigValue(javaConfig, false);
+            //JavaConfig javaConfig = new JavaConfig();
+            javaConfigValue(javaConfig);
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
             executorContext.setJavaConfig(javaConfig);
@@ -892,12 +893,12 @@ public class MainController implements Initializable {
         config.setProtocolFiles(protocolFiles);
 
         //java
-        javaConfigValue(javaConfig, true);
+        javaConfigValue(javaConfig);
         //java
 
     }
 
-    private void javaConfigValue(JavaConfig javaConfig, boolean save) {
+    private void javaConfigValue(JavaConfig javaConfig) {
         javaConfig.setJavaEventHandlerCodeRootPath(textFieldJavaEventHandlerCodeRootPath.getText());
         javaConfig.setJavaBeanCodeRootPath(textFieldJavaBeanCodeRootPath.getText());
         javaConfig.setJavaCSMessageHandlerCodeRootPath(textFieldJavaCSMessageHandlerCodeRootPath.getText());
@@ -909,15 +910,10 @@ public class MainController implements Initializable {
         javaConfig.setJavaCSMessageHandlerTemplate(choiceJavaCSMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaSCMessageHandlerTemplate(choiceJavaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaEventHandlerTemplate(choiceJavaEventHandler.getSelectionModel().getSelectedItem().getName());
-        if (save) {
-            javaConfig.setJavaEventHandlerCover(false);
-            javaConfig.setJavaCSMessageHandlerCover(false);
-            javaConfig.setJavaSCMessageHandlerCover(false);
-        } else {
-            javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
-            javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
-            javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
-        }
+
+        javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
+        javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
+
         javaConfig.setGenerateJavaBean(checkJavaBean.isSelected());
         javaConfig.setGenerateJavaEnum(checkJavaEnum.isSelected());
         javaConfig.setGenerateJavaEvent(checkJavaEvent.isSelected());

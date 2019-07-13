@@ -65,7 +65,9 @@ public class HabitUtil {
     }
 
     public static ProjectConfig getUseConfig() {
-
+        if (habit == null) {
+            loadHabit();
+        }
         for (ProjectConfig config : habit.getConfigs()) {
             if (Objects.equals(config.getProjectName(), habit.getUserProject())) {
                 return config;
@@ -101,7 +103,7 @@ public class HabitUtil {
         }
         JavaConfig javaConfig = projectConfig.getJavaConfig();
         if (!new File(javaConfig.getJavaEventHandlerCodeRootPath()).exists()) {
-           // javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
+            // javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
         }
         if (!new File(javaConfig.getJavaBeanCodeRootPath()).exists()) {
@@ -109,7 +111,7 @@ public class HabitUtil {
             javaConfig.setJavaBeanCodeRootChooserPath(new File(javaConfig.getJavaBeanCodeRootPath()).getParent());
         }
         if (!new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).exists()) {
-           // javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+            // javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
             javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
         }
         if (!new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).exists()) {

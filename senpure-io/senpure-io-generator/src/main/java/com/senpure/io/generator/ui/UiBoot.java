@@ -36,8 +36,7 @@ public class UiBoot extends AbstractJavaFxApplicationSupport {
     }
 
     public static void main(String[] args) {
-        AppEvn.markClassRootPath();
-        AppEvn.installAnsiConsole();
+
 
         launch(UiBoot.class, MainView.class,
                 args
@@ -51,9 +50,9 @@ public class UiBoot extends AbstractJavaFxApplicationSupport {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             logger.error("出现错误", e);
             if (AppEvn.isWindowsOS()) {
-                File logFile = new File(AppEvn.getClassRootPath(), "generator.log");
+                File logFile = new File(AppEvn.getClassRootPath(), "logs/generator.log");
                 if (!AppEvn.classInJar(getClass())) {
-                    logFile = new File(System.getProperty("user.dir"), "generator.log");
+                    logFile = new File(System.getProperty("user.dir"), "logs/generator.log");
                 }
                 NoteUtil.openNote(logFile, (int) (e.getStackTrace().length * 1.6));
             }

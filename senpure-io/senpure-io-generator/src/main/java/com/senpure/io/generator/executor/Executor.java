@@ -111,6 +111,10 @@ public class Executor {
                 generateJavaEventHandler();
             }
         }
+        else {
+
+            logger.debug("不生成java代码");
+        }
     }
 
     private void checkFile(File file) {
