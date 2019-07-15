@@ -612,8 +612,9 @@ public class MainController implements Initializable {
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             if (checkProjectName(file.getName())) {
-                fileVale(file, config);
                 updateProjectName(config.getProjectName());
+                fileVale(file, config);
+                loadValueByConfig();
             }
         }
     }
