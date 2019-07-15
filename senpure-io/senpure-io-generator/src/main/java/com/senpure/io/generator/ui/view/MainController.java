@@ -163,6 +163,8 @@ public class MainController implements Initializable {
     private List<Event> events = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
 
+    private boolean allChoose = true;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -495,6 +497,52 @@ public class MainController implements Initializable {
 
     }
 
+    public void chooseBeanAndEnum() {
+        logger.info("选择上bean/enum");
+        for (ProtocolData item : tableViewProtocolView.getItems()) {
+            if ("bean".equals(item.getType()) || "enum".equals(item.getType())) {
+                item.setGenerate(true);
+            }
+        }
+    }
+
+    public void chooseCSMessage() {
+        logger.info("选择上csMessage");
+        for (ProtocolData item : tableViewProtocolView.getItems()) {
+            if ("csMessage".equals(item.getType())) {
+                item.setGenerate(true);
+            }
+        }
+    }
+
+    public void chooseSCMessage() {
+        logger.info("选择上scMessage");
+        for (ProtocolData item : tableViewProtocolView.getItems()) {
+            if ("scMessage".equals(item.getType())) {
+                item.setGenerate(true);
+            }
+        }
+    }
+
+    public void chooseEvent() {
+        logger.info("选择上event");
+        for (ProtocolData item : tableViewProtocolView.getItems()) {
+            if ("event".equals(item.getType())) {
+                item.setGenerate(true);
+            }
+        }
+    }
+
+    public void chooseAll() {
+        allChoose = !allChoose;
+        logger.debug(allChoose ? "选择所有" : "取消所有");
+        tableViewProtocolView.getItems().forEach(item -> item.setGenerate(allChoose));
+    }
+
+    public void expandProtocolConfig() {
+        accordionMessage.setExpandedPane(titledPaneProtocolConfig);
+    }
+
     public void choiceJavaBeanCodeRootPath() {
         directoryChooser.setInitialDirectory(new File(javaConfig.getJavaBeanCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
@@ -775,7 +823,7 @@ public class MainController implements Initializable {
             if (error) {
                 return;
             }
-           // JavaConfig javaConfig = new JavaConfig();
+            // JavaConfig javaConfig = new JavaConfig();
             javaConfigValue(javaConfig);
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
@@ -790,6 +838,11 @@ public class MainController implements Initializable {
 
 
         } else {
+
+            if (enums.size() + beans.size() + events.size() + messages.size() == 0) {
+                logger.warn("未选择任何可生产的对象");
+                return;
+            }
             //JavaConfig javaConfig = new JavaConfig();
             javaConfigValue(javaConfig);
             executorContext = new ExecutorContext();

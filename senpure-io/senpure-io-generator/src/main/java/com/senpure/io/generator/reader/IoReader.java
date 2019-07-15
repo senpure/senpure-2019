@@ -40,9 +40,10 @@ public class IoReader {
                 ioProtocolReaderMap.putIfAbsent(key, ioProtocolReader);
                 return ioProtocolReader;
             }
+            return ioProtocolReader;
 
         } else {
-            logger.debug("{} 文件后缀格式不对", key);
+            logger.warn("{} 文件后缀格式不对,需要.io", key);
         }
 
         return null;

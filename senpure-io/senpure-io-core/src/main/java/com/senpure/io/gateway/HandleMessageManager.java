@@ -27,15 +27,15 @@ public class HandleMessageManager {
     private boolean serverShare;
     private List<ProducerManager> serverManagers = new ArrayList<>();
     private ProducerManager serverManager;
-    private GatewayMessageExecutor messageExecuter;
+    private GatewayMessageExecutor messageExecutor;
     private int csAskHandleMessageId = new CSAskHandleMessage().getMessageId();
     //   private AtomicInteger atomicIndex = new AtomicInteger(-1);
     private int handId;
 
-    public HandleMessageManager(int handId, boolean direct, boolean serverShare, GatewayMessageExecutor messageExecuter) {
+    public HandleMessageManager(int handId, boolean direct, boolean serverShare, GatewayMessageExecutor messageExecutor) {
         this.direct = direct;
         this.serverShare = serverShare;
-        this.messageExecuter = messageExecuter;
+        this.messageExecutor = messageExecutor;
         this.handId = handId;
         if (direct && serverShare) {
             Assert.error("direct 与 serverShare 不能同时为true ");
@@ -83,12 +83,12 @@ public class HandleMessageManager {
                 errorMessage.setType(Constant.ERROR_SERVER_ERROR);
                 errorMessage.setId(message.getMessageId());
                 errorMessage.setMessage("询问值只能是String类型" + MessageIdReader.read(message.getMessageId()));
-                messageExecuter.sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
+                messageExecutor.sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
                 return;
             }
             CSAskHandleMessage askHandleMessage = new CSAskHandleMessage();
             askHandleMessage.setFromMessageId(message.getMessageId());
-            askHandleMessage.setToken(messageExecuter.idGenerator.nextId());
+            askHandleMessage.setToken(messageExecutor.idGenerator.nextId());
             askHandleMessage.setValue(value);
             Client2GatewayMessage temp = new Client2GatewayMessage();
             temp.setMessageId(csAskHandleMessageId);
@@ -100,7 +100,7 @@ public class HandleMessageManager {
             byte[] data = new byte[askHandleMessage.getSerializedSize()];
             buf.readBytes(data);
             temp.setData(data);
-            WaitAskTask waitAskTask = new WaitAskTask(messageExecuter.getGateway().getAskMaxDelay());
+            WaitAskTask waitAskTask = new WaitAskTask(messageExecutor.getGateway().getAskMaxDelay());
             waitAskTask.setAskToken(askHandleMessage.getToken());
             waitAskTask.setRequestId(message.getRequestId());
             waitAskTask.setFromMessageId(askHandleMessage.getFromMessageId());
@@ -113,7 +113,7 @@ public class HandleMessageManager {
             waitAskTask.setAskTimes(askTimes);
             waitAskTask.setMessage(message);
 
-            messageExecuter.waitAskMap.put(waitAskTask.getAskToken(), waitAskTask);
+            messageExecutor.waitAskMap.put(waitAskTask.getAskToken(), waitAskTask);
             for (ProducerManager serverManager : serverManagers) {
                 for (ProducerChannelManager channelManager : serverManager.getUseChannelManagers()) {
                     Channel channel = channelManager.nextChannel();

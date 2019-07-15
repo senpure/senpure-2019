@@ -76,10 +76,12 @@
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="252.0">
                                     <children>
-                                        <Button layoutX="14.0" layoutY="3.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="101.0" text="预览" />
-                                        <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="101.0" text="预览" />
-                                        <Button layoutX="14.0" layoutY="73.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="101.0" text="预览" />
-                                        <Button layoutX="14.0" layoutY="108.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="101.0" text="预览" />
+                                        <Button layoutX="14.0" layoutY="3.0" mnemonicParsing="false" onAction="#chooseBeanAndEnum" prefHeight="23.0" prefWidth="101.0" text="选择base" />
+                                        <Button layoutX="14.0" layoutY="38.0" mnemonicParsing="false" onAction="#chooseCSMessage" prefHeight="23.0" prefWidth="101.0" text="选择CS" />
+                                        <Button layoutX="14.0" layoutY="73.0" mnemonicParsing="false" onAction="#chooseSCMessage" prefHeight="23.0" prefWidth="101.0" text="选择SC" />
+                                        <Button layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#chooseEvent" prefHeight="23.0" prefWidth="101.0" text="选择event" />
+                                        <Button layoutX="14.0" layoutY="143.0" mnemonicParsing="false" onAction="#chooseAll" prefHeight="23.0" prefWidth="101.0" text="全选/清空" />
+                                        <Button layoutX="14.0" layoutY="178.0" mnemonicParsing="false" onAction="#expandProtocolConfig" prefHeight="23.0" prefWidth="101.0" text="配置面板" />
                                     </children>
                                 </AnchorPane>
                             </items>
