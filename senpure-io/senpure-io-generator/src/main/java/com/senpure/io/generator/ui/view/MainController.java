@@ -913,6 +913,7 @@ public class MainController implements Initializable {
 
         javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
         javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
+        javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
 
         javaConfig.setGenerateJavaBean(checkJavaBean.isSelected());
         javaConfig.setGenerateJavaEnum(checkJavaEnum.isSelected());
