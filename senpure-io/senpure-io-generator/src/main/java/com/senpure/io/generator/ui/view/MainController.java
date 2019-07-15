@@ -402,7 +402,12 @@ public class MainController implements Initializable {
         if (index > -1) {
             FileData fileData = tableViewFileView.getItems().remove(index);
             protocolFiles.remove(fileData.getFile());
+
             logger.debug("移除 {} -> {}", fileData.getName(), fileData.getPath());
+            if (tableViewProtocolView.getItems().size() > 0) {
+                logger.info("清除协议预览");
+                protocolViewClear();
+            }
         } else {
             logger.warn("没有选择任何文件");
         }
