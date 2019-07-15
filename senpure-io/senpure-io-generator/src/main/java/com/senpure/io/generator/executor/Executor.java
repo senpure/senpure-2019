@@ -56,12 +56,12 @@ public class Executor {
         }
     }
 
-    public  boolean check() {
+    public boolean check() {
         boolean check = true;
         for (Bean bean : context.getBeans()) {
             boolean temp = CheckUtil.check(bean);
             if (!temp) {
-                check =false;
+                check = false;
             }
         }
         for (Enum anEnum : context.getEnums()) {
@@ -92,8 +92,8 @@ public class Executor {
         }
         if (javaConfig != null) {
             if (javaConfig.isGenerateJavaBean()) {
-                generateJavaBean();
                 generateJavaEnum();
+                generateJavaBean();
             }
             if (javaConfig.isGenerateJavaMessage()) {
                 generateJavaMessage();
@@ -110,8 +110,7 @@ public class Executor {
             if (javaConfig.isGenerateJavaEventHandler()) {
                 generateJavaEventHandler();
             }
-        }
-        else {
+        } else {
 
             logger.debug("不生成java代码");
         }
@@ -127,7 +126,7 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(javaConfig.getJavaBeanTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaBeanTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -145,7 +144,7 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(javaConfig.getJavaEnumTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaEnumTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -164,7 +163,7 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(javaConfig.getJavaMessageTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaMessageTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -182,7 +181,7 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(templateName);
+            template = cfg.getTemplate(templateName, "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -197,8 +196,9 @@ public class Executor {
                     } else {
                         cover = true;
                     }
+                } else {
+                    checkFile(file);
                 }
-                checkFile(file);
                 message.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
                 if (cover) {
                     logger.info("覆盖生成 messageHandler {} {}", file.getName(), file.getAbsoluteFile());
@@ -230,7 +230,7 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(javaConfig.getJavaEventTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaEventTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -248,7 +248,7 @@ public class Executor {
         changeTemplateDir2Java();
         Template template = null;
         try {
-            template = cfg.getTemplate(javaConfig.getJavaEventHandlerTemplate());
+            template = cfg.getTemplate(javaConfig.getJavaEventHandlerTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -263,8 +263,9 @@ public class Executor {
                     cover = true;
                 }
 
+            } else {
+                checkFile(file);
             }
-            checkFile(file);
             event.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             if (cover) {
                 logger.info("覆盖生成 eventHandler {} {}", file.getName(), file.getAbsoluteFile());
