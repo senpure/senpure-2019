@@ -28,7 +28,22 @@ public class Boot {
         AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
         if (Objects.equals(System.getProperty("silence"), "true")) {
-            ProjectConfig config = HabitUtil.getUseConfig();
+            ProjectConfig config = null;
+            String useProject = System.getProperty("useProject");
+            if (useProject == null) {
+                config = HabitUtil.getUseConfig();
+            } else {
+                for (ProjectConfig projectConfig : HabitUtil.getHabit().getConfigs()) {
+                    if (Objects.equals(projectConfig.getProjectName(), useProject)) {
+                        config = projectConfig;
+                        break;
+                    }
+                }
+                if (config == null) {
+                    logger.info("项目 {} 没有配置 ", useProject);
+                    return;
+                }
+            }
             logger.info("使用项目 {} ", config.getProjectName());
             boolean useCover = false;
             String cover = System.getProperty("cover");
