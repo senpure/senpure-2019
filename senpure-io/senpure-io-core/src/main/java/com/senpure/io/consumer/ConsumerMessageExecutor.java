@@ -46,7 +46,6 @@ public class ConsumerMessageExecutor {
     }
 
     public void execute(Channel channel, MessageFrame frame) {
-        //channel 本地构造的超时返回 channel = null
         service.execute(() -> {
             int requestId = frame.getRequestId();
             Message message = frame.getMessage();

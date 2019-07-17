@@ -150,7 +150,7 @@ public class DefaultFuture implements ResponseFuture {
                             frame.setMessage(errorMessage);
                             ConsumerMessageExecutor messageExecutor = Spring.getBean(ConsumerMessageExecutor.class);
                             if (messageExecutor != null) {
-                                messageExecutor.execute(null, frame);
+                                messageExecutor.execute(future.channel, frame);
                             } else {
                                 logger.warn("没有从spring 容器中找到  ConsumerMessageExecutor");
                             }
