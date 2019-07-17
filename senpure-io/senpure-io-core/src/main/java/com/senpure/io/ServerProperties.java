@@ -237,7 +237,7 @@ public class ServerProperties {
          */
         private String readableName = "realityServer";
         /**
-         * 关联id与类名的包名
+         * 关联id与类名的包名多个用,逗号分割
          */
         private String idNamesPackage;
         /**
