@@ -61,7 +61,7 @@ public class ServerProperties {
         /**
          * 没有channel时下一个可用channel重发消息的时间限制
          */
-        private int messageRetryTimeLimit = 60000;
+        private int messageRetryTimeLimit = 10000;
 
         /**
          * 输出格式化
@@ -267,7 +267,7 @@ public class ServerProperties {
         /**
          * 没有channel时下一个可用channel重发消息的时间限制
          */
-        private int messageRetryTimeLimit = 60000;
+        private int messageRetryTimeLimit = 10000;
 
         /**
          * 输出格式化
