@@ -141,7 +141,7 @@ public class ConsumerServerStarter implements ApplicationRunner {
                     String portStr = instance.getMetadata().get("csPort");
                     int port;
                     if (portStr == null) {
-                         port = gateway.getCsPort();
+                        port = gateway.getCsPort();
                     } else {
                         port = Integer.parseInt(portStr);
                     }
@@ -150,6 +150,7 @@ public class ConsumerServerStarter implements ApplicationRunner {
                             getRemoteServerChannelManager(serverKey);
                     remoteServerChannelManager.setHost(instance.getHost());
                     remoteServerChannelManager.setPort(port);
+                    remoteServerChannelManager.setDefaultMessageRetryTimeLimit(properties.getConsumer().getMessageRetryTimeLimit());
                     remoteServerManager.setDefaultChannelManager(remoteServerChannelManager);
 
                 } else {
@@ -178,6 +179,7 @@ public class ConsumerServerStarter implements ApplicationRunner {
                             if (consumerServer.start(remoteServerChannelManager.getHost(), remoteServerChannelManager.getPort())) {
                                 servers.add(consumerServer);
                                 //验证
+                                remoteServerChannelManager.addChannel(consumerServer.getChannel());
                                 failTimes = 0;
                             } else {
                                 lastFailTime = now;

@@ -1,8 +1,8 @@
 package com.senpure.io.consumer;
 
 import com.senpure.io.ServerProperties;
-import com.senpure.io.consumer.remoting.DefaultFuture;
-import com.senpure.io.consumer.remoting.ResponseResult;
+import com.senpure.io.consumer.remoting.Response;
+import com.senpure.io.consumer.remoting.ResponseCallback;
 import com.senpure.io.protocol.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,31 +63,65 @@ public class RemoteServerManager {
     }
 
     /**
-     * 发送一个同步消息,必须有返回
+     * @param message  消息
+     * @param callback 回调
+     */
+    public void sendMessage(Message message, ResponseCallback callback) {
+
+        sendMessage(message, callback, defaultTimeout);
+    }
+
+    /**
+     * @param message  消息
+     * @param callback 回调
+     * @param timeout  超时 毫秒
+     */
+    public void sendMessage(Message message, ResponseCallback callback, int timeout) {
+        MessageFrame frame = new MessageFrame();
+        frame.setRequestId(nextRequestId());
+        frame.setMessage(message);
+
+        defaultChannelManager.sendMessage(frame, callback, timeout);
+
+    }
+
+    /**
+     * 发送一个同步消息
      *
      * @param message
      */
-    public ResponseResult sendSyncMessage(Message message) {
+    public Response sendSyncMessage(Message message) {
         return sendSyncMessage(message, defaultTimeout);
     }
 
 
     /**
-     * 发送一个同步消息,必须有返回
+     * 发送一个同步消息
      *
      * @param message
      * @param timeout 超时毫秒
      */
-    public ResponseResult sendSyncMessage(Message message, int timeout) {
+    public Response sendSyncMessage(Message message, int timeout) {
         MessageFrame frame = new MessageFrame();
         frame.setRequestId(nextRequestId());
         frame.setMessage(message);
-        DefaultFuture future = new DefaultFuture(frame, timeout);
-
-        defaultChannelManager.sendMessage(frame);
-        return future.get();
+        return defaultChannelManager.sendSyncMessage(frame, timeout);
     }
 
+    /**
+     * 发送一个同步消息
+     *
+     * @param message
+     * @param timeout               超时毫秒
+     * @param messageRetryTimeLimit 如果连接不可用额外等待时间 毫秒
+     * @return
+     */
+    public Response sendSyncMessage(Message message, int timeout, int messageRetryTimeLimit) {
+        MessageFrame frame = new MessageFrame();
+        frame.setRequestId(nextRequestId());
+        frame.setMessage(message);
+        return defaultChannelManager.sendSyncMessage(frame, timeout, messageRetryTimeLimit);
+    }
 
     private int nextRequestId() {
         int requestId = atomicRequestId.getAndIncrement();

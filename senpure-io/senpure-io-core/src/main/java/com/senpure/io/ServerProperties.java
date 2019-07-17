@@ -58,6 +58,10 @@ public class ServerProperties {
          * 与目标建立的channel 数量
          */
         private int remoteChannel = 2;
+        /**
+         * 没有channel时下一个可用channel重发消息的时间限制
+         */
+        private int messageRetryTimeLimit = 60000;
 
         /**
          * 输出格式化
@@ -197,6 +201,14 @@ public class ServerProperties {
             this.executorThreadPoolSize = executorThreadPoolSize;
         }
 
+        public int getMessageRetryTimeLimit() {
+            return messageRetryTimeLimit;
+        }
+
+        public void setMessageRetryTimeLimit(int messageRetryTimeLimit) {
+            this.messageRetryTimeLimit = messageRetryTimeLimit;
+        }
+
         public long getConnectFailInterval() {
             return connectFailInterval;
         }
@@ -252,6 +264,11 @@ public class ServerProperties {
          * 与网关建立的channel 数量
          */
         private int gatewayChannel = 2;
+        /**
+         * 没有channel时下一个可用channel重发消息的时间限制
+         */
+        private int messageRetryTimeLimit = 60000;
+
         /**
          * 输出格式化
          */
@@ -390,6 +407,14 @@ public class ServerProperties {
 
         public void setIdNamesPackage(String idNamesPackage) {
             this.idNamesPackage = idNamesPackage;
+        }
+
+        public int getMessageRetryTimeLimit() {
+            return messageRetryTimeLimit;
+        }
+
+        public void setMessageRetryTimeLimit(int messageRetryTimeLimit) {
+            this.messageRetryTimeLimit = messageRetryTimeLimit;
         }
     }
 

@@ -5,6 +5,7 @@ import com.senpure.io.consumer.ConsumerMessageExecutor;
 import com.senpure.io.consumer.MessageFrame;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.protocol.Constant;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,21 +33,23 @@ public class DefaultFuture implements ResponseFuture {
     private final int messageId;
 
     private final int timeout;
+    private final Channel channel;
 
     private final Lock lock = new ReentrantLock();
     private final Condition done = lock.newCondition();
     private final long start = System.currentTimeMillis();
 
 
-    private volatile ResponseResult result;
+    private volatile Response response;
     private volatile ResponseCallback callback;
 
 
-    public DefaultFuture(MessageFrame frame, int timeout) {
+    public DefaultFuture(MessageFrame frame, Channel channel, int timeout) {
 
         this.requestId = frame.getRequestId();
         this.messageId = frame.getMessage().getMessageId();
         this.timeout = timeout;
+        this.channel = channel;
         FUTURES.put(requestId, this);
     }
 
@@ -56,12 +59,10 @@ public class DefaultFuture implements ResponseFuture {
     }
 
 
-
-
-    public void doReceived(ResponseResult result) {
+    public void doReceived(Response response) {
         lock.lock();
         try {
-            this.result = result;
+            this.response = response;
             done.signal();
         } finally {
             lock.unlock();
@@ -73,13 +74,13 @@ public class DefaultFuture implements ResponseFuture {
 
 
     @Override
-    public ResponseResult get() {
+    public Response get() {
         return get(timeout);
     }
 
 
     @Override
-    public ResponseResult get(int timeout) {
+    public Response get(int timeout) {
         if (timeout <= 0) {
             timeout = 500;
         }
@@ -102,7 +103,7 @@ public class DefaultFuture implements ResponseFuture {
                 throw new RuntimeException("ResponseFuture get() 超时" + timeout);
             }
         }
-        return result;
+        return response;
 
     }
 
@@ -147,11 +148,10 @@ public class DefaultFuture implements ResponseFuture {
                             MessageFrame frame = new MessageFrame();
                             frame.setRequestId(future.getRequestId());
                             frame.setMessage(errorMessage);
-                            ConsumerMessageExecutor messageExecutor=  Spring.getBean(ConsumerMessageExecutor.class);
+                            ConsumerMessageExecutor messageExecutor = Spring.getBean(ConsumerMessageExecutor.class);
                             if (messageExecutor != null) {
                                 messageExecutor.execute(null, frame);
-                            }
-                            else {
+                            } else {
                                 logger.warn("没有从spring 容器中找到  ConsumerMessageExecutor");
                             }
 
@@ -170,7 +170,7 @@ public class DefaultFuture implements ResponseFuture {
 
     @Override
     public boolean isDone() {
-        return result != null;
+        return response != null;
     }
 
 
@@ -179,24 +179,28 @@ public class DefaultFuture implements ResponseFuture {
         if (callback == null) {
             throw new NullPointerException("回调不能为空");
         }
-        if (result == null) {
+        if (response == null) {
             throw new NullPointerException("结果不能为空");
         }
 
-        if (result.isSuccess()) {
-            try {
-                callback.success(result.getValue());
-            } catch (Exception e) {
-                logger.error("执行成功回调出错", e);
-            }
-        } else {
-            try {
-                callback.fail(result.getError());
-            } catch (Exception e) {
-                logger.error("执行失败回调出错", e);
-            }
+        try {
+            callback.execute(response);
+        } catch (Exception e) {
+            logger.error("执行回调出错", e);
         }
 
+//        if (response.isSuccess()) {
+//            try {
+//                callback.success(response.getValue());
+//            } catch (Exception e) {
+//                logger.error("执行成功回调出错", e);
+//            }
+//        } else {
+//            try {
+//                callback.fail(response.getError());
+//            } catch (Exception e) {
+//                logger.error("执行失败回调出错", e);
+//            }
     }
 
 

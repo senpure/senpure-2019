@@ -1,7 +1,5 @@
 package com.senpure.io.consumer.remoting;
 
-import com.senpure.io.protocol.Message;
-
 /**
  * ResponseCallback
  *
@@ -10,7 +8,5 @@ import com.senpure.io.protocol.Message;
  */
 public interface ResponseCallback {
 
-    void success(Message message);
-
-    void fail(Message message);
+    void execute(Response result);
 }

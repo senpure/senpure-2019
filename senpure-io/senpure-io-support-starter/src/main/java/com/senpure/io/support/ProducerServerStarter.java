@@ -165,9 +165,15 @@ public class ProducerServerStarter implements ApplicationRunner {
                         if (producerServer.start(instance.getHost(), port)) {
                             servers.add(producerServer);
                             regServer(producerServer, handleMessages);
-                            if (gatewayChannelManager.getChannelSize() == 1 && finalIdNames != null && finalIdNames.size() > 0) {
-                                regIdNames(producerServer, finalIdNames);
+                            if (gatewayChannelManager.getChannelSize() == 0) {
+                                gatewayChannelManager.setDefaultMessageRetryTimeLimit(producer.getMessageRetryTimeLimit());
+                                if (finalIdNames != null && finalIdNames.size() > 0) {
+                                    regIdNames(producerServer, finalIdNames);
+                                }
                             }
+                            //认证
+                            gatewayChannelManager.addChannel(producerServer.getChannel());
+
                         } else {
                             failGatewayMap.put(gatewayKey, now);
                         }

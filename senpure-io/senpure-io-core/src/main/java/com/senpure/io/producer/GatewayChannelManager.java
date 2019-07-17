@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -23,8 +21,8 @@ public class GatewayChannelManager {
 
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
 
-    private List<Producer2GatewayMessage> failMessage = new ArrayList<>(128);
-
+    private List<FailMessage> failMessages = new ArrayList<>(128);
+    private int defaultMessageRetryTimeLimit = 10000;
     private boolean connecting = false;
 
     private ReadWriteLock connectLock = new ReentrantReadWriteLock();
@@ -44,6 +42,9 @@ public class GatewayChannelManager {
 
 
     public void addChannel(Channel channel) {
+        if (channels.contains(channel)) {
+            return;
+        }
         channels.add(channel);
         checkFailMessage();
     }
@@ -53,33 +54,65 @@ public class GatewayChannelManager {
     }
 
     private void checkFailMessage() {
-        ProducerMessageExecutor executor = Spring.getBean(ProducerMessageExecutor.class);
-        if (executor != null) {
-            executor.execute(this::sendFailMessage);
-        } else {
-            logger.warn("没有从spring 容器中找到ProducerMessageExecutor");
-            new Thread(this::sendFailMessage).start();
+        synchronized (failMessages) {
+            if (failMessages.size() > 0) {
+                ProducerMessageExecutor executor = Spring.getBean(ProducerMessageExecutor.class);
+                if (executor != null) {
+                    executor.execute(this::sendFailMessage);
+                } else {
+                    logger.warn("没有从spring 容器中找到ProducerMessageExecutor");
+                    new Thread(this::sendFailMessage).start();
+                }
+            }
         }
 
     }
 
     private void sendFailMessage() {
-        List<Producer2GatewayMessage> list = null;
-        synchronized (failMessage) {
-            if (failMessage.size() > 0) {
-                list = new ArrayList<>(failMessage);
-                failMessage.clear();
+        List<FailMessage> list = new ArrayList<>(failMessages.size());
+        long now = System.currentTimeMillis();
+        synchronized (failMessages) {
+            if (failMessages.size() > 0) {
+                for (FailMessage message : failMessages) {
+                    if (now - message.startTime <= message.messageRetryTimeLimit) {
+                        list.add(message);
+                    } else {
+                        logger.warn("超过重试时间限制,不在重新发送 {}", message);
+                    }
+                }
+                failMessages.clear();
             }
         }
-        if (list != null) {
-            logger.info("重新发送失败消息 {}", list.size());
-            sendMessage(list);
+
+        if (list.size() > 0) {
+            Channel channel = nextChannel();
+            if (channel != null) {
+                int temp = 1;
+                for (FailMessage failMessage : list) {
+                    logger.info("重新发送消息{}", failMessage.frame);
+                    channel.write(failMessage.frame);
+                    if (temp % 100 == 0) {
+                        channel.flush();
+                        temp = 1;
+                    }
+                    temp++;
+                }
+                if (temp > 1) {
+                    channel.flush();
+                }
+            } else {
+                synchronized (failMessages) {
+                    failMessages.addAll(list);
+                }
+            }
         }
     }
 
-    private void addFailMessage(Producer2GatewayMessage frame) {
-        synchronized (failMessage) {
-            failMessage.add(frame);
+    //心跳不会走这里
+    private void addFailMessage(FailMessage failMessage) {
+        synchronized (failMessages) {
+            logger.info("加入重新发送队列,等待可用channel {}", failMessage.frame);
+            failMessages.add(failMessage);
         }
     }
 
@@ -101,11 +134,7 @@ public class GatewayChannelManager {
             return;
         }
 
-        for (Producer2GatewayMessage frame : frames) {
-            addFailMessage(frame);
-        }
 
-        logger.error("全部channel 不可用 {}", toString());
     }
 
     public void sendMessage(Producer2GatewayMessage frame) {
@@ -114,7 +143,11 @@ public class GatewayChannelManager {
             channel.writeAndFlush(frame);
             return;
         }
-        addFailMessage(frame);
+        FailMessage failMessage = new FailMessage();
+        failMessage.startTime = System.currentTimeMillis();
+        failMessage.frame = frame;
+        failMessage.messageRetryTimeLimit = defaultMessageRetryTimeLimit;
+        addFailMessage(failMessage);
         logger.error("全部channel 不可用 {}", toString());
     }
 
@@ -189,6 +222,11 @@ public class GatewayChannelManager {
         return channels.size();
     }
 
+
+    public void setDefaultMessageRetryTimeLimit(int defaultMessageRetryTimeLimit) {
+        this.defaultMessageRetryTimeLimit = defaultMessageRetryTimeLimit;
+    }
+
     @Override
     public String toString() {
         return "GatewayChannelManager{" +
@@ -199,10 +237,24 @@ public class GatewayChannelManager {
                 '}';
     }
 
-    public static void main(String[] args) {
-        ConcurrentMap<Integer, Integer> ids = new ConcurrentHashMap<>();
-        System.out.println(ids.putIfAbsent(1, 1));
-        System.out.println(ids.putIfAbsent(1, 2));
-        System.out.println(ids.putIfAbsent(1, 3));
+    private static class FailMessage {
+        private long startTime;
+        private Producer2GatewayMessage frame;
+
+        private int messageRetryTimeLimit;
+
+        public void setStartTime(long startTime) {
+            this.startTime = startTime;
+        }
+
+        public void setFrame(Producer2GatewayMessage frame) {
+            this.frame = frame;
+        }
+
+        public void setMessageRetryTimeLimit(int messageRetryTimeLimit) {
+            this.messageRetryTimeLimit = messageRetryTimeLimit;
+        }
     }
+
+
 }

@@ -103,8 +103,7 @@ public class ProducerServer {
                 path = AppEvn.getClassRootPath();
             }
             String serverKey = address.getAddress().getHostAddress() + "->" + path;
-            GatewayChannelManager channelServer = gatewayManager.getGatewayChannelServer(gatewayKey);
-            channelServer.addChannel(channel);
+
             ChannelAttributeUtil.setRemoteServerKey(channel, gatewayKey);
             ChannelAttributeUtil.setLocalServerKey(channel, serverKey);
             logger.info("{}启动完成 localServerKey {} address {}", getReadableServerName(), serverKey, address);

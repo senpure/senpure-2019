@@ -144,7 +144,7 @@ public class GatewayAutoConfiguration {
 
         @Override
         public String toString() {
-            return "ResponseResult{" +
+            return "Response{" +
                     "code=" + code +
                     ", getValue='" + message + '\'' +
                     ", serverCenterAndWork=" + serverCenterAndWork +

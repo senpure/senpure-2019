@@ -3,12 +3,12 @@ package com.senpure.io.consumer.remoting;
 import com.senpure.io.protocol.Message;
 
 /**
- * ResponseResult
+ * Response
  *
  * @author senpure
  * @time 2019-06-28 11:13:28
  */
-public interface ResponseResult {
+public interface Response {
 
     boolean isSuccess();
 

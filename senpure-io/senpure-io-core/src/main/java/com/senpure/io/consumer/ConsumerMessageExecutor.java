@@ -2,8 +2,8 @@ package com.senpure.io.consumer;
 
 import com.senpure.io.ServerProperties;
 import com.senpure.io.consumer.remoting.DefaultFuture;
-import com.senpure.io.consumer.remoting.DefaultResult;
-import com.senpure.io.consumer.remoting.ResponseResult;
+import com.senpure.io.consumer.remoting.DefaultResponse;
+import com.senpure.io.consumer.remoting.Response;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.protocol.Message;
 import io.netty.channel.Channel;
@@ -61,11 +61,11 @@ public class ConsumerMessageExecutor {
                 DefaultFuture future = DefaultFuture.received(requestId);
                 if (future != null) {
                     if (isErrorMessage(message)) {
-                        ResponseResult result = new DefaultResult(null, message);
-                        future.doReceived(result);
+                        Response response = new DefaultResponse(null, message);
+                        future.doReceived(response);
                     } else {
-                        ResponseResult result = new DefaultResult(message, null);
-                        future.doReceived(result);
+                        Response response = new DefaultResponse(message, null);
+                        future.doReceived(response);
                     }
                 } else {
                     logger.warn("远程服务器返回时间过长,服务器已经做了超时处理 {}",frame);
