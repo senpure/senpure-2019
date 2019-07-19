@@ -439,17 +439,27 @@ public class MainController implements Initializable {
 
         List<ProtocolData> protocolDatas = new ArrayList<>();
         boolean error = false;
+        StringBuilder errorBuilder = new StringBuilder();
         for (File file : protocolFiles) {
             IoProtocolReader ioProtocolReader;
             try {
                 ioProtocolReader = IoReader.getInstance().read(file);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+               // logger.error(e.getMessage());
+                if (errorBuilder.length() > 0) {
+                    errorBuilder.append("\n");
+                }
+                errorBuilder.append(e.getMessage());
                 error = true;
                 continue;
             }
             if (ioProtocolReader.isHasError()) {
-                logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
+                if (errorBuilder.length() > 0) {
+                    errorBuilder.append("\n");
+                }
+                errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
+
+               // logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
                 error = true;
                 continue;
             }
@@ -484,6 +494,7 @@ public class MainController implements Initializable {
 
         if (error) {
             protocolViewClear();
+            logger.error("协议错误\n{}", errorBuilder.toString());
             //  logger.error("协议文件语法或格式不对请仔细检查修改");
             return;
         }
@@ -814,21 +825,32 @@ public class MainController implements Initializable {
             }
             IoReader.getInstance().getIoProtocolReaderMap().clear();
             boolean error = false;
+            StringBuilder errorBuilder = new StringBuilder();
             for (File file : protocolFiles) {
                 IoProtocolReader ioProtocolReader;
                 try {
                     ioProtocolReader = IoReader.getInstance().read(file);
                 } catch (Exception e) {
-                    logger.error(e.getMessage());
+                   // logger.error(e.getMessage());
+                    if (errorBuilder.length() > 0) {
+                        errorBuilder.append("\n");
+                    }
+                    errorBuilder.append(e.getMessage());
                     error = true;
                     continue;
                 }
                 if (ioProtocolReader.isHasError()) {
                     error = true;
-                    logger.error("{} 语法错误", ioProtocolReader.getFilePath());
+                    if (errorBuilder.length() > 0) {
+                        errorBuilder.append("\n");
+                    }
+                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
+
+                   // logger.error("{} 语法错误", ioProtocolReader.getFilePath());
                 }
             }
             if (error) {
+                logger.error("协议错误\n{}", errorBuilder.toString());
                 return;
             }
             // JavaConfig javaConfig = new JavaConfig();

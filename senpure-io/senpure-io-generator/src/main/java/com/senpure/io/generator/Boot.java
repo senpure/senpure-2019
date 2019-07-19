@@ -65,21 +65,31 @@ public class Boot {
                 return;
             }
             IoReader.getInstance().clear();
+            StringBuilder errorBuilder = new StringBuilder();
             boolean error = false;
             for (ProtocolFile protocolFile : config.getProtocolFiles()) {
                 try {
                     IoProtocolReader ioProtocolReader = IoReader.getInstance().read(new File(protocolFile.getPath()));
                     if (ioProtocolReader.isHasError()) {
-                        logger.error("{} 出现语法错误", ioProtocolReader.getFilePath());
+                        if (errorBuilder.length() > 0) {
+                            errorBuilder.append("\n");
+                        }
+                        errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
+                        //logger.error("{} 出现语法错误", ioProtocolReader.getFilePath());
                         error = true;
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage());
+                    if (errorBuilder.length() > 0) {
+                        errorBuilder.append("\n");
+                    }
+                    errorBuilder.append(e.getMessage());
+                    //logger.error(e.getMessage());
                     error = true;
                 }
 
             }
             if (error) {
+                logger.error("协议错误\n{}", errorBuilder.toString());
                 return;
             }
             ExecutorContext executorContext = new ExecutorContext();
