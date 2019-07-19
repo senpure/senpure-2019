@@ -383,7 +383,7 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
     private void checkName(Bean a, Bean b, String aName, String bName) {
-        if (aName.equals(bName)&&a.getNamespace().equals(b.getNamespace())) {
+        if (aName.equals(bName) && a.getNamespace().equals(b.getNamespace())) {
 
             checkErrorBuilder();
             errorBuilder.append(filePath).append(": 同有命名空间name重复 ").append(aName);
@@ -469,12 +469,27 @@ public class IoProtocolReader extends IoBaseListener {
         for (Bean bean : beans) {
             for (Field field : bean.getFields()) {
                 if (!field.isBaseField()) {
-                    Bean b = findBean(field.getClassType(), allBeans);
-                    if (b != null) {
+                    List<Bean> finds = findBean(field.getClassType(), allBeans);
+                    if (finds.size() == 1) {
+                        Bean b = finds.get(0);
                         if (b instanceof Enum) {
                             bean.setHasBean(false);
                         }
                         field.setBean(b);
+                    }
+                    if (finds.size() > 1) {
+                        checkErrorBuilder();
+                        errorBuilder.append(filePath)
+                                .append(" ")
+                                .append(field.getTypeLocation()).append(" ")
+                                .append(bean.getType());
+                        errorBuilder.append(bean.getName()).append(".").append(field.getName());
+                        errorBuilder.append("[");
+                        errorBuilder.append(field.getClassType())
+                                .append("] Type,引用不明确");
+                        for (Bean find : finds) {
+                            errorBuilder.append(find.getFilePath()).append(find.getNameLocation()).append(" ");
+                        }
                     } else {
                         checkErrorBuilder();
                         errorBuilder.append(filePath)
@@ -494,13 +509,14 @@ public class IoProtocolReader extends IoBaseListener {
         }
     }
 
-    private static Bean findBean(String type, List<Bean> beans) {
+    private static List<Bean> findBean(String type, List<Bean> beans) {
+        List<Bean> finds = new ArrayList<>(16);
         for (Bean bean : beans) {
             if (bean.getOriginalName().equals(type)) {
-                return bean;
+                finds.add(bean);
             }
         }
-        return null;
+        return finds;
     }
 
     public void read(File file, Map<String, IoProtocolReader> ioProtocolReaderMap) {
