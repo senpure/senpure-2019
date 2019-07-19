@@ -804,6 +804,8 @@ public class MainController implements Initializable {
 
 
     public void generateJavaCode() {
+        String str="messageHandler 存在不能生成 CSVolletballChatMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\volleyball\\protocol\\message\\handler\\CSVolletballChatMessageHandlermessageHandler 存在不能生成 CSJoinRoomMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\protocol\\message\\handler\\CSJoinRoomMessageHandler.java";
+       logger.info(str);
         ExecutorContext executorContext;
         if (tableViewProtocolView.getItems().size() == 0) {
             if (protocolFiles.size() == 0) {

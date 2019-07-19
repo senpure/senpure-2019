@@ -28,6 +28,9 @@ public class TextAreaAppender extends AbstractAppender {
 
     private static TextArea textArea;
 
+    private static int lineLen = 88;
+    private static String newLine = "\n";
+    private static String space = "    ";
     private static BlockingQueue<String> queue = new LinkedBlockingDeque();
 
     static {
@@ -40,6 +43,7 @@ public class TextAreaAppender extends AbstractAppender {
 
                         try {
                             String str = queue.take();
+
                             Platform.runLater(() -> textArea.insertText(0, str));
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -61,7 +65,61 @@ public class TextAreaAppender extends AbstractAppender {
         thread.start();
     }
 
+    private static String getStr(String str) {
+        StringBuilder out = new StringBuilder();
+        int len = 0;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (isChinese(c)) {
+                len += 2;
+            } else {
+                len++;
+            }
+            if (len == lineLen) {
+                out.append(c);
+                if (i < out.length() - 1) {
+                    out.append(newLine);
+                    out.append(space);
+
+                    len = 0;
+                }
+            } else if (len > lineLen) {
+                out.append(newLine).append(space);
+                out.append(c);
+                len = 2;
+            } else {
+                out.append(c);
+                if (c == '\n') {
+//                                        if (i < out.length() - 1) {
+//                                            out.append(space);
+//                                        }
+                    len = 0;
+                }
+            }
+        }
+        return out.toString();
+    }
+
+    private static boolean isChinese(char c) {
+        if (c >= 0x4E00 && c <= 0x9FA5) {
+            return true;
+        }
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+            return true;
+        }
+
+
+        return false;
+    }
+
     public static void setTextArea(TextArea textArea) {
+        // lineLen=textArea.getPrefColumnCount();
         TextAreaAppender.textArea = textArea;
     }
 
@@ -90,4 +148,17 @@ public class TextAreaAppender extends AbstractAppender {
     }
 
 
+    public static void main(String[] args) {
+
+        String str = "1345\naaa";
+        System.out.println(str);
+
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '\n') {
+
+                System.out.println("======");
+            }
+        }
+    }
 }

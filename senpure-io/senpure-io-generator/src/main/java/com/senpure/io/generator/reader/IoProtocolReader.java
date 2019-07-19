@@ -476,26 +476,23 @@ public class IoProtocolReader extends IoBaseListener {
                             bean.setHasBean(false);
                         }
                         field.setBean(b);
-                    }
-                    if (finds.size() > 1) {
+                    } else if (finds.size() > 1) {
                         checkErrorBuilder();
                         errorBuilder.append(filePath)
                                 .append(" ")
-                                .append(field.getTypeLocation()).append(" ")
-                                .append(bean.getType());
+                                .append(field.getTypeLocation()).append(" ");
                         errorBuilder.append(bean.getName()).append(".").append(field.getName());
                         errorBuilder.append("[");
                         errorBuilder.append(field.getClassType())
                                 .append("] Type,引用不明确");
                         for (Bean find : finds) {
-                            errorBuilder.append(find.getFilePath()).append(find.getNameLocation()).append(" ");
+                            errorBuilder.append(find.getFilePath()).append(" ").append(find.getNameLocation()).append(" ");
                         }
                     } else {
                         checkErrorBuilder();
                         errorBuilder.append(filePath)
                                 .append(" ")
-                                .append(field.getTypeLocation()).append(" ")
-                                .append(bean.getType());
+                                .append(field.getTypeLocation()).append(" ");
                         errorBuilder.append(bean.getName()).append(".").append(field.getName());
                         errorBuilder.append("[");
                         errorBuilder.append(field.getClassType())
