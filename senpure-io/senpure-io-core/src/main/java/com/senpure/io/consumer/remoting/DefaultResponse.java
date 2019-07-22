@@ -1,6 +1,7 @@
 package com.senpure.io.consumer.remoting;
 
 import com.senpure.io.protocol.Message;
+import io.netty.channel.Channel;
 
 /**
  * DefaultResponse
@@ -13,8 +14,10 @@ public class DefaultResponse implements Response {
 
     private Message message;
     private Message error;
+    private Channel channel;
 
-    public DefaultResponse(Message message, Message error) {
+    public DefaultResponse(Channel channel,Message message, Message error) {
+        this.channel = channel;
         this.message = message;
         this.error = error;
     }
@@ -32,5 +35,10 @@ public class DefaultResponse implements Response {
     @Override
     public <T extends Message> T getError() {
         return (T) error;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
     }
 }

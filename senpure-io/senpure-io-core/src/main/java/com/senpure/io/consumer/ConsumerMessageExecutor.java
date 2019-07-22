@@ -60,10 +60,10 @@ public class ConsumerMessageExecutor {
                 DefaultFuture future = DefaultFuture.received(requestId);
                 if (future != null) {
                     if (isErrorMessage(message)) {
-                        Response response = new DefaultResponse(null, message);
+                        Response response = new DefaultResponse(channel,null, message);
                         future.doReceived(response);
                     } else {
-                        Response response = new DefaultResponse(message, null);
+                        Response response = new DefaultResponse(channel,message, null);
                         future.doReceived(response);
                     }
                 } else {

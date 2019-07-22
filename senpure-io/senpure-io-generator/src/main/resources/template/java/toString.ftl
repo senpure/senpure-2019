@@ -31,7 +31,7 @@
             sb.append("[");
             for (int i = 0; i<${field.name}Size;i++) {
                 sb.append("\n");
-        <#if field.baseField>
+        <#if field.baseField||field.bean.enum>>
                 sb.append(nextIndent);
                 sb.append(indent).append(${field.name}.get(i));
         <#else>

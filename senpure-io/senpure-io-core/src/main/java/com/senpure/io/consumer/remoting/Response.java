@@ -1,6 +1,7 @@
 package com.senpure.io.consumer.remoting;
 
 import com.senpure.io.protocol.Message;
+import io.netty.channel.Channel;
 
 /**
  * Response
@@ -15,4 +16,6 @@ public interface Response {
     <T extends Message> T getValue();
 
     <T extends Message> T getError();
+
+    Channel getChannel();
 }
