@@ -54,6 +54,8 @@ public class Generator {
             logger.error("UnsupportedEncodingException", e);
         } catch (IOException e) {
             logger.error("IOException", e);
+        } catch (Exception e) {
+            logger.error("Exception", e);
         }
     }
 

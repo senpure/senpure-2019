@@ -6,8 +6,8 @@
 <#if field.list >
     private List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
 <#else>
-    <#if field.bean.enum>
-    private ${field.javaType} ${field.name} = ${field.defaultField.name};
+    <#if !field.baseField&&field.bean.enum>
+    private ${field.javaType} ${field.name} = ${field.bean.javaName}.${field.bean.defaultField.name};
         <#else >
     private ${field.javaType} ${field.name};
     </#if>
