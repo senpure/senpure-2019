@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -67,9 +69,11 @@ public class Boot {
             IoReader.getInstance().clear();
             StringBuilder errorBuilder = new StringBuilder();
             boolean error = false;
+            List<IoProtocolReader> ioProtocolReaders = new ArrayList<>();
             for (ProtocolFile protocolFile : config.getProtocolFiles()) {
                 try {
                     IoProtocolReader ioProtocolReader = IoReader.getInstance().read(new File(protocolFile.getPath()));
+                    ioProtocolReaders.add(ioProtocolReader);
                     if (ioProtocolReader.isHasError()) {
                         if (errorBuilder.length() > 0) {
                             errorBuilder.append("\n");
@@ -93,7 +97,7 @@ public class Boot {
                 return;
             }
             ExecutorContext executorContext = new ExecutorContext();
-            for (IoProtocolReader ioProtocolReader : IoReader.getInstance().getIoProtocolReaderMap().values()) {
+            for (IoProtocolReader ioProtocolReader : ioProtocolReaders) {
                 executorContext.getEnums().addAll(ioProtocolReader.getEnums());
                 executorContext.getBeans().addAll(ioProtocolReader.getBeans());
                 executorContext.getMessages().addAll(ioProtocolReader.getMessages());

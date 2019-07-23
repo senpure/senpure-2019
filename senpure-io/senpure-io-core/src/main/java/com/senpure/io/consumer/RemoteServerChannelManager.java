@@ -149,7 +149,7 @@ public class RemoteServerChannelManager {
                     if (now - message.startTime <= message.messageRetryTimeLimit) {
                         list.add(message);
                     } else {
-                        logger.warn("超过重试时间限制,不在重新发送 {}", message);
+                        logger.warn("超过重试时间限制,不再重新发送 {}", message);
                     }
                 }
 

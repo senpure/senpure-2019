@@ -815,8 +815,8 @@ public class MainController implements Initializable {
 
 
     public void generateJavaCode() {
-        String str="messageHandler 存在不能生成 CSVolletballChatMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\volleyball\\protocol\\message\\handler\\CSVolletballChatMessageHandlermessageHandler 存在不能生成 CSJoinRoomMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\protocol\\message\\handler\\CSJoinRoomMessageHandler.java";
-       logger.info(str);
+        //String str="messageHandler 存在不能生成 CSVolletballChatMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\volleyball\\protocol\\message\\handler\\CSVolletballChatMessageHandlermessageHandler 存在不能生成 CSJoinRoomMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\protocol\\message\\handler\\CSJoinRoomMessageHandler.java";
+       //logger.info(str);
         ExecutorContext executorContext;
         if (tableViewProtocolView.getItems().size() == 0) {
             if (protocolFiles.size() == 0) {
@@ -826,10 +826,12 @@ public class MainController implements Initializable {
             IoReader.getInstance().getIoProtocolReaderMap().clear();
             boolean error = false;
             StringBuilder errorBuilder = new StringBuilder();
+            List<IoProtocolReader> ioProtocolReaders = new ArrayList<>();
             for (File file : protocolFiles) {
                 IoProtocolReader ioProtocolReader;
                 try {
                     ioProtocolReader = IoReader.getInstance().read(file);
+                    ioProtocolReaders.add(ioProtocolReader);
                 } catch (Exception e) {
                    // logger.error(e.getMessage());
                     if (errorBuilder.length() > 0) {
@@ -858,8 +860,7 @@ public class MainController implements Initializable {
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
             executorContext.setJavaConfig(javaConfig);
-            Map<String, IoProtocolReader> ioProtocolReaderMap = IoReader.getInstance().getIoProtocolReaderMap();
-            for (IoProtocolReader ioProtocolReader : ioProtocolReaderMap.values()) {
+            for (IoProtocolReader ioProtocolReader : ioProtocolReaders) {
                 executorContext.getEnums().addAll(ioProtocolReader.getEnums());
                 executorContext.getBeans().addAll(ioProtocolReader.getBeans());
                 executorContext.getMessages().addAll(ioProtocolReader.getMessages());
