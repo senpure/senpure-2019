@@ -22,5 +22,6 @@ if %fileName% =="" (
 )
 
 ::echo %fileName%
+title %fileName%
 java -jar %fileName%
 :end
