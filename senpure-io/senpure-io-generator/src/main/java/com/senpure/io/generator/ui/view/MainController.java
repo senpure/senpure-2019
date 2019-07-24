@@ -128,10 +128,10 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox checkJavaSCMessageHandler;
     @FXML
-    private CheckBox checkJavaCSMessageHandlerCover;
+    private CheckBox checkJavaCSMessageHandlerOverwrite;
 
     @FXML
-    private CheckBox checkJavaSCMessageHandlerCover;
+    private CheckBox checkJavaSCMessageHandlerOverwrite;
 
     @FXML
     private CheckBox checkJavaEvent;
@@ -139,7 +139,7 @@ public class MainController implements Initializable {
     private CheckBox checkJavaEventHandler;
 
     @FXML
-    private CheckBox checkJavaEventHandlerCover;
+    private CheckBox checkJavaEventHandlerOverwrite;
 
     //java--↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
@@ -305,9 +305,9 @@ public class MainController implements Initializable {
         checkJavaEventHandler.setSelected(javaConfig.isGenerateJavaEventHandler());
 
         //覆盖操作不读取
-        // checkJavaCSMessageHandlerCover.setSelected(javaConfig.isJavaCSMessageHandlerCover());
-        // checkJavaSCMessageHandlerCover.setSelected(javaConfig.isJavaSCMessageHandlerCover());
-        // checkJavaEventHandlerCover.setSelected(javaConfig.isJavaEventHandlerCover());
+        // checkJavaCSMessageHandlerOverwrite.setSelected(javaConfig.isJavaCSMessageHandlerOverwrite());
+        // checkJavaSCMessageHandlerOverwrite.setSelected(javaConfig.isJavaSCMessageHandlerOverwrite());
+        // checkJavaEventHandlerOverwrite.setSelected(javaConfig.isJavaEventHandlerOverwrite());
     }
 
     private void initPlane() {
@@ -995,9 +995,9 @@ public class MainController implements Initializable {
         javaConfig.setJavaSCMessageHandlerTemplate(choiceJavaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaEventHandlerTemplate(choiceJavaEventHandler.getSelectionModel().getSelectedItem().getName());
 
-        javaConfig.setJavaEventHandlerCover(checkJavaEventHandlerCover.isSelected());
-        javaConfig.setJavaCSMessageHandlerCover(checkJavaCSMessageHandlerCover.isSelected());
-        javaConfig.setJavaSCMessageHandlerCover(checkJavaSCMessageHandlerCover.isSelected());
+        javaConfig.setJavaEventHandlerOverwrite(checkJavaEventHandlerOverwrite.isSelected());
+        javaConfig.setJavaCSMessageHandlerOverwrite(checkJavaCSMessageHandlerOverwrite.isSelected());
+        javaConfig.setJavaSCMessageHandlerOverwrite(checkJavaSCMessageHandlerOverwrite.isSelected());
 
         javaConfig.setGenerateJavaBean(checkJavaBean.isSelected());
         javaConfig.setGenerateJavaEnum(checkJavaEnum.isSelected());

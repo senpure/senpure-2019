@@ -215,7 +215,7 @@ public class Executor {
         generateJavaMessageHandler("CS",
                 javaConfig.getJavaCSMessageHandlerTemplate(),
                 javaConfig.getJavaCSMessageHandlerCodeRootPath(),
-                javaConfig.isJavaCSMessageHandlerCover());
+                javaConfig.isJavaCSMessageHandlerOverwrite());
     }
 
     private void generateJavaSCMessageHandler() {
@@ -223,7 +223,7 @@ public class Executor {
         generateJavaMessageHandler("SC",
                 javaConfig.getJavaSCMessageHandlerTemplate(),
                 javaConfig.getJavaSCMessageHandlerCodeRootPath(),
-                javaConfig.isJavaSCMessageHandlerCover());
+                javaConfig.isJavaSCMessageHandlerOverwrite());
     }
 
     private void generateJavaEvent() {
@@ -256,7 +256,7 @@ public class Executor {
             File file = new File(javaConfig.getJavaEventHandlerCodeRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
-                if (!javaConfig.isJavaEventHandlerCover()) {
+                if (!javaConfig.isJavaEventHandlerOverwrite()) {
                     logger.warn("eventHandler 存在不能生成 {} {}", file.getName(), file.getAbsoluteFile());
                     continue;
                 } else {

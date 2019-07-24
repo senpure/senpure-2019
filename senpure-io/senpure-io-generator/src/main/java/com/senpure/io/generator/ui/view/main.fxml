@@ -145,11 +145,11 @@
                                                                         <CheckBox fx:id="checkJavaMessage" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="生成" GridPane.columnIndex="4" GridPane.rowIndex="6" />
                                                                         <CheckBox fx:id="checkJavaEvent" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="生成" GridPane.columnIndex="4" GridPane.rowIndex="7" />
                                                                         <CheckBox fx:id="checkJavaCSMessageHandler" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="生成" GridPane.columnIndex="4" GridPane.rowIndex="8" />
-                                                                        <CheckBox fx:id="checkJavaCSMessageHandlerCover" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="覆盖" GridPane.columnIndex="6" GridPane.rowIndex="8" />
+                                                                        <CheckBox fx:id="checkJavaCSMessageHandlerOverwrite" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="覆盖" GridPane.columnIndex="6" GridPane.rowIndex="8" />
                                                                         <Label prefHeight="15.0" prefWidth="101.0" text="eventHandler" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                                                                         <ChoiceBox fx:id="choiceJavaEventHandler" prefHeight="23.0" prefWidth="243.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
                                                                         <CheckBox fx:id="checkJavaEventHandler" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="生成" GridPane.columnIndex="4" GridPane.rowIndex="10" />
-                                                                        <CheckBox fx:id="checkJavaEventHandlerCover" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="覆盖" GridPane.columnIndex="6" GridPane.rowIndex="10" />
+                                                                        <CheckBox fx:id="checkJavaEventHandlerOverwrite" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="覆盖" GridPane.columnIndex="6" GridPane.rowIndex="10" />
                                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="scHandler根路径" wrappingWidth="140.12109375" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="eventHandler根路径" wrappingWidth="140.12109375" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                                         <TextField fx:id="textFieldJavaSCMessageHandlerCodeRootPath" editable="false" GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="2" />
@@ -157,7 +157,7 @@
                                                                         <Label prefHeight="15.0" prefWidth="132.0" text="scMessageHandler" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                                                         <ChoiceBox fx:id="choiceJavaSCMessageHandler" prefHeight="23.0" prefWidth="243.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
                                                                         <CheckBox fx:id="checkJavaSCMessageHandler" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="生成" GridPane.columnIndex="4" GridPane.rowIndex="9" />
-                                                                        <CheckBox fx:id="checkJavaSCMessageHandlerCover" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="覆盖" GridPane.columnIndex="6" GridPane.rowIndex="9" />
+                                                                        <CheckBox fx:id="checkJavaSCMessageHandlerOverwrite" mnemonicParsing="false" prefHeight="16.0" prefWidth="68.0" text="覆盖" GridPane.columnIndex="6" GridPane.rowIndex="9" />
                                                                     </children>
                                                                 </GridPane>
                                                             </children>

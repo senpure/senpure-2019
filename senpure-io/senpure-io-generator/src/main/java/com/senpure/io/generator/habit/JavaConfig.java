@@ -32,9 +32,9 @@ public class JavaConfig {
     private boolean generateJavaCSMessageHandler = true;
     private boolean generateJavaSCMessageHandler = false;
 
-    private boolean javaCSMessageHandlerCover = false;
-    private boolean javaSCMessageHandlerCover = false;
-    private boolean javaEventHandlerCover = false;
+    private boolean javaCSMessageHandlerOverwrite = false;
+    private boolean javaSCMessageHandlerOverwrite = false;
+    private boolean javaEventHandlerOverwrite = false;
 
     public String getJavaEventHandlerCodeRootPath() {
         return javaEventHandlerCodeRootPath;
@@ -76,12 +76,12 @@ public class JavaConfig {
         this.javaCSMessageHandlerTemplate = javaCSMessageHandlerTemplate;
     }
 
-    public boolean isJavaCSMessageHandlerCover() {
-        return javaCSMessageHandlerCover;
+    public boolean isJavaCSMessageHandlerOverwrite() {
+        return javaCSMessageHandlerOverwrite;
     }
 
-    public void setJavaCSMessageHandlerCover(boolean javaCSMessageHandlerCover) {
-        this.javaCSMessageHandlerCover = javaCSMessageHandlerCover;
+    public void setJavaCSMessageHandlerOverwrite(boolean javaCSMessageHandlerOverwrite) {
+        this.javaCSMessageHandlerOverwrite = javaCSMessageHandlerOverwrite;
     }
 
     public String getJavaEventTemplate() {
@@ -108,12 +108,12 @@ public class JavaConfig {
         this.javaEventHandlerTemplate = javaEventHandlerTemplate;
     }
 
-    public boolean isJavaEventHandlerCover() {
-        return javaEventHandlerCover;
+    public boolean isJavaEventHandlerOverwrite() {
+        return javaEventHandlerOverwrite;
     }
 
-    public void setJavaEventHandlerCover(boolean javaEventHandlerCover) {
-        this.javaEventHandlerCover = javaEventHandlerCover;
+    public void setJavaEventHandlerOverwrite(boolean javaEventHandlerOverwrite) {
+        this.javaEventHandlerOverwrite = javaEventHandlerOverwrite;
     }
 
     public String getJavaEventHandlerCodeRootChooserPath() {
@@ -196,12 +196,12 @@ public class JavaConfig {
         this.javaSCMessageHandlerTemplate = javaSCMessageHandlerTemplate;
     }
 
-    public boolean isJavaSCMessageHandlerCover() {
-        return javaSCMessageHandlerCover;
+    public boolean isJavaSCMessageHandlerOverwrite() {
+        return javaSCMessageHandlerOverwrite;
     }
 
-    public void setJavaSCMessageHandlerCover(boolean javaSCMessageHandlerCover) {
-        this.javaSCMessageHandlerCover = javaSCMessageHandlerCover;
+    public void setJavaSCMessageHandlerOverwrite(boolean javaSCMessageHandlerOverwrite) {
+        this.javaSCMessageHandlerOverwrite = javaSCMessageHandlerOverwrite;
     }
 
     public String getJavaCSMessageHandlerCodeRootPath() {

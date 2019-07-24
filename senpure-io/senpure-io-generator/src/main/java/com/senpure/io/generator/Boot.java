@@ -107,9 +107,9 @@ public class Boot {
 
             if (!useCover) {
                 JavaConfig javaConfig = config.getJavaConfig();
-                javaConfig.setJavaEventHandlerCover(false);
-                javaConfig.setJavaCSMessageHandlerCover(false);
-                javaConfig.setJavaSCMessageHandlerCover(false);
+                javaConfig.setJavaEventHandlerOverwrite(false);
+                javaConfig.setJavaCSMessageHandlerOverwrite(false);
+                javaConfig.setJavaSCMessageHandlerOverwrite(false);
             } else {
                 logger.info("不使用覆盖设置");
             }
@@ -130,14 +130,14 @@ public class Boot {
     private static boolean hasCover(ProjectConfig config) {
         JavaConfig javaConfig = config.getJavaConfig();
 
-        if (javaConfig.isJavaCSMessageHandlerCover()) {
+        if (javaConfig.isJavaCSMessageHandlerOverwrite()) {
             return true;
         }
-        if (javaConfig.isJavaSCMessageHandlerCover()) {
+        if (javaConfig.isJavaSCMessageHandlerOverwrite()) {
 
             return true;
         }
-        if (javaConfig.isJavaEventHandlerCover()) {
+        if (javaConfig.isJavaEventHandlerOverwrite()) {
 
             return true;
         }
