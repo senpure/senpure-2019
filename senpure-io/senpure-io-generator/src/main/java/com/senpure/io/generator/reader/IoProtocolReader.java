@@ -1,6 +1,5 @@
 package com.senpure.io.generator.reader;
 
-import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.base.util.StringUtil;
 import com.senpure.io.antlr.IoBaseListener;
@@ -10,10 +9,7 @@ import com.senpure.io.generator.Constant;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.*;
 import com.senpure.io.generator.util.ProtocolUtil;
-import com.senpure.io.generator.util.TemplateUtil;
 import com.senpure.template.FileUtil;
-import com.senpure.template.Generator;
-import freemarker.template.Configuration;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
@@ -539,67 +535,17 @@ public class IoProtocolReader extends IoBaseListener {
         parser.addErrorListener(ioErrorListener);
         IoParser.ProtocolContext protocolContext = parser.protocol();
         ParseTreeWalker walker = new ParseTreeWalker();
-        if (!isHasError()) {
+        if (canWalk()) {
             walker.walk(this, protocolContext);
-            // findBenAndAssignment(ioProtocolReaderMap);
         }
 
     }
 
 
-    private void protocolString() {
-
-        File javaFile = new File(TemplateUtil.templateDir(), "java2");
-        Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-        try {
-            cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "java"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        TemplateUtil.share(cfg);
-        for (Bean b : beans) {
-            File file = new File(FileUtil.file("../../src/test/java"), FileUtil.fullFileEnd(b.getJavaPack().replace(".", File.separator)) + b.getJavaName() + ".java");
-            //File file = new File(AppEvn.getClassRootPath(), msg.getJavaName() + ".java");
-            if (!file.getParentFile().exists()) {
-
-                file.getParentFile().mkdirs();
-            }
-            logger.info(file.getAbsolutePath());
-            try {
-                Generator.generate(b, cfg.getTemplate("bean.ftl"), file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        for (Message msg : messages) {
-
-            File file = new File(FileUtil.file("../../src/test/java"), FileUtil.fullFileEnd(msg.getJavaPack().replace(".", File.separator)) + msg.getJavaName() + ".java");
-            //File file = new File(AppEvn.getClassRootPath(), msg.getJavaName() + ".java");
-            if (!file.getParentFile().exists()) {
-
-                file.getParentFile().mkdirs();
-            }
-            logger.info(file.getAbsolutePath());
-            try {
-                Generator.generate(msg, cfg.getTemplate("getValue.ftl"), file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        for (Enum anEnum : enums) {
-            File file = new File(FileUtil.file("../../src/test/java"), FileUtil.fullFileEnd(anEnum.getJavaPack().replace(".", File.separator)) + anEnum.getJavaName() + ".java");
-            if (!file.getParentFile().exists()) {
-
-                file.getParentFile().mkdirs();
-            }
-            try {
-                Generator.generate(anEnum, cfg.getTemplate("enum.ftl"), file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+    protected boolean canWalk() {
+        return !isHasError();
     }
+
 
     public List<Message> getMessages() {
         return messages;
@@ -642,16 +588,5 @@ public class IoProtocolReader extends IoBaseListener {
         return ioProtocolReaderMap;
     }
 
-    public static void main(String[] args) throws IOException {
-        AppEvn.markClassRootPath();
-        AppEvn.installAnsiConsole();
 
-        IoProtocolReader reader = IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), "hello.io"));
-
-        if (!reader.isHasError()) {
-
-            reader.protocolString();
-        }
-        //System.out.println(FileUtil.file("lll"));
-    }
 }
