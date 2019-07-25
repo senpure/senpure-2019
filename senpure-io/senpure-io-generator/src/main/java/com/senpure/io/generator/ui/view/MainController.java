@@ -623,7 +623,7 @@ public class MainController implements Initializable {
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             if (checkProjectName(file.getName())) {
-                updateProjectName(config.getProjectName());
+                updateProjectName(file.getName());
                 fileVale(file, config);
                 loadValueByConfig();
             }
