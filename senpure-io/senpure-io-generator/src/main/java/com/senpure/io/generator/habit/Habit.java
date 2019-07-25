@@ -12,10 +12,8 @@ import java.util.List;
 public class Habit {
 
     private String userProject;
-    private boolean silence = false;
+
     private List<ProjectConfig> configs = new ArrayList<>();
-
-
 
 
     public String getUserProject() {
@@ -34,11 +32,5 @@ public class Habit {
         this.configs = configs;
     }
 
-    public boolean isSilence() {
-        return silence;
-    }
 
-    public void setSilence(boolean silence) {
-        this.silence = silence;
-    }
 }
