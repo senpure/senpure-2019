@@ -47,9 +47,9 @@ public class Boot {
                 }
             }
             logger.info("使用项目 {} ", config.getProjectName());
-            boolean useCover = false;
-            String cover = System.getProperty("cover");
-            if (cover == null) {
+            boolean useOverwrite = false;
+            String overwrite = System.getProperty("overwrite");
+            if (overwrite == null) {
                 if (hasCover(config)) {
                     logger.info("静默模式要使覆盖设置生效请使用参数-Dsilence=true");
                     logger.info("静默模式要使覆盖设置生效请使用参数-Dsilence=true");
@@ -57,8 +57,8 @@ public class Boot {
                 }
 
             } else {
-                if (Objects.equals(cover, "true")) {
-                    useCover = true;
+                if (Objects.equals(overwrite, "true")) {
+                    useOverwrite = true;
                 }
             }
 
@@ -105,7 +105,7 @@ public class Boot {
             }
             executorContext.setProjectName(config.getProjectName());
 
-            if (!useCover) {
+            if (!useOverwrite) {
                 JavaConfig javaConfig = config.getJavaConfig();
                 javaConfig.setJavaEventHandlerOverwrite(false);
                 javaConfig.setJavaCSMessageHandlerOverwrite(false);
