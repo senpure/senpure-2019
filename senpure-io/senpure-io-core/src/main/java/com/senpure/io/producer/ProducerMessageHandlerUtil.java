@@ -23,7 +23,13 @@ public class ProducerMessageHandlerUtil {
     private static List<Integer> regMessageIds = new ArrayList<>(128);
 
     public static void regMessageHandler(ProducerMessageHandler handler) {
-        Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
+        ProducerMessageHandler old = handlerMap.get(handler.handlerId());
+        if (old != null) {
+            Assert.error(handler.handlerId() + " -> " + handler.getEmptyMessage()
+                    .getClass().getName() + "  处理程序已经存在"
+                    + "old " + old.getClass().getName() + " new " + handler.getClass().getName());
+        }
+        // Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
 
         handlerMap.put(handler.handlerId(), handler);
         if (handler.regToGateway()) {

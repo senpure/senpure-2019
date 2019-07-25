@@ -20,7 +20,13 @@ public class ConsumerMessageHandlerUtil {
     }
 
     public static void regMessageHandler(ConsumerMessageHandler handler) {
-        Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
+       // Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
+        ConsumerMessageHandler old = handlerMap.get(handler.handlerId());
+        if (old != null) {
+            Assert.error(handler.handlerId() + " -> " + handler.getEmptyMessage()
+                    .getClass().getName() + "  处理程序已经存在"
+                    + "old " + old.getClass().getName() + " new " + handler.getClass().getName());
+        }
         handlerMap.put(handler.handlerId(), handler);
     }
 
