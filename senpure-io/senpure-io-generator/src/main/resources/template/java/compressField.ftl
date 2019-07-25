@@ -66,7 +66,7 @@
             writeVar32(buf,${field.tag});
             writeVar32(buf,${field.name}SerializedSize);
             for (int i= 0;i< ${field.name}.size();i++){
-                writeVar32(${field.name}.get(i).getValue());
+                writeVar32(buf,${field.name}.get(i).getValue());
             }
         }
             <#else>
