@@ -130,7 +130,7 @@ public class IoProtocolReader extends IoBaseListener {
                 }
 
             }
-            javaPackage = namespace;
+            javaPackage = namespace+".protocol";
         }
     }
 
