@@ -77,6 +77,8 @@
                 <targetPath>${project.build.directory}</targetPath>
                 <includes>
                     <include>*.bat</include>
+                    <include>*.vbs</include>
+                    <include>*.txt</include>
                 </includes>
             </resource>
         </resources>
