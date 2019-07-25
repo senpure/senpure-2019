@@ -27,7 +27,7 @@ public class ProducerMessageHandlerUtil {
         if (old != null) {
             Assert.error(handler.handlerId() + " -> " + handler.getEmptyMessage()
                     .getClass().getName() + "  处理程序已经存在"
-                    + "old " + old.getClass().getName() + " new " + handler.getClass().getName());
+                    + " 存在 " + old.getClass().getName() + " 注册 " + handler.getClass().getName());
         }
         // Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
 
