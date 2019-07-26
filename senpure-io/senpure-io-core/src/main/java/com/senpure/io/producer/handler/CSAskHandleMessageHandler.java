@@ -18,9 +18,12 @@ public class CSAskHandleMessageHandler extends AbstractInnerMessageHandler<CSAsk
     @Override
     public void execute(Channel channel, long token, long userId, CSAskHandleMessage message) {
         ProducerMessageHandler ProducerMessageHandler = ProducerMessageHandlerUtil.getHandler(message.getFromMessageId());
-        ProducerAskMessageHandler askMessageHandler = (ProducerAskMessageHandler) ProducerMessageHandler;
-
-        SCAskHandleMessage scAskHandleMessage = askMessageHandler.ask(message);
+        ProducerAskMessageHandler askMessageHandler;
+        SCAskHandleMessage scAskHandleMessage = null;
+        if (ProducerMessageHandler instanceof ProducerAskMessageHandler) {
+            askMessageHandler = (ProducerAskMessageHandler) ProducerMessageHandler;
+            scAskHandleMessage = askMessageHandler.ask(message);
+        }
         if (scAskHandleMessage == null) {
             scAskHandleMessage = new SCAskHandleMessage();
             scAskHandleMessage.setFromMessageId(message.getFromMessageId());
