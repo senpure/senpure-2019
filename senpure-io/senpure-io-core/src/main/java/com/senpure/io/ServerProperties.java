@@ -505,7 +505,7 @@ public class ServerProperties {
         /**
          * 询问处理最多延迟毫秒
          */
-        private long askMaxDelay = 3000;
+        private long askMaxDelay = 1000;
 
         public int getCsPort() {
             return csPort;

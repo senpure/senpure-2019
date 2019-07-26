@@ -355,20 +355,23 @@ public class GatewayMessageExecutor {
                 handleMessageManager.addProducerManager(handleMessage.getHandleMessageId(), producerManager);
             }
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             CSRegServerHandleMessageMessage returnMessage = new CSRegServerHandleMessageMessage();
             returnMessage.setSuccess(false);
             returnMessage.setMessage(e.getMessage());
+            sendMessage2Producer(channel,returnMessage);
+            return true;
         }
         CSRegServerHandleMessageMessage returnMessage = new CSRegServerHandleMessageMessage();
-        returnMessage.setSuccess(false);
+        returnMessage.setSuccess(true);
         if (sb.length() > 0) {
             returnMessage.setMessage(sb.toString());
         }
+        sendMessage2Producer(channel,returnMessage);
         return true;
     }
 
-
-    public void sendMessage(ProducerChannelManager serverChannelManager, Message message) {
+    private Client2GatewayMessage createMessage(Message message) {
         Client2GatewayMessage toMessage = new Client2GatewayMessage();
         toMessage.setMessageId(message.getMessageId());
         ByteBuf buf = Unpooled.buffer(message.getSerializedSize());
@@ -376,7 +379,18 @@ public class GatewayMessageExecutor {
         byte[] data = new byte[message.getSerializedSize()];
         buf.readBytes(data);
         toMessage.setData(data);
-        serverChannelManager.sendMessage(toMessage);
+        return toMessage;
+    }
+
+    public void sendMessage2Producer(Channel channel, Message message) {
+        Client2GatewayMessage toMessage = createMessage(message);
+        channel.writeAndFlush(toMessage);
+
+    }
+
+    public void sendMessage(ProducerChannelManager producerChannelManager, Message message) {
+        Client2GatewayMessage toMessage = createMessage(message);
+        producerChannelManager.sendMessage(toMessage);
     }
 
 
@@ -408,15 +422,7 @@ public class GatewayMessageExecutor {
             breakUserGatewayMessage.setToken(message.getToken());
             breakUserGatewayMessage.setUserId(message.getUserId());
             breakUserGatewayMessage.setRelationToken(message.getRelationToken());
-            Client2GatewayMessage toMessage = new Client2GatewayMessage();
-            toMessage.setMessageId(breakUserGatewayMessage.getMessageId());
-            ByteBuf buf = Unpooled.buffer();
-            buf.ensureWritable(breakUserGatewayMessage.getSerializedSize());
-            byte[] data = new byte[breakUserGatewayMessage.getSerializedSize()];
-            message.write(buf);
-            buf.readBytes(data);
-            toMessage.setData(data);
-            channel.writeAndFlush(toMessage);
+            sendMessage2Producer(channel, breakUserGatewayMessage);
         }
         return true;
     }

@@ -19,12 +19,12 @@ public class CSRegServerHandleMessageMessageHandler extends AbstractInnerMessage
             logger.info("{} 注册服务成功 {}", ChannelAttributeUtil.getLocalServerKey(channel), channel);
 
             if (message.getMessage() != null) {
-                logger.info("\n", message.getMessage());
+                logger.info("\n{}", message.getMessage());
             }
         } else {
-            logger.info("{} 注册服务失败 {}", ChannelAttributeUtil.getLocalServerKey(channel), channel);
+            logger.error("{} 注册服务失败 {}", ChannelAttributeUtil.getLocalServerKey(channel), channel);
             if (message.getMessage() != null) {
-                logger.info("\n", message.getMessage());
+                logger.error("\n{}", message.getMessage());
             }
             Spring.exit();
         }

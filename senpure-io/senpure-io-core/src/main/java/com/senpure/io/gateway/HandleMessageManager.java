@@ -48,7 +48,7 @@ public class HandleMessageManager {
         if (add) {
             //不同的服务处理相同的id,容易编码疏忽,取消这种模式
             if (producerManagers.size() >= 1 && direct) {
-                Assert.error("不同的服务处理了相同的非ask消息id,该模式容易编码疏忽,产出bug,强制不允许  id:"+handId);
+                Assert.error("不同的服务处理了相同的非ask消息id,该模式容易编码疏忽,产出bug,强制不允许  id:"+MessageIdReader.read(handId));
             }
             producerManagers.add(producerManager);
         }

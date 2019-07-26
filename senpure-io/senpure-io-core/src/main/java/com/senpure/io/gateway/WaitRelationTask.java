@@ -45,12 +45,12 @@ public class WaitRelationTask {
         serverManager.sendMessage(message);
     }
 
-    public void sendCancelMessage(GatewayMessageExecutor messageExecuter) {
+    public void sendCancelMessage(GatewayMessageExecutor messageExecutor) {
         CSBreakUserGatewayMessage breakMessage = new CSBreakUserGatewayMessage();
         breakMessage.setRelationToken(relationToken);
         breakMessage.setToken(message.getToken());
         breakMessage.setUserId(message.getUserId());
-        messageExecuter.sendMessage(serverChannelManager, breakMessage);
+        messageExecutor.sendMessage(serverChannelManager, breakMessage);
 
     }
 
