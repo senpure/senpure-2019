@@ -17,12 +17,14 @@ public class CSAskHandleMessageHandler extends AbstractInnerMessageHandler<CSAsk
 
     @Override
     public void execute(Channel channel, long token, long userId, CSAskHandleMessage message) {
-        ProducerMessageHandler ProducerMessageHandler = ProducerMessageHandlerUtil.getHandler(message.getFromMessageId());
+        ProducerMessageHandler producerMessageHandler = ProducerMessageHandlerUtil.getHandler(message.getFromMessageId());
         ProducerAskMessageHandler askMessageHandler;
         SCAskHandleMessage scAskHandleMessage = null;
-        if (ProducerMessageHandler instanceof ProducerAskMessageHandler) {
-            askMessageHandler = (ProducerAskMessageHandler) ProducerMessageHandler;
+        if (producerMessageHandler instanceof ProducerAskMessageHandler) {
+            askMessageHandler = (ProducerAskMessageHandler) producerMessageHandler;
             scAskHandleMessage = askMessageHandler.ask(message);
+        } else {
+            logger.warn("{} 没有实现 ProducerAskMessageHandler", producerMessageHandler.getClass().getName());
         }
         if (scAskHandleMessage == null) {
             scAskHandleMessage = new SCAskHandleMessage();
