@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * @author senpure
- * @time 2019-6-26 20:21:14
+ * @time 2019-7-26 15:22:52
  */
 public class CSBreakUserGatewayMessage extends  Message {
 
@@ -168,11 +168,11 @@ public class CSBreakUserGatewayMessage extends  Message {
                 + "}";
    }
 
-    //最长字段长度 13
-    private int filedPad = 13;
 
     @Override
     public String toString(String indent) {
+        //最长字段长度 13
+        int filedPad = 13;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
         sb.append("CSBreakUserGatewayMessage").append("[107]").append("{");

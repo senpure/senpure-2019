@@ -4,17 +4,15 @@ import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 
 /**
- * 关联用户与网关
- * 
  * @author senpure
- * @time 2019-3-22 10:34:46
+ * @time 2019-7-26 15:22:52
  */
-public class SCRelationUserGatewayMessage extends Message {
+public class SCRelationUserGatewayMessage extends  Message {
 
-    public static final int MESSAGE_ID = 1102;
+    public static final int MESSAGE_ID = 106;
     //channel token
     private long token;
-    //用户Id
+    //userId
     private long userId;
     //relation token
     private long relationToken;
@@ -26,7 +24,7 @@ public class SCRelationUserGatewayMessage extends Message {
         getSerializedSize();
         //channel token
         writeVar64(buf,8,token);
-        //用户Id
+        //userId
         writeVar64(buf,16,userId);
         //relation token
         writeVar64(buf,24,relationToken);
@@ -44,15 +42,15 @@ public class SCRelationUserGatewayMessage extends Message {
                 return;
                 //channel token
                 case 8:// 1 << 3 | 0
-                        token = readVar64(buf);
+                    token = readVar64(buf);
                     break;
-                //用户Id
+                //userId
                 case 16:// 2 << 3 | 0
-                        userId = readVar64(buf);
+                    userId = readVar64(buf);
                     break;
                 //relation token
                 case 24:// 3 << 3 | 0
-                        relationToken = readVar64(buf);
+                    relationToken = readVar64(buf);
                     break;
                 default://skip
                     skip(buf, tag);
@@ -72,7 +70,7 @@ public class SCRelationUserGatewayMessage extends Message {
         size = 0 ;
         //channel token
         size += computeVar64Size(1,token);
-        //用户Id
+        //userId
         size += computeVar64Size(1,userId);
         //relation token
         size += computeVar64Size(1,relationToken);
@@ -96,7 +94,7 @@ public class SCRelationUserGatewayMessage extends Message {
         return this;
     }
     /**
-     * get 用户Id
+     * get userId
      * @return
      */
     public  long getUserId() {
@@ -104,7 +102,7 @@ public class SCRelationUserGatewayMessage extends Message {
     }
 
     /**
-     * set 用户Id
+     * set userId
      */
     public SCRelationUserGatewayMessage setUserId(long userId) {
         this.userId=userId;
@@ -128,30 +126,30 @@ public class SCRelationUserGatewayMessage extends Message {
 
     @Override
     public int getMessageId() {
-        return 1102;
+        return 106;
     }
 
     @Override
     public String toString() {
-        return "SCRelationUserGatewayMessage[1102]{"
+        return "SCRelationUserGatewayMessage[106]{"
                 +"token=" + token
                 +",userId=" + userId
                 +",relationToken=" + relationToken
                 + "}";
    }
 
-    //最长字段长度 13
-    private int filedPad = 13;
 
     @Override
     public String toString(String indent) {
+        //最长字段长度 13
+        int filedPad = 13;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
-        sb.append("SCRelationUserGatewayMessage").append("[1102]").append("{");
+        sb.append("SCRelationUserGatewayMessage").append("[106]").append("{");
         //channel token
         sb.append("\n");
         sb.append(indent).append(rightPad("token", filedPad)).append(" = ").append(token);
-        //用户Id
+        //userId
         sb.append("\n");
         sb.append(indent).append(rightPad("userId", filedPad)).append(" = ").append(userId);
         //relation token

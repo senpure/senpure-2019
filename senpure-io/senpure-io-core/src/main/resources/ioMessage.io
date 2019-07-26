@@ -4,13 +4,18 @@ javaPack  com.senpure.io;
 bean HandleMessage {
     int     handleMessageId;            //可以处理的消息ID
     String  messageClasses;             //消息类名
-    boolean serverShare;                //是否共享messageId 不同的服务都可以处理"
     boolean direct;                     //true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
 }
 
 bean IdName {
     int    id;                          //消息id
     String messageName;                 //有意义的字符串
+}
+
+//网关注册处理消息返回
+message CS RegServerHandleMessage 101 {
+    boolean success;
+    String  message;
 }
 
 //服务器注册消息处理器到网关
@@ -33,6 +38,11 @@ message CS RelationUserGateway 105 {
     long relationToken;                 //relation token
 }
 
+message SC RelationUserGateway 106 {
+    long token;                         // channel token
+    long userId;                        //userId
+    long relationToken;                 //relation token
+}
 message CS BreakUserGateway 107 {
     long   token;                       //channel token
     long   userId;                      //用户Id
@@ -72,9 +82,8 @@ message SC Heart 66 {
 
 //服务器内部错误提示
 message SC InnerError 100 {
-    int    requestId;                   //请求id
     String type;                        //错误类型
     String message;                     //提示内容
     int    id;                          //消息id
-    String value;
+    String value;                       //ask的value
 }

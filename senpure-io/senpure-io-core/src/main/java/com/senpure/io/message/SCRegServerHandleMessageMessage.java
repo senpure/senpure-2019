@@ -4,14 +4,14 @@ import com.senpure.io.bean.HandleMessage;
 import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 服务器注册消息处理器到网关
  * 
  * @author senpure
- * @time 2019-6-26 20:21:14
+ * @time 2019-7-26 15:22:52
  */
 public class SCRegServerHandleMessageMessage extends  Message {
 
@@ -192,13 +192,13 @@ public class SCRegServerHandleMessageMessage extends  Message {
                 + "}";
    }
 
-    //18 + 3 = 21 个空格
-    private String nextIndent ="                     ";
-    //最长字段长度 18
-    private int filedPad = 18;
 
     @Override
     public String toString(String indent) {
+        //18 + 3 = 21 个空格
+        String nextIndent ="                     ";
+        //最长字段长度 18
+        int filedPad = 18;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
         sb.append("SCRegServerHandleMessageMessage").append("[102]").append("{");

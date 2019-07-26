@@ -12,13 +12,6 @@ public abstract class AbstractProducerAskMessageHandler<T extends Message> exten
         return false;
     }
 
-    @Override
-    public boolean serverShare() {
-        return true;
-    }
 
-    @Override
-    public boolean regToGateway() {
-        return true;
-    }
+
 }

@@ -22,11 +22,6 @@ public interface ProducerMessageHandler<T extends Message> {
     boolean direct();
 
 
-    /**
-     * true 表示不同的服务器
-     */
-    boolean serverShare();
-
 
     /**
      * 内部请求不要注册到网关

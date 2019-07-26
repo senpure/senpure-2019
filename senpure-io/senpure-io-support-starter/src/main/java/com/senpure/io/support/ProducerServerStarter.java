@@ -116,7 +116,6 @@ public class ProducerServerStarter implements ApplicationRunner {
             handleMessage.setHandleMessageId(id);
             ProducerMessageHandler handler = ProducerMessageHandlerUtil.getHandler(id);
             handleMessage.setDirect(handler.direct());
-            handleMessage.setServerShare(handler.serverShare());
             handleMessage.setMessageClasses(ProducerMessageHandlerUtil.getEmptyMessage(id).getClass().getName());
             handleMessages.add(handleMessage);
             MessageIdReader.relation(id, handler.getEmptyMessage().getClass().getSimpleName());

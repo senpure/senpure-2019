@@ -4,14 +4,14 @@ import com.senpure.io.bean.IdName;
 import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 数字id与字符串的关联
  * 
  * @author senpure
- * @time 2019-6-26 20:21:14
+ * @time 2019-7-26 15:22:52
  */
 public class SCIdNameMessage extends  Message {
 
@@ -91,13 +91,13 @@ public class SCIdNameMessage extends  Message {
                 + "}";
    }
 
-    //7 + 3 = 10 个空格
-    private String nextIndent ="          ";
-    //最长字段长度 7
-    private int filedPad = 7;
 
     @Override
     public String toString(String indent) {
+        //7 + 3 = 10 个空格
+        String nextIndent ="          ";
+        //最长字段长度 7
+        int filedPad = 7;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
         sb.append("SCIdNameMessage").append("[104]").append("{");

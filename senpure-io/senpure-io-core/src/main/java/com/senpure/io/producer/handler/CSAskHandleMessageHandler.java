@@ -19,20 +19,19 @@ public class CSAskHandleMessageHandler extends AbstractInnerMessageHandler<CSAsk
     public void execute(Channel channel, long token, long userId, CSAskHandleMessage message) {
         ProducerMessageHandler producerMessageHandler = ProducerMessageHandlerUtil.getHandler(message.getFromMessageId());
         ProducerAskMessageHandler askMessageHandler;
-        SCAskHandleMessage scAskHandleMessage = null;
+
+        boolean handle = false;
         if (producerMessageHandler instanceof ProducerAskMessageHandler) {
             askMessageHandler = (ProducerAskMessageHandler) producerMessageHandler;
-            scAskHandleMessage = askMessageHandler.ask(message);
+            handle = askMessageHandler.ask(message.getValue());
         } else {
             logger.warn("{} 没有实现 ProducerAskMessageHandler", producerMessageHandler.getClass().getName());
         }
-        if (scAskHandleMessage == null) {
-            scAskHandleMessage = new SCAskHandleMessage();
-            scAskHandleMessage.setFromMessageId(message.getFromMessageId());
-            scAskHandleMessage.setHandle(false);
-            scAskHandleMessage.setToken(message.getToken());
-            scAskHandleMessage.setValue(message.getValue());
-        }
+        SCAskHandleMessage scAskHandleMessage = new SCAskHandleMessage();
+        scAskHandleMessage.setFromMessageId(message.getFromMessageId());
+        scAskHandleMessage.setHandle(handle);
+        scAskHandleMessage.setToken(message.getToken());
+        scAskHandleMessage.setValue(message.getValue());
         Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
         toGateway.setToken(token);
         toGateway.setUserIds(new Long[0]);

@@ -5,15 +5,13 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * @author senpure
- * @time 2019-6-21 11:45:32
+ * @time 2019-7-26 15:22:52
  */
 public class HandleMessage extends  Bean {
     //可以处理的消息ID
     private int handleMessageId;
     //消息类名
     private String messageClasses;
-    //是否共享messageId 不同的服务都可以处理"
-    private boolean serverShare;
     //true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
     private boolean direct;
     /**
@@ -28,10 +26,8 @@ public class HandleMessage extends  Bean {
         if (messageClasses != null){
             writeString(buf,19,messageClasses);
         }
-        //是否共享messageId 不同的服务都可以处理"
-        writeBoolean(buf,24,serverShare);
         //true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
-        writeBoolean(buf,32,direct);
+        writeBoolean(buf,24,direct);
     }
 
     /**
@@ -52,12 +48,8 @@ public class HandleMessage extends  Bean {
                 case 19:// 2 << 3 | 3
                     messageClasses = readString(buf);
                     break;
-                //是否共享messageId 不同的服务都可以处理"
-                case 24:// 3 << 3 | 0
-                    serverShare = readBoolean(buf);
-                    break;
                 //true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
-                case 32:// 4 << 3 | 0
+                case 24:// 3 << 3 | 0
                     direct = readBoolean(buf);
                     break;
                 default://skip
@@ -82,8 +74,6 @@ public class HandleMessage extends  Bean {
         if (messageClasses != null){
             size += computeStringSize(1,messageClasses);
         }
-        //是否共享messageId 不同的服务都可以处理"
-        size += computeBooleanSize(1,serverShare);
         //true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
         size += computeBooleanSize(1,direct);
         serializedSize = size ;
@@ -121,21 +111,6 @@ public class HandleMessage extends  Bean {
         return this;
     }
     /**
-     *  is 是否共享messageId 不同的服务都可以处理"
-     * @return
-     */
-    public  boolean  isServerShare() {
-        return serverShare;
-    }
-
-    /**
-     * set 是否共享messageId 不同的服务都可以处理"
-     */
-    public HandleMessage setServerShare(boolean serverShare) {
-        this.serverShare=serverShare;
-        return this;
-    }
-    /**
      *  is true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
      * @return
      */
@@ -156,16 +131,15 @@ public class HandleMessage extends  Bean {
         return "HandleMessage{"
                 +"handleMessageId=" + handleMessageId
                 +",messageClasses=" + messageClasses
-                +",serverShare=" + serverShare
                 +",direct=" + direct
                 + "}";
    }
 
-    //最长字段长度 15
-    private int filedPad = 15;
 
     @Override
     public String toString(String indent) {
+        //最长字段长度 15
+        int filedPad = 15;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
         sb.append("HandleMessage").append("{");
@@ -175,9 +149,6 @@ public class HandleMessage extends  Bean {
         //消息类名
         sb.append("\n");
         sb.append(indent).append(rightPad("messageClasses", filedPad)).append(" = ").append(messageClasses);
-        //是否共享messageId 不同的服务都可以处理"
-        sb.append("\n");
-        sb.append(indent).append(rightPad("serverShare", filedPad)).append(" = ").append(serverShare);
         //true网关直接选择服务器转发，false 网关会对所有处理该消息的服务器进行一次询问
         sb.append("\n");
         sb.append(indent).append(rightPad("direct", filedPad)).append(" = ").append(direct);

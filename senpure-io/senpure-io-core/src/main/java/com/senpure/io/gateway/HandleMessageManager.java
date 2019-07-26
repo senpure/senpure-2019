@@ -15,60 +15,51 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 当前设计direct 会执行一个具体的服务器绑定
- * 所以 direct 与 serverShare 不能同时为true
- */
+
 public class HandleMessageManager {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private boolean direct;
-    private boolean serverShare;
-    private List<ProducerManager> serverManagers = new ArrayList<>();
-    private ProducerManager serverManager;
+    private List<ProducerManager> producerManagers = new ArrayList<>();
+    private ProducerManager producerManager;
     private GatewayMessageExecutor messageExecutor;
-    private int csAskHandleMessageId = new CSAskHandleMessage().getMessageId();
+    private int csAskHandleMessageId =  CSAskHandleMessage.MESSAGE_ID;
     //   private AtomicInteger atomicIndex = new AtomicInteger(-1);
     private int handId;
 
-    public HandleMessageManager(int handId, boolean direct, boolean serverShare, GatewayMessageExecutor messageExecutor) {
+    public HandleMessageManager(int handId, boolean direct, GatewayMessageExecutor messageExecutor) {
         this.direct = direct;
-        this.serverShare = serverShare;
         this.messageExecutor = messageExecutor;
         this.handId = handId;
-        if (direct && serverShare) {
-            Assert.error("direct 与 serverShare 不能同时为true ");
-        }
-
     }
 
-    public synchronized void addServerManager(int handId, ProducerManager serverManager) {
+    public synchronized void addProducerManager(int handId, ProducerManager producerManager) {
         if (this.handId != handId) {
-
             Assert.error("handId 不匹配");
         }
         boolean add = true;
-        for (ProducerManager manager : serverManagers) {
-            if (manager.getServerName().equalsIgnoreCase(serverManager.getServerName())) {
+        for (ProducerManager manager : producerManagers) {
+            if (manager.getServerName().equalsIgnoreCase(producerManager.getServerName())) {
                 add = false;
                 break;
             }
         }
         if (add) {
-            if (serverManagers.size() >= 1 && direct) {
-                Assert.error("direct 与 serverShare 不能同时为true 不同的服务处理了相同的消息id ");
+            //不同的服务处理相同的id,容易编码疏忽,取消这种模式
+            if (producerManagers.size() >= 1 && direct) {
+                Assert.error("不同的服务处理了相同的非ask消息id,该模式容易编码疏忽,产出bug,强制不允许  id:"+handId);
             }
-            serverManagers.add(serverManager);
+            producerManagers.add(producerManager);
         }
         if (direct) {
-            this.serverManager = serverManager;
+            this.producerManager = producerManager;
         }
     }
 
     public void execute(Client2GatewayMessage message) {
         if (direct) {
-            serverManager.sendMessage(message);
+            producerManager.sendMessage(message);
         } else {
             ByteBuf buf = Unpooled.buffer(message.getData().length);
             buf.writeBytes(message.getData());
@@ -107,14 +98,14 @@ public class HandleMessageManager {
             waitAskTask.setValue(value);
 
             int askTimes = 0;
-            for (ProducerManager serverManager : serverManagers) {
+            for (ProducerManager serverManager : producerManagers) {
                 askTimes += serverManager.getUseChannelManagers().size();
             }
             waitAskTask.setAskTimes(askTimes);
             waitAskTask.setMessage(message);
 
             messageExecutor.waitAskMap.put(waitAskTask.getAskToken(), waitAskTask);
-            for (ProducerManager serverManager : serverManagers) {
+            for (ProducerManager serverManager : producerManagers) {
                 for (ProducerChannelManager channelManager : serverManager.getUseChannelManagers()) {
                     Channel channel = channelManager.nextChannel();
                     if (channel != null) {
@@ -134,12 +125,6 @@ public class HandleMessageManager {
         this.direct = direct;
     }
 
-    public boolean isServerShare() {
-        return serverShare;
-    }
 
-    public void setServerShare(boolean serverShare) {
-        this.serverShare = serverShare;
-    }
 
 }

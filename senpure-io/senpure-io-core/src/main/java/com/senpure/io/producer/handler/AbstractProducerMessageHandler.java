@@ -15,6 +15,7 @@ import org.springframework.core.ResolvableType;
 public abstract class AbstractProducerMessageHandler<T extends Message> implements ProducerMessageHandler<T>, InitializingBean {
     protected Logger logger;
     protected Class<T> messageClass;
+    protected T IdMessage;
     @Autowired
     protected GatewayManager gatewayManager;
 
@@ -22,7 +23,10 @@ public abstract class AbstractProducerMessageHandler<T extends Message> implemen
         this.logger = LoggerFactory.getLogger(getClass());
         ResolvableType resolvableType = ResolvableType.forClass(getClass());
         messageClass = (Class<T>) resolvableType.getSuperType().getGeneric(0).resolve();
+
     }
+
+
 
     @Override
     public T getEmptyMessage() {
@@ -37,6 +41,15 @@ public abstract class AbstractProducerMessageHandler<T extends Message> implemen
     }
 
     @Override
+    public int handlerId() {
+        if (IdMessage != null) {
+            return IdMessage.getMessageId();
+        }
+        IdMessage = getEmptyMessage();
+        return IdMessage.getMessageId();
+    }
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         ProducerMessageHandlerUtil.regMessageHandler(this);
 
@@ -48,10 +61,6 @@ public abstract class AbstractProducerMessageHandler<T extends Message> implemen
         return true;
     }
 
-    @Override
-    public boolean serverShare() {
-        return false;
-    }
 
     @Override
     public boolean regToGateway() {

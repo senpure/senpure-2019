@@ -19,6 +19,10 @@ if %fileName% =="" (
 ::echo %fileName%
 title %fileName%
 call java -Dsilence=true -jar %fileName% 
+echo 5秒后关闭该窗口,要想停止请按ctrl + c
+ping /n 2 127.1 >nul
+echo 4秒后关闭该窗口,要想停止请按ctrl + c
+ping /n 2 127.1 >nul
 echo 3秒后关闭该窗口,要想停止请按ctrl + c
 ping /n 2 127.1 >nul
 echo 2秒后关闭该窗口,要想停止请按ctrl + c

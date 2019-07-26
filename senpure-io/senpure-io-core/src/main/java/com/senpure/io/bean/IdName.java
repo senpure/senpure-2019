@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * @author senpure
- * @time 2019-6-21 11:45:32
+ * @time 2019-7-26 15:22:52
  */
 public class IdName extends  Bean {
     //消息id
@@ -109,11 +109,11 @@ public class IdName extends  Bean {
                 + "}";
    }
 
-    //最长字段长度 11
-    private int filedPad = 11;
 
     @Override
     public String toString(String indent) {
+        //最长字段长度 11
+        int filedPad = 11;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
         sb.append("IdName").append("{");

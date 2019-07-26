@@ -113,7 +113,7 @@ public class GatewayMessageExecutor {
                 prepLoginChannels.put(ChannelAttributeUtil.getToken(channel), channel);
             } else if (message.getMessageId() == csHeartMessageId) {
                 SCHeartMessage heartMessage = new SCHeartMessage();
-                sendMessage2Client(message.getRequestId(),heartMessage, ChannelAttributeUtil.getToken(channel));
+                sendMessage2Client(message.getRequestId(), heartMessage, ChannelAttributeUtil.getToken(channel));
                 return;
             }
 
@@ -131,7 +131,7 @@ public class GatewayMessageExecutor {
                 errorMessage.setType(Constant.ERROR_NOT_FOUND_SERVER);
                 errorMessage.setId(message.getMessageId());
                 errorMessage.setMessage("没有服务器处理" + MessageIdReader.read(message.getMessageId()));
-                sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
+                sendMessage2Client(message.getRequestId(), errorMessage, message.getToken());
                 return;
             }
             try {
@@ -143,12 +143,12 @@ public class GatewayMessageExecutor {
                 errorMessage.setType(Constant.ERROR_SERVER_ERROR);
                 errorMessage.setId(message.getMessageId());
                 errorMessage.setMessage(MessageIdReader.read(message.getMessageId()) + "," + e.getMessage());
-                sendMessage2Client(message.getRequestId(),errorMessage, message.getToken());
+                sendMessage2Client(message.getRequestId(), errorMessage, message.getToken());
             }
         });
     }
 
-    protected void sendMessage2Client(int requestId,Message message, Long token) {
+    protected void sendMessage2Client(int requestId, Message message, Long token) {
         Channel clientChannel = tokenChannel.get(token);
         if (clientChannel == null) {
             logger.warn("没有找到channel token {}", token);
@@ -173,7 +173,7 @@ public class GatewayMessageExecutor {
         }
         Assert.notNull(gateway, "gateway 配置文件不能为空");
         init = true;
-        Assert.isTrue(csLoginMessageId > 0 && scLoginMessageId > 0, "登录消息为设置");
+        Assert.isTrue(csLoginMessageId > 0 && scLoginMessageId > 0, "登录消息未设置");
         sgHandlerMap.put(SCRegServerHandleMessageMessage.MESSAGE_ID, this::regServerInstance);
         sgHandlerMap.put(SCRelationUserGatewayMessage.MESSAGE_ID, this::relationMessage);
         sgHandlerMap.put(SCAskHandleMessage.MESSAGE_ID, this::askMessage);
@@ -278,67 +278,91 @@ public class GatewayMessageExecutor {
 
     //todo 一个服务只允许一个ask id
     private synchronized boolean regServerInstance(Channel channel, Server2GatewayMessage server2GatewayMessage) {
-        SCRegServerHandleMessageMessage message = new SCRegServerHandleMessageMessage();
-        ByteBuf buf = Unpooled.buffer(server2GatewayMessage.getData().length);
-        buf.writeBytes(server2GatewayMessage.getData());
-        // logger.info("writerIndex {} readerIndex {} ", buf.writerIndex(), buf.readerIndex());
-        message.read(buf, buf.writerIndex());
-        List<HandleMessage> handleMessages = message.getMessages();
-        String serverKey = message.getServerKey();
-        ChannelAttributeUtil.setRemoteServerName(channel, message.getServerName());
-        ChannelAttributeUtil.setRemoteServerKey(channel, serverKey);
-        logger.info("服务注册:{}:{} [{}]", message.getServerName(), message.getServerKey(), message.getReadableServerName());
-        for (HandleMessage handleMessage : handleMessages) {
-            logger.info("{}", handleMessage);
-        }
-        ProducerManager producerManager = serverInstanceMap.get(message.getServerName());
-        if (producerManager == null) {
-            producerManager = new ProducerManager(this);
-            serverInstanceMap.put(message.getServerName(), producerManager);
+        StringBuilder sb = new StringBuilder();
+        try {
+            SCRegServerHandleMessageMessage message = new SCRegServerHandleMessageMessage();
+
+            ByteBuf buf = Unpooled.buffer(server2GatewayMessage.getData().length);
+            buf.writeBytes(server2GatewayMessage.getData());
+            // logger.info("writerIndex {} readerIndex {} ", buf.writerIndex(), buf.readerIndex());
+            message.read(buf, buf.writerIndex());
+            List<HandleMessage> handleMessages = message.getMessages();
+            String serverKey = message.getServerKey();
+            ChannelAttributeUtil.setRemoteServerName(channel, message.getServerName());
+            ChannelAttributeUtil.setRemoteServerKey(channel, serverKey);
+            logger.info("服务注册:{}:{} [{}]", message.getServerName(), message.getServerKey(), message.getReadableServerName());
             for (HandleMessage handleMessage : handleMessages) {
-                producerManager.markHandleId(handleMessage.getHandleMessageId());
-                messageHandleMap.putIfAbsent(handleMessage.getHandleMessageId(), producerManager);
+                logger.info("{}", handleMessage);
             }
-            producerManager.setServerName(message.getServerName());
-        }
-        //如果同一个服务处理消息id不一致，旧得实例停止接收新的连接
-        for (HandleMessage handleMessage : handleMessages) {
-            if (!producerManager.handleId(handleMessage.getHandleMessageId())) {
-                logger.info("{} 处理了新的消息{}[{}] ，旧的服务器停止接收新的请求分发", message.getServerName(), handleMessage.getHandleMessageId(), handleMessage.getMessageClasses());
-                producerManager.prepStopOldInstance();
-                for (HandleMessage hm : handleMessages) {
-                    producerManager.markHandleId(hm.getHandleMessageId());
+            ProducerManager producerManager = serverInstanceMap.get(message.getServerName());
+            if (producerManager == null) {
+                producerManager = new ProducerManager(this);
+                serverInstanceMap.put(message.getServerName(), producerManager);
+                for (HandleMessage handleMessage : handleMessages) {
+                    producerManager.markHandleId(handleMessage.getHandleMessageId());
+                    messageHandleMap.putIfAbsent(handleMessage.getHandleMessageId(), producerManager);
                 }
-                break;
+                producerManager.setServerName(message.getServerName());
             }
-        }
-        for (Integer id : producerManager.getHandleIds()) {
-            boolean discard = true;
+            //如果同一个服务处理消息id不一致，旧得实例停止接收新的连接
             for (HandleMessage handleMessage : handleMessages) {
-                if (handleMessage.getHandleMessageId() == id) {
-                    discard = false;
+                if (!producerManager.handleId(handleMessage.getHandleMessageId())) {
+                    if (sb.length() > 0) {
+                        sb.append("\n");
+                    }
+                    sb.append(message.getServerName()).append(" 处理了新的消息").append(handleMessage.getHandleMessageId()).append("[")
+                            .append(handleMessage.getMessageClasses()).append("] ,旧的服务器停止接收新的请求分发");
+                    logger.info("{} 处理了新的消息{}[{}] ，旧的服务器停止接收新的请求分发", message.getServerName(),
+                            handleMessage.getHandleMessageId(), handleMessage.getMessageClasses());
+                    producerManager.prepStopOldInstance();
+                    for (HandleMessage hm : handleMessages) {
+                        producerManager.markHandleId(hm.getHandleMessageId());
+                    }
                     break;
                 }
             }
-            if (discard) {
-                logger.info("{} 丢弃了消息{} ，旧的服务器停止接收新的请求分发", message.getServerName(), id);
-                producerManager.prepStopOldInstance();
-                for (HandleMessage hm : handleMessages) {
-                    producerManager.markHandleId(hm.getHandleMessageId());
+            for (Integer id : producerManager.getHandleIds()) {
+                boolean discard = true;
+                for (HandleMessage handleMessage : handleMessages) {
+                    if (handleMessage.getHandleMessageId() == id) {
+                        discard = false;
+                        break;
+                    }
                 }
-                break;
+                if (discard) {
+                    if (sb.length() > 0) {
+                        sb.append("\n");
+                    }
+                    sb.append(message.getServerName()).append(" 丢弃了消息 ").append(MessageIdReader.read(id))
+                            .append(" ，旧的服务器停止接收新的请求分发");
+                    logger.info("{} 丢弃了消息 {} ，旧的服务器停止接收新的请求分发", message.getServerName(), MessageIdReader.read(id));
+                    producerManager.prepStopOldInstance();
+                    for (HandleMessage hm : handleMessages) {
+                        producerManager.markHandleId(hm.getHandleMessageId());
+                    }
+                    break;
+                }
             }
+            ProducerChannelManager producerChannelManager = producerManager.getChannelServer(serverKey);
+            producerChannelManager.addChannel(channel);
+            producerManager.checkChannelServer(serverKey, producerChannelManager);
+            for (HandleMessage handleMessage : handleMessages) {
+                HandleMessageManager handleMessageManager = handleMessageManagerMap.get(handleMessage.getHandleMessageId());
+                if (handleMessageManager == null) {
+                    handleMessageManager = new HandleMessageManager(handleMessage.getHandleMessageId(), handleMessage.isDirect(), this);
+                    handleMessageManagerMap.put(handleMessage.getHandleMessageId(), handleMessageManager);
+                }
+                handleMessageManager.addProducerManager(handleMessage.getHandleMessageId(), producerManager);
+            }
+        } catch (Exception e) {
+            CSRegServerHandleMessageMessage returnMessage = new CSRegServerHandleMessageMessage();
+            returnMessage.setSuccess(false);
+            returnMessage.setMessage(e.getMessage());
         }
-        ProducerChannelManager serverChannelManager = producerManager.getChannelServer(serverKey);
-        serverChannelManager.addChannel(channel);
-        producerManager.checkChannelServer(serverKey, serverChannelManager);
-        for (HandleMessage handleMessage : handleMessages) {
-            HandleMessageManager handleMessageManager = handleMessageManagerMap.get(handleMessage.getHandleMessageId());
-            if (handleMessageManager == null) {
-                handleMessageManager = new HandleMessageManager(handleMessage.getHandleMessageId(), handleMessage.isDirect(), handleMessage.isServerShare(), this);
-                handleMessageManagerMap.put(handleMessage.getHandleMessageId(), handleMessageManager);
-            }
-            handleMessageManager.addServerManager(handleMessage.getHandleMessageId(), producerManager);
+        CSRegServerHandleMessageMessage returnMessage = new CSRegServerHandleMessageMessage();
+        returnMessage.setSuccess(false);
+        if (sb.length() > 0) {
+            returnMessage.setMessage(sb.toString());
         }
         return true;
     }
@@ -533,7 +557,7 @@ public class GatewayMessageExecutor {
                     errorMessage.setId(waitAskTask.getFromMessageId());
                     errorMessage.setMessage(MessageIdReader.read(waitAskTask.getFromMessageId()));
                     errorMessage.setValue(waitAskTask.getValue());
-                    sendMessage2Client(waitAskTask.getRequestId(),errorMessage, waitAskTask.getMessage().getToken());
+                    sendMessage2Client(waitAskTask.getRequestId(), errorMessage, waitAskTask.getMessage().getToken());
                 }
             }
         }

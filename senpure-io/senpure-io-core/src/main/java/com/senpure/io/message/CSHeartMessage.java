@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
  * 心跳
  * 
  * @author senpure
- * @time 2019-6-26 20:21:14
+ * @time 2019-7-26 15:22:52
  */
 public class CSHeartMessage extends  Message {
 

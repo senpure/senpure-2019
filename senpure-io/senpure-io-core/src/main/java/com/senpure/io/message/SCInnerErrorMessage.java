@@ -5,11 +5,11 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * 服务器内部错误提示
- *
+ * 
  * @author senpure
- * @time 2019-7-5 10:38:23
+ * @time 2019-7-26 15:22:52
  */
-public class SCInnerErrorMessage extends Message {
+public class SCInnerErrorMessage extends  Message {
 
     public static final int MESSAGE_ID = 100;
     //错误类型
@@ -20,26 +20,25 @@ public class SCInnerErrorMessage extends Message {
     private int id;
     //ask的value
     private String value;
-
     /**
      * 写入字节缓存
      */
     @Override
-    public void write(ByteBuf buf) {
+    public void write(ByteBuf buf){
         getSerializedSize();
         //错误类型
-        if (type != null) {
-            writeString(buf, 11, type);
+        if (type != null){
+            writeString(buf,11,type);
         }
         //提示内容
-        if (message != null) {
-            writeString(buf, 19, message);
+        if (message != null){
+            writeString(buf,19,message);
         }
         //消息id
-        writeVar32(buf, 24, id);
+        writeVar32(buf,24,id);
         //ask的value
-        if (value != null) {
-            writeString(buf, 35, value);
+        if (value != null){
+            writeString(buf,35,value);
         }
     }
 
@@ -47,12 +46,12 @@ public class SCInnerErrorMessage extends Message {
      * 读取字节缓存
      */
     @Override
-    public void read(ByteBuf buf, int endIndex) {
-        while (true) {
+    public void read(ByteBuf buf,int endIndex){
+        while(true){
             int tag = readTag(buf, endIndex);
             switch (tag) {
                 case 0://end
-                    return;
+                return;
                 //错误类型
                 case 11:// 1 << 3 | 3
                     type = readString(buf);
@@ -79,36 +78,35 @@ public class SCInnerErrorMessage extends Message {
     private int serializedSize = -1;
 
     @Override
-    public int getSerializedSize() {
-        int size = serializedSize;
-        if (size != -1) {
+    public int getSerializedSize(){
+        int size = serializedSize ;
+        if (size != -1 ){
             return size;
         }
-        size = 0;
+        size = 0 ;
         //错误类型
-        if (type != null) {
-            size += computeStringSize(1, type);
+        if (type != null){
+            size += computeStringSize(1,type);
         }
         //提示内容
-        if (message != null) {
-            size += computeStringSize(1, message);
+        if (message != null){
+            size += computeStringSize(1,message);
         }
         //消息id
-        size += computeVar32Size(1, id);
+        size += computeVar32Size(1,id);
         //ask的value
-        if (value != null) {
-            size += computeStringSize(1, value);
+        if (value != null){
+            size += computeStringSize(1,value);
         }
-        serializedSize = size;
-        return size;
+        serializedSize = size ;
+        return size ;
     }
 
     /**
      * get 错误类型
-     *
      * @return
      */
-    public String getType() {
+    public  String getType() {
         return type;
     }
 
@@ -116,16 +114,14 @@ public class SCInnerErrorMessage extends Message {
      * set 错误类型
      */
     public SCInnerErrorMessage setType(String type) {
-        this.type = type;
+        this.type=type;
         return this;
     }
-
     /**
      * get 提示内容
-     *
      * @return
      */
-    public String getMessage() {
+    public  String getMessage() {
         return message;
     }
 
@@ -133,16 +129,14 @@ public class SCInnerErrorMessage extends Message {
      * set 提示内容
      */
     public SCInnerErrorMessage setMessage(String message) {
-        this.message = message;
+        this.message=message;
         return this;
     }
-
     /**
      * get 消息id
-     *
      * @return
      */
-    public int getId() {
+    public  int getId() {
         return id;
     }
 
@@ -150,16 +144,14 @@ public class SCInnerErrorMessage extends Message {
      * set 消息id
      */
     public SCInnerErrorMessage setId(int id) {
-        this.id = id;
+        this.id=id;
         return this;
     }
-
     /**
      * get ask的value
-     *
      * @return
      */
-    public String getValue() {
+    public  String getValue() {
         return value;
     }
 
@@ -167,7 +159,7 @@ public class SCInnerErrorMessage extends Message {
      * set ask的value
      */
     public SCInnerErrorMessage setValue(String value) {
-        this.value = value;
+        this.value=value;
         return this;
     }
 
@@ -179,12 +171,12 @@ public class SCInnerErrorMessage extends Message {
     @Override
     public String toString() {
         return "SCInnerErrorMessage[100]{"
-                + "type=" + type
-                + ",message=" + message
-                + ",id=" + id
-                + ",value=" + value
+                +"type=" + type
+                +",message=" + message
+                +",id=" + id
+                +",value=" + value
                 + "}";
-    }
+   }
 
 
     @Override

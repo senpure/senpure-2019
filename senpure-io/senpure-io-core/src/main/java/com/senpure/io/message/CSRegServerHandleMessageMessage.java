@@ -4,26 +4,26 @@ import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 
 /**
+ * 网关注册处理消息返回
+ * 
  * @author senpure
  * @time 2019-7-26 15:22:52
  */
-public class SCKickOffMessage extends  Message {
+public class CSRegServerHandleMessageMessage extends  Message {
 
-    public static final int MESSAGE_ID = 112;
-    //token
-    private long token;
-    //userId
-    private long userId;
+    public static final int MESSAGE_ID = 101;
+    private boolean success;
+    private String message;
     /**
      * 写入字节缓存
      */
     @Override
     public void write(ByteBuf buf){
         getSerializedSize();
-        //token
-        writeVar64(buf,8,token);
-        //userId
-        writeVar64(buf,16,userId);
+        writeBoolean(buf,8,success);
+        if (message != null){
+            writeString(buf,19,message);
+        }
     }
 
     /**
@@ -36,13 +36,11 @@ public class SCKickOffMessage extends  Message {
             switch (tag) {
                 case 0://end
                 return;
-                //token
                 case 8:// 1 << 3 | 0
-                    token = readVar64(buf);
+                    success = readBoolean(buf);
                     break;
-                //userId
-                case 16:// 2 << 3 | 0
-                    userId = readVar64(buf);
+                case 19:// 2 << 3 | 3
+                    message = readString(buf);
                     break;
                 default://skip
                     skip(buf, tag);
@@ -60,72 +58,56 @@ public class SCKickOffMessage extends  Message {
             return size;
         }
         size = 0 ;
-        //token
-        size += computeVar64Size(1,token);
-        //userId
-        size += computeVar64Size(1,userId);
+        size += computeBooleanSize(1,success);
+        if (message != null){
+            size += computeStringSize(1,message);
+        }
         serializedSize = size ;
         return size ;
     }
 
-    /**
-     * get token
-     * @return
-     */
-    public  long getToken() {
-        return token;
+    public  boolean  isSuccess() {
+        return success;
     }
 
-    /**
-     * set token
-     */
-    public SCKickOffMessage setToken(long token) {
-        this.token=token;
+    public CSRegServerHandleMessageMessage setSuccess(boolean success) {
+        this.success=success;
         return this;
     }
-    /**
-     * get userId
-     * @return
-     */
-    public  long getUserId() {
-        return userId;
+    public  String getMessage() {
+        return message;
     }
 
-    /**
-     * set userId
-     */
-    public SCKickOffMessage setUserId(long userId) {
-        this.userId=userId;
+    public CSRegServerHandleMessageMessage setMessage(String message) {
+        this.message=message;
         return this;
     }
 
     @Override
     public int getMessageId() {
-        return 112;
+        return 101;
     }
 
     @Override
     public String toString() {
-        return "SCKickOffMessage[112]{"
-                +"token=" + token
-                +",userId=" + userId
+        return "CSRegServerHandleMessageMessage[101]{"
+                +"success=" + success
+                +",message=" + message
                 + "}";
    }
 
 
     @Override
     public String toString(String indent) {
-        //最长字段长度 6
-        int filedPad = 6;
+        //最长字段长度 7
+        int filedPad = 7;
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
-        sb.append("SCKickOffMessage").append("[112]").append("{");
-        //token
+        sb.append("CSRegServerHandleMessageMessage").append("[101]").append("{");
         sb.append("\n");
-        sb.append(indent).append(rightPad("token", filedPad)).append(" = ").append(token);
-        //userId
+        sb.append(indent).append(rightPad("success", filedPad)).append(" = ").append(success);
         sb.append("\n");
-        sb.append(indent).append(rightPad("userId", filedPad)).append(" = ").append(userId);
+        sb.append(indent).append(rightPad("message", filedPad)).append(" = ").append(message);
         sb.append("\n");
         sb.append(indent).append("}");
         return sb.toString();
