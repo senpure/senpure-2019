@@ -60,6 +60,7 @@ public class ProtocolData {
 
     public void setGenerate(boolean generate) {
         this.generate.set(generate);
+        bean.setGenerate(generate);
     }
 
     public String getType() {

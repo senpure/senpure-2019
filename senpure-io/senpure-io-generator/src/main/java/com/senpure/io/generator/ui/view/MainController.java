@@ -445,7 +445,7 @@ public class MainController implements Initializable {
             try {
                 ioProtocolReader = IoReader.getInstance().read(file);
             } catch (Exception e) {
-               // logger.error(e.getMessage());
+                // logger.error(e.getMessage());
                 if (errorBuilder.length() > 0) {
                     errorBuilder.append("\n");
                 }
@@ -459,7 +459,7 @@ public class MainController implements Initializable {
                 }
                 errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
 
-               // logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
+                // logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
                 error = true;
                 continue;
             }
@@ -511,6 +511,15 @@ public class MainController implements Initializable {
             }
         }
 
+    }
+
+    public void tableViewProtocolViewClick() {
+
+        ProtocolData protocolData =
+                tableViewProtocolView.getSelectionModel().getSelectedItem();
+        if (protocolData != null) {
+            protocolData.setGenerate(!protocolData.isGenerate());
+        }
     }
 
     public void chooseBeanAndEnum() {
@@ -816,7 +825,7 @@ public class MainController implements Initializable {
 
     public void generateJavaCode() {
         //String str="messageHandler 存在不能生成 CSVolletballChatMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\volleyball\\protocol\\message\\handler\\CSVolletballChatMessageHandlermessageHandler 存在不能生成 CSJoinRoomMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\protocol\\message\\handler\\CSJoinRoomMessageHandler.java";
-       //logger.info(str);
+        //logger.info(str);
         ExecutorContext executorContext;
         if (tableViewProtocolView.getItems().size() == 0) {
             if (protocolFiles.size() == 0) {
@@ -833,7 +842,7 @@ public class MainController implements Initializable {
                     ioProtocolReader = IoReader.getInstance().read(file);
                     ioProtocolReaders.add(ioProtocolReader);
                 } catch (Exception e) {
-                   // logger.error(e.getMessage());
+                    // logger.error(e.getMessage());
                     if (errorBuilder.length() > 0) {
                         errorBuilder.append("\n");
                     }
@@ -848,7 +857,7 @@ public class MainController implements Initializable {
                     }
                     errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
 
-                   // logger.error("{} 语法错误", ioProtocolReader.getFilePath());
+                    // logger.error("{} 语法错误", ioProtocolReader.getFilePath());
                 }
             }
             if (error) {

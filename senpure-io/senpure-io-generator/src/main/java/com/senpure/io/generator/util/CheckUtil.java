@@ -107,7 +107,7 @@ public class CheckUtil {
             logger.debug("obj.name {}  name {}", obj.name, name);
             if (!name.equals(obj.name)) {
                 logger.error("消息id重复 {} {}.{}  {}.{} ", bean.getId(), obj.filePath, obj.name, bean.getFilePath(), name);
-                logger.info("如果确认以前的消息不需要,请删除{} 里面的相关记录", recordPath());
+                logger.info("可能是更改了消息id,如果确认以前的消息不需要,请删除{} 里面的相关记录", recordPath());
                 return false;
             }
         }
@@ -120,7 +120,7 @@ public class CheckUtil {
         if (obj != null) {
             if (!name.equals(obj.name)) {
                 logger.error("事件id重复 {} {}.{}  {}.{} ", bean.getId(), obj.filePath, obj.name, bean.getFilePath(), name);
-                logger.info("如果确认以前的事件不需要,请删除{} 里面的相关记录", recordPath());
+                logger.info("可能是更改了事件id,如果确认以前的事件不需要,请删除{} 里面的相关记录", recordPath());
                 return false;
             }
         }
@@ -143,6 +143,8 @@ public class CheckUtil {
         if (obj != null) {
             if (!obj.filePath.equals(bean.getFilePath())) {
                 logger.error("不同的文件含有相同的命名 {} \n{} \n{}", name, obj.filePath, bean.getFilePath());
+                logger.info("可能是更改了命名,如果确认以前的命名不需要,请删除{} 里面的相关记录", recordPath());
+
                 return false;
             }
         } else {

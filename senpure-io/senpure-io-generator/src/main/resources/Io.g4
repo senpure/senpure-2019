@@ -143,6 +143,7 @@ SELF:'self';
 MESSAGEID:'messageId';
 EVENTID:'eventId';
 SERIALIZEDSIZE:'serializedSize';
+UNKNOWN:'UNKNOWN';
 
 //↑↑protocol keywords↑↑
 Number:[0-9]+;

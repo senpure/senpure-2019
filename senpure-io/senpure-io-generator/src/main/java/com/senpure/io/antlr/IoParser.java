@@ -28,8 +28,8 @@ public class IoParser extends Parser {
 		PRIVATE=60, PROTECTED=61, PUBLIC=62, RETURN=63, SHORT=64, STATIC=65, STRICTFP=66, 
 		SUPER=67, SWITCH=68, SYNCHRONIZED=69, THIS=70, THROW=71, THROWS=72, TRANSIENT=73, 
 		TRY=74, VOID=75, VOLATILE=76, WHILE=77, SELF=78, MESSAGEID=79, EVENTID=80, 
-		SERIALIZEDSIZE=81, Number=82, Identifier=83, WS=84, COMMENT=85, LINE_COMMENT=86, 
-		CODE_COMMENT=87;
+		SERIALIZEDSIZE=81, UNKNOWN=82, Number=83, Identifier=84, WS=85, COMMENT=86, 
+		LINE_COMMENT=87, CODE_COMMENT=88;
 	public static final int
 		RULE_protocol = 0, RULE_headContent = 1, RULE_entity = 2, RULE_importIo = 3, 
 		RULE_importValue = 4, RULE_javaPack = 5, RULE_javaPackageValue = 6, RULE_namespace = 7, 
@@ -65,7 +65,8 @@ public class IoParser extends Parser {
 			"'new'", "'package'", "'private'", "'protected'", "'public'", "'return'", 
 			"'short'", "'static'", "'strictfp'", "'super'", "'switch'", "'synchronized'", 
 			"'this'", "'throw'", "'throws'", "'transient'", "'try'", "'void'", "'volatile'", 
-			"'while'", "'self'", "'messageId'", "'eventId'", "'serializedSize'"
+			"'while'", "'self'", "'messageId'", "'eventId'", "'serializedSize'", 
+			"'UNKNOWN'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -80,8 +81,8 @@ public class IoParser extends Parser {
 			"LONG", "NATIVE", "NEW", "PACKAGE", "PRIVATE", "PROTECTED", "PUBLIC", 
 			"RETURN", "SHORT", "STATIC", "STRICTFP", "SUPER", "SWITCH", "SYNCHRONIZED", 
 			"THIS", "THROW", "THROWS", "TRANSIENT", "TRY", "VOID", "VOLATILE", "WHILE", 
-			"SELF", "MESSAGEID", "EVENTID", "SERIALIZEDSIZE", "Number", "Identifier", 
-			"WS", "COMMENT", "LINE_COMMENT", "CODE_COMMENT"
+			"SELF", "MESSAGEID", "EVENTID", "SERIALIZEDSIZE", "UNKNOWN", "Number", 
+			"Identifier", "WS", "COMMENT", "LINE_COMMENT", "CODE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -2339,7 +2340,7 @@ public class IoParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3Y\u012b\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3Z\u012b\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -2363,7 +2364,7 @@ public class IoParser extends Parser {
 		"\f \16 \u0111\13 \3 \3 \3 \3 \3 \6 \u0118\n \r \16 \u0119\3 \3 \3!\3!"+
 		"\3!\5!\u0121\n!\3!\3!\5!\u0125\n!\3\"\3\"\3#\3#\3#\2\5\16\22\26$\2\4\6"+
 		"\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BD\2\5\4\2"+
-		"\4\4\17\22\3\2\b\13\t\2\30\35  ++\61\6188::UU\2\u012d\2I\3\2\2\2\4W\3"+
+		"\4\4\17\22\3\2\b\13\t\2\30\35  ++\61\6188::VV\2\u012d\2I\3\2\2\2\4W\3"+
 		"\2\2\2\6]\3\2\2\2\b_\3\2\2\2\nc\3\2\2\2\fg\3\2\2\2\16k\3\2\2\2\20v\3\2"+
 		"\2\2\22z\3\2\2\2\24\u009a\3\2\2\2\26\u009c\3\2\2\2\30\u00aa\3\2\2\2\32"+
 		"\u00ba\3\2\2\2\34\u00bc\3\2\2\2\36\u00be\3\2\2\2 \u00c0\3\2\2\2\"\u00c2"+
@@ -2382,9 +2383,9 @@ public class IoParser extends Parser {
 		"us\3\2\2\2vw\7\7\2\2wx\5\22\n\2xy\7\3\2\2y\21\3\2\2\2z{\b\n\1\2{|\5\24"+
 		"\13\2|\u0082\3\2\2\2}~\f\3\2\2~\177\7\4\2\2\177\u0081\5\24\13\2\u0080"+
 		"}\3\2\2\2\u0081\u0084\3\2\2\2\u0082\u0080\3\2\2\2\u0082\u0083\3\2\2\2"+
-		"\u0083\23\3\2\2\2\u0084\u0082\3\2\2\2\u0085\u0087\7T\2\2\u0086\u0085\3"+
+		"\u0083\23\3\2\2\2\u0084\u0082\3\2\2\2\u0085\u0087\7U\2\2\u0086\u0085\3"+
 		"\2\2\2\u0087\u008a\3\2\2\2\u0088\u0086\3\2\2\2\u0088\u0089\3\2\2\2\u0089"+
-		"\u008e\3\2\2\2\u008a\u0088\3\2\2\2\u008b\u008d\7U\2\2\u008c\u008b\3\2"+
+		"\u008e\3\2\2\2\u008a\u0088\3\2\2\2\u008b\u008d\7V\2\2\u008c\u008b\3\2"+
 		"\2\2\u008d\u0090\3\2\2\2\u008e\u008c\3\2\2\2\u008e\u008f\3\2\2\2\u008f"+
 		"\u009b\3\2\2\2\u0090\u008e\3\2\2\2\u0091\u009b\7\b\2\2\u0092\u009b\7\t"+
 		"\2\2\u0093\u009b\7\n\2\2\u0094\u009b\7\13\2\2\u0095\u009b\7\f\2\2\u0096"+
@@ -2402,31 +2403,31 @@ public class IoParser extends Parser {
 		"\2\u00b2\u00b4\5\62\32\2\u00b3\u00b2\3\2\2\2\u00b4\u00b7\3\2\2\2\u00b5"+
 		"\u00b3\3\2\2\2\u00b5\u00b6\3\2\2\2\u00b6\u00b8\3\2\2\2\u00b7\u00b5\3\2"+
 		"\2\2\u00b8\u00b9\7\24\2\2\u00b9\31\3\2\2\2\u00ba\u00bb\7\r\2\2\u00bb\33"+
-		"\3\2\2\2\u00bc\u00bd\t\3\2\2\u00bd\35\3\2\2\2\u00be\u00bf\7U\2\2\u00bf"+
-		"\37\3\2\2\2\u00c0\u00c1\7T\2\2\u00c1!\3\2\2\2\u00c2\u00c3\7X\2\2\u00c3"+
+		"\3\2\2\2\u00bc\u00bd\t\3\2\2\u00bd\35\3\2\2\2\u00be\u00bf\7V\2\2\u00bf"+
+		"\37\3\2\2\2\u00c0\u00c1\7U\2\2\u00c1!\3\2\2\2\u00c2\u00c3\7Y\2\2\u00c3"+
 		"#\3\2\2\2\u00c4\u00c6\5\"\22\2\u00c5\u00c4\3\2\2\2\u00c6\u00c9\3\2\2\2"+
 		"\u00c7\u00c5\3\2\2\2\u00c7\u00c8\3\2\2\2\u00c8\u00ca\3\2\2\2\u00c9\u00c7"+
 		"\3\2\2\2\u00ca\u00cb\5&\24\2\u00cb\u00cc\5(\25\2\u00cc\u00cd\5*\26\2\u00cd"+
 		"\u00d1\7\23\2\2\u00ce\u00d0\5\62\32\2\u00cf\u00ce\3\2\2\2\u00d0\u00d3"+
 		"\3\2\2\2\u00d1\u00cf\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2\u00d4\3\2\2\2\u00d3"+
 		"\u00d1\3\2\2\2\u00d4\u00d5\7\24\2\2\u00d5%\3\2\2\2\u00d6\u00d7\7\16\2"+
-		"\2\u00d7\'\3\2\2\2\u00d8\u00d9\7U\2\2\u00d9)\3\2\2\2\u00da\u00db\7T\2"+
+		"\2\u00d7\'\3\2\2\2\u00d8\u00d9\7V\2\2\u00d9)\3\2\2\2\u00da\u00db\7U\2"+
 		"\2\u00db+\3\2\2\2\u00dc\u00de\5\"\22\2\u00dd\u00dc\3\2\2\2\u00de\u00e1"+
 		"\3\2\2\2\u00df\u00dd\3\2\2\2\u00df\u00e0\3\2\2\2\u00e0\u00e2\3\2\2\2\u00e1"+
 		"\u00df\3\2\2\2\u00e2\u00e3\5.\30\2\u00e3\u00e4\5\60\31\2\u00e4\u00e6\7"+
 		"\23\2\2\u00e5\u00e7\5\62\32\2\u00e6\u00e5\3\2\2\2\u00e7\u00e8\3\2\2\2"+
 		"\u00e8\u00e6\3\2\2\2\u00e8\u00e9\3\2\2\2\u00e9\u00ea\3\2\2\2\u00ea\u00eb"+
 		"\7\24\2\2\u00eb-\3\2\2\2\u00ec\u00ed\7\f\2\2\u00ed/\3\2\2\2\u00ee\u00ef"+
-		"\7U\2\2\u00ef\61\3\2\2\2\u00f0\u00f2\58\35\2\u00f1\u00f3\5\64\33\2\u00f2"+
+		"\7V\2\2\u00ef\61\3\2\2\2\u00f0\u00f2\58\35\2\u00f1\u00f3\5\64\33\2\u00f2"+
 		"\u00f1\3\2\2\2\u00f2\u00f3\3\2\2\2\u00f3\u00f4\3\2\2\2\u00f4\u00f7\5:"+
 		"\36\2\u00f5\u00f6\7\25\2\2\u00f6\u00f8\5\66\34\2\u00f7\u00f5\3\2\2\2\u00f7"+
 		"\u00f8\3\2\2\2\u00f8\u00f9\3\2\2\2\u00f9\u00fb\7\3\2\2\u00fa\u00fc\5<"+
 		"\37\2\u00fb\u00fa\3\2\2\2\u00fb\u00fc\3\2\2\2\u00fc\63\3\2\2\2\u00fd\u00fe"+
-		"\7\26\2\2\u00fe\u00ff\7\27\2\2\u00ff\65\3\2\2\2\u0100\u0101\7T\2\2\u0101"+
-		"\67\3\2\2\2\u0102\u0103\t\4\2\2\u01039\3\2\2\2\u0104\u0109\7U\2\2\u0105"+
+		"\7\26\2\2\u00fe\u00ff\7\27\2\2\u00ff\65\3\2\2\2\u0100\u0101\7U\2\2\u0101"+
+		"\67\3\2\2\2\u0102\u0103\t\4\2\2\u01039\3\2\2\2\u0104\u0109\7V\2\2\u0105"+
 		"\u0109\5\32\16\2\u0106\u0109\5.\30\2\u0107\u0109\5&\24\2\u0108\u0104\3"+
 		"\2\2\2\u0108\u0105\3\2\2\2\u0108\u0106\3\2\2\2\u0108\u0107\3\2\2\2\u0109"+
-		";\3\2\2\2\u010a\u010b\7X\2\2\u010b=\3\2\2\2\u010c\u010e\5\"\22\2\u010d"+
+		";\3\2\2\2\u010a\u010b\7Y\2\2\u010b=\3\2\2\2\u010c\u010e\5\"\22\2\u010d"+
 		"\u010c\3\2\2\2\u010e\u0111\3\2\2\2\u010f\u010d\3\2\2\2\u010f\u0110\3\2"+
 		"\2\2\u0110\u0112\3\2\2\2\u0111\u010f\3\2\2\2\u0112\u0113\5B\"\2\u0113"+
 		"\u0114\5D#\2\u0114\u0115\7\23\2\2\u0115\u0117\5@!\2\u0116\u0118\5@!\2"+
@@ -2435,7 +2436,7 @@ public class IoParser extends Parser {
 		"\u0120\5:\36\2\u011e\u011f\7\25\2\2\u011f\u0121\5\66\34\2\u0120\u011e"+
 		"\3\2\2\2\u0120\u0121\3\2\2\2\u0121\u0122\3\2\2\2\u0122\u0124\7\3\2\2\u0123"+
 		"\u0125\5<\37\2\u0124\u0123\3\2\2\2\u0124\u0125\3\2\2\2\u0125A\3\2\2\2"+
-		"\u0126\u0127\7-\2\2\u0127C\3\2\2\2\u0128\u0129\7U\2\2\u0129E\3\2\2\2\32"+
+		"\u0126\u0127\7-\2\2\u0127C\3\2\2\2\u0128\u0129\7V\2\2\u0129E\3\2\2\2\32"+
 		"IOW]s\u0082\u0088\u008e\u009a\u00a4\u00aa\u00b5\u00c7\u00d1\u00df\u00e8"+
 		"\u00f2\u00f7\u00fb\u0108\u010f\u0119\u0120\u0124";
 	public static final ATN _ATN =
