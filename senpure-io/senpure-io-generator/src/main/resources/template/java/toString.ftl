@@ -29,7 +29,7 @@
         int ${field.name}Size = ${field.name}.size();
         if (${field.name}Size > 0) {
             sb.append("[");
-            for (int i = 0; i<${field.name}Size;i++) {
+            for (int i = 0; i < ${field.name}Size; i++) {
                 sb.append("\n");
         <#if field.baseField||field.bean.enum>
                 sb.append(nextIndent);
@@ -52,7 +52,7 @@
         sb.append(indent).append(rightPad("${field.name}", filedPad)).append(" = ").append(${field.name});
         <#else>
         sb.append(indent).append(rightPad("${field.name}", filedPad)).append(" = ");
-        if(${field.name}!=null){
+        if (${field.name} != null){
             <#if field.bean.enum>
             sb.append(${field.name});
                 <#else >

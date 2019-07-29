@@ -35,6 +35,7 @@ public class TemplateUtil {
         cfg.setSharedVariable("rightPad", new RightPad());
         cfg.setSharedVariable("var32Size", new Var32Size());
         cfg.setSharedVariable("luaNameStyle", new LuaNameStyle());
+        cfg.setSharedVariable("lowerCamelCase", new LowerCamelCaseNameRule());
         try {
             cfg.setSharedVariable("luaImplPrefix", Constant.LUA_IMPL_SC_PREFIX);
         } catch (TemplateModelException e) {

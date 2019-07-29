@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * @time ${.now?datetime}
  */
 <#assign name>${javaName}</#assign>
-public class ${name} extends  Message {
+public class ${name} extends Message {
 
     public static final int MESSAGE_ID = ${id?c};
 <#include "compressField.ftl">

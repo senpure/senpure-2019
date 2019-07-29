@@ -13,11 +13,34 @@
     </#if>
 </#if>
 </#list>
+
+
+    public void copy(${javaName} from) {
+<#list fields as field>
+        <#if field.list >
+        this.${field.name}.clear();
+            <#if field.baseField ||field.bean.enum>
+        this.${field.name}.addAll(from.get${field.name?cap_first}());
+                <#else >
+        for (int i = 0; i < from.get${field.name?cap_first}.size(); i++) {
+            ${field.javaType} ${lowerCamelCase(field.javaType)} = new ${field.javaType}();
+            ${lowerCamelCase(field.javaType)}.copy(from.get${field.name?cap_first}.get(i));
+            this.${field.name}.add(${lowerCamelCase(field.javaType)});
+        }
+           </#if>
+        <#elseif field.classType="boolean">
+        this.${field.name} = from.is${field.name?cap_first}();
+            <#else >
+        this.${field.name} = from.get${field.name?cap_first}();
+         </#if>
+    </#list>
+    }
+
     /**
      * 写入字节缓存
      */
     @Override
-    public void write(ByteBuf buf){
+    public void write(ByteBuf buf) {
         getSerializedSize();
 <#list fields as field>
     <#if field.hasExplain>
@@ -26,88 +49,88 @@
     <#if field.list >
         <#if field.baseField>
             <#if field.javaType!="String">
-        if (${field.name}.size() > 0){
-            writeVar32(buf,${field.tag});
-            writeVar32(buf,${field.name}SerializedSize);
-            for (int i= 0;i< ${field.name}.size();i++){
+        if (${field.name}.size() > 0) {
+            writeVar32(buf, ${field.tag});
+            writeVar32(buf, ${field.name}SerializedSize);
+            for (int i = 0; i < ${field.name}.size(); i++) {
                 <#if field.classType="boolean">
-                writeBoolean(buf,${field.name}.get(i));
+                writeBoolean(buf, ${field.name}.get(i));
                 <#elseif field.classType="byte">
-                writeVar32(buf,${field.name}.get(i));
+                writeVar32(buf, ${field.name}.get(i));
                 <#elseif field.classType="short">
-                writeVar32(buf,${field.name}.get(i));
+                writeVar32(buf, ${field.name}.get(i));
                 <#elseif field.classType="int">
-                writeVar32(buf,${field.name}.get(i));
+                writeVar32(buf, ${field.name}.get(i));
                 <#elseif field.classType="long">
-                writeVar64(buf,${field.name}.get(i));
+                writeVar64(buf, ${field.name}.get(i));
                 <#elseif field.classType="sint">
-                writeSInt(buf,${field.name}.get(i));
+                writeSInt(buf, ${field.name}.get(i));
                 <#elseif field.classType="slong">
-                writeSLong(buf,${field.name}.get(i));
+                writeSLong(buf, ${field.name}.get(i));
                 <#elseif field.classType="float">
-                writeFloat(buf,${field.name}.get(i));
+                writeFloat(buf, ${field.name}.get(i));
                 <#elseif field.classType="double">
-                writeDouble(buf,${field.name}.get(i));
+                writeDouble(buf, ${field.name}.get(i));
                 <#elseif field.classType="sfixed32">
-                writeSFixed32(buf,${field.name}.get(i));
+                writeSFixed32(buf, ${field.name}.get(i));
                 <#elseif field.classType="sfixed64">
-                writeSFixed64(buf,${field.name}.get(i));
+                writeSFixed64(buf, ${field.name}.get(i));
                 </#if>
             }
         }
             <#else ><#--String-->
-        for (int i= 0;i< ${field.name}.size();i++){
-            writeString(buf,${field.tag},${field.name}.get(i));
+        for (int i = 0; i < ${field.name}.size(); i++) {
+            writeString(buf, ${field.tag}, ${field.name}.get(i));
         }
             </#if>
         <#else ><#--bean -->
             <#if field.bean.enum>
-        if (${field.name}.size() > 0){
-            writeVar32(buf,${field.tag});
-            writeVar32(buf,${field.name}SerializedSize);
-            for (int i= 0;i< ${field.name}.size();i++){
-                writeVar32(buf,${field.name}.get(i).getValue());
+        if (${field.name}.size() > 0) {
+            writeVar32(buf, ${field.tag});
+            writeVar32(buf, ${field.name}SerializedSize);
+            for (int i = 0;i < ${field.name}.size(); i++) {
+                writeVar32(buf, ${field.name}.get(i).getValue());
             }
         }
             <#else>
-        for (int i= 0;i< ${field.name}.size();i++){
-             writeBean(buf,${field.tag},${field.name}.get(i));
+        for (int i = 0;i < ${field.name}.size(); i++) {
+             writeBean(buf, ${field.tag}, ${field.name}.get(i));
         }
             </#if>
         </#if>
     <#else ><#--不是list-->
         <#if field.classType="boolean">
-        writeBoolean(buf,${field.tag},${field.name});
+        writeBoolean(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="byte">
-        writeVar32(buf,${field.tag},${field.name});
+        writeVar32(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="short">
-        writeVar32(buf,${field.tag},${field.name});
+        writeVar32(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="int">
-        writeVar32(buf,${field.tag},${field.name});
+        writeVar32(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="long">
-        writeVar64(buf,${field.tag},${field.name});
+        writeVar64(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="sint">
-        writeSInt(buf,${field.tag},${field.name});
+        writeSInt(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="slong">
-        writeSLong(buf,${field.tag},${field.name});
+        writeSLong(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="float">
-        writeFloat(buf,${field.tag},${field.name});
+        writeFloat(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="double">
-        writeDouble(buf,${field.tag},${field.name});
+        writeDouble(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="sfixed32">
-        writeSFixed32(buf,${field.tag},${field.name});
+        writeSFixed32(buf, ${field.tag}, ${field.name});
         <#elseif field.classType="sfixed64">
-        writeSFixed64(buf,${field.tag},${field.name});
+        writeSFixed64(buf, ${field.tag}, ${field.name});
         <#elseif field.javaType="String">
-        if (${field.name} != null){
-            writeString(buf,${field.tag},${field.name});
+        if (${field.name} != null) {
+            writeString(buf, ${field.tag}, ${field.name});
         }
         <#else>
-        if (${field.name }!= null){
+        if (${field.name} != null) {
             <#if field.bean.enum>
-            writeVar32(buf,${field.tag},${field.name}.getValue());
+            writeVar32(buf, ${field.tag}, ${field.name}.getValue());
             <#else>
-            writeBean(buf,${field.tag},${field.name});
+            writeBean(buf, ${field.tag}, ${field.name});
             </#if>
         }
         </#if>
@@ -119,8 +142,8 @@
      * 读取字节缓存
      */
     @Override
-    public void read(ByteBuf buf,int endIndex){
-        while(true){
+    public void read(ByteBuf buf, int endIndex) {
+        while (true) {
             int tag = readTag(buf, endIndex);
             switch (tag) {
                 case 0://end
@@ -219,12 +242,11 @@
                     ${field.name} = readString(buf);
             <#else>
                 <#if field.bean.enum>
-                    ${field.name} = ${field.javaType}.get${field.bean.javaName}( readVar32(buf)) ;
+                    ${field.name} = ${field.javaType}.get${field.bean.javaName}(readVar32(buf)) ;
                     <#else>
                     ${field.name} = new ${field.javaType}();
                     readBean(buf,${field.name});
                 </#if>
-
             </#if>
         </#if>
                     break;
@@ -252,9 +274,9 @@
 </#list>
 
     @Override
-    public int getSerializedSize(){
+    public int getSerializedSize() {
         int size = serializedSize ;
-        if (size != -1 ){
+        if (size != -1 ) {
             return size;
         }
         size = 0 ;
@@ -266,7 +288,7 @@
         <#if field.baseField>
             <#if field.javaType!="String">
             int ${field.name}DataSize = 0;
-        for(int i=0;i< ${field.name}.size();i++){
+        for(int i = 0; i < ${field.name}.size(); i++) {
             <#if field.classType="boolean">
             ${field.name}DataSize += computeBooleanSizeNoTag(${field.name}.get(i));
             <#elseif field.classType="byte">
@@ -292,69 +314,69 @@
             </#if><#--多个选项的-->
         }
         ${field.name}SerializedSize = ${field.name}DataSize;
-        if(${field.name}DataSize > 0 ){
+        if (${field.name}DataSize > 0 ) {
             //tag size ${field.tag}
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
             size += computeVar32SizeNoTag(${field.name}SerializedSize);
         }
             <#else ><#--String-->
-        for(int i=0;i< ${field.name}.size();i++){
-            size += computeStringSize(${var32Size(field.tag)},${field.name}.get(i));
+        for(int i = 0; i < ${field.name}.size(); i++) {
+            size += computeStringSize(${var32Size(field.tag)}, ${field.name}.get(i));
         }
             </#if><#--String-->
         <#else ><#--bean-->
             <#if field.bean.enum>
         int ${field.name}DataSize = 0;
-        for(int i=0;i< ${field.name}.size();i++){
+        for (int i = 0;i < ${field.name}.size(); i++) {
             ${field.name}DataSize += computeVar32SizeNoTag(${field.name}.get(i).getValue());
         }
         ${field.name}SerializedSize = ${field.name}DataSize;
-        if(${field.name}DataSize > 0 ){
+        if (${field.name}DataSize > 0 ) {
             //tag size ${field.tag}
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
             size += computeVar32SizeNoTag(${field.name}SerializedSize);
         }
             <#else >
-        for(int i=0;i< ${field.name}.size();i++){
-            size += computeBeanSize(${var32Size(field.tag)},${field.name}.get(i));
+        for (int i = 0; i < ${field.name}.size(); i++) {
+            size += computeBeanSize(${var32Size(field.tag)}, ${field.name}.get(i));
         }
     </#if>
         </#if><#--bean-->
     <#else><#--不是list-->
         <#if field.classType="boolean">
-        size += computeBooleanSize(${var32Size(field.tag)},${field.name});
+        size += computeBooleanSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="byte">
-        size += computeVar32Size(${var32Size(field.tag)},${field.name});
+        size += computeVar32Size(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="short">
-        size += computeVar32Size(${var32Size(field.tag)},${field.name});
+        size += computeVar32Size(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="int">
         size += computeVar32Size(${var32Size(field.tag)},${field.name});
         <#elseif field.classType="long">
-        size += computeVar64Size(${var32Size(field.tag)},${field.name});
+        size += computeVar64Size(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="sint">
-        size += computeSIntSize(${var32Size(field.tag)},${field.name});
+        size += computeSIntSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="slong">
-        size += computeSLongSize(${var32Size(field.tag)},${field.name});
+        size += computeSLongSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="float">
-        size += computeFloatSize(${var32Size(field.tag)},${field.name});
+        size += computeFloatSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="double">
-        size += computeDoubleSize(${var32Size(field.tag)},${field.name});
+        size += computeDoubleSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="sfixed32">
-        size += computeSFixed32Size(${var32Size(field.tag)},${field.name});
+        size += computeSFixed32Size(${var32Size(field.tag)}, ${field.name});
         <#elseif field.classType="sfixed64">
-        size += computeSFixed64Size(${var32Size(field.tag)},${field.name});
+        size += computeSFixed64Size(${var32Size(field.tag)}, ${field.name});
         <#elseif field.javaType="String">
-        if (${field.name} != null){
-            size += computeStringSize(${var32Size(field.tag)},${field.name});
+        if (${field.name} != null) {
+            size += computeStringSize(${var32Size(field.tag)}, ${field.name});
         }
         <#else>
-        if (${field.name} != null){
+        if (${field.name} != null) {
             <#if field.bean.enum>
-            size += computeVar32Size(${var32Size(field.tag)},${field.name}.getValue());
+            size += computeVar32Size(${var32Size(field.tag)}, ${field.name}.getValue());
                 <#else >
-            size += computeBeanSize(${var32Size(field.tag)},${field.name});
+            size += computeBeanSize(${var32Size(field.tag)}, ${field.name});
             </#if>
         }
         </#if>
@@ -372,7 +394,7 @@
       * @return
       */
         </#if>
-    public List<${.globals[field.javaType]!field.javaType?cap_first}> get${field.name?cap_first}(){
+    public List<${.globals[field.javaType]!field.javaType?cap_first}> get${field.name?cap_first}() {
         return ${field.name};
     }
         <#if field.hasExplain&&field.explain?length gt 1>
@@ -380,12 +402,12 @@
       * set ${field.explain}
       */
         </#if>
-    public ${name} set${field.name?cap_first} (List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}){
-        if(${field.name} == null){
+    public ${name} set${field.name?cap_first} (List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}) {
+        if(${field.name} == null) {
         this.${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
             return this;
         }
-        this.${field.name}=${field.name};
+        this.${field.name} = ${field.name};
         return this;
     }
 
@@ -406,7 +428,7 @@
      */
         </#if>
     public ${name} set${field.name?cap_first}(${field.javaType} ${field.name}) {
-        this.${field.name}=${field.name};
+        this.${field.name} = ${field.name};
         return this;
     }
     </#if>

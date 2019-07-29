@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * @time ${.now?datetime}
  */
 <#assign name>${javaName}</#assign>
-public class ${name} extends  Bean {
+public class ${name} extends Bean {
 <#include "compressField.ftl">
 
     @Override
