@@ -49,8 +49,8 @@ public class ConsumerAutoConfiguration {
     }
 
     @Bean
-    public HandlerChecker handlerChecker() {
-        return new HandlerChecker();
+    public ConsumerHandlerChecker consumerHandlerChecker() {
+        return new ConsumerHandlerChecker();
     }
 
 
@@ -58,7 +58,7 @@ public class ConsumerAutoConfiguration {
         this.properties = properties;
     }
 
-    class HandlerChecker implements ApplicationRunner {
+    class ConsumerHandlerChecker implements ApplicationRunner {
         @Override
         public void run(ApplicationArguments args) throws Exception {
             ConsumerMessageHandler handler = ConsumerMessageHandlerUtil.getHandler(SCInnerErrorMessage.MESSAGE_ID);

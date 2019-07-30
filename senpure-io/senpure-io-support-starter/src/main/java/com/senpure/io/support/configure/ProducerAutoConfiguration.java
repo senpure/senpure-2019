@@ -65,11 +65,11 @@ public class ProducerAutoConfiguration {
     }
 
     @Bean
-    public HandlerChecker handlerChecker() {
-        return new HandlerChecker();
+    public ProducerHandlerChecker producerHandlerChecker() {
+        return new ProducerHandlerChecker();
     }
 
-    class HandlerChecker implements ApplicationRunner {
+    class ProducerHandlerChecker implements ApplicationRunner {
         @Override
         public void run(ApplicationArguments args) throws Exception {
             ProducerMessageHandler handler = ProducerMessageHandlerUtil.getHandler(CSBreakUserGatewayMessage.MESSAGE_ID);

@@ -9,6 +9,7 @@ import com.senpure.io.event.EventHelper;
 import com.senpure.io.message.SCIdNameMessage;
 import com.senpure.io.message.SCRegServerHandleMessageMessage;
 import com.senpure.io.producer.*;
+import com.senpure.io.producer.handler.ProducerAskMessageHandler;
 import com.senpure.io.producer.handler.ProducerMessageHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -92,6 +93,7 @@ public class ProducerServerStarter implements ApplicationRunner {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
                 new NameThreadFactory(serverProperties.getName() + "-executor"));
         messageExecutor.setService(service);
+        messageExecutor.setGatewayManager(gatewayManager);
         this.service = service;
         EventHelper.setService(service);
     }
@@ -115,7 +117,16 @@ public class ProducerServerStarter implements ApplicationRunner {
             HandleMessage handleMessage = new HandleMessage();
             handleMessage.setHandleMessageId(id);
             ProducerMessageHandler handler = ProducerMessageHandlerUtil.getHandler(id);
-            handleMessage.setDirect(handler.direct());
+            if (handler instanceof ProducerAskMessageHandler) {
+                //避免编码出错
+                handleMessage.setDirect(false);
+                if (handler.direct()) {
+                    logger.warn("{}实现了ProducerAskMessageHandler但是direct()返回true 修正为false", handler.getClass().getName());
+                }
+            } else {
+                handleMessage.setDirect(true);
+            }
+
             handleMessage.setMessageClasses(ProducerMessageHandlerUtil.getEmptyMessage(id).getClass().getName());
             handleMessages.add(handleMessage);
             MessageIdReader.relation(id, handler.getEmptyMessage().getClass().getSimpleName());
@@ -198,7 +209,10 @@ public class ProducerServerStarter implements ApplicationRunner {
         gatewayMessage.setMessageId(message.getMessageId());
         gatewayMessage.setMessage(message);
         gatewayMessage.setUserIds(new Long[]{0L});
-        logger.debug("向{}注册服务{}", ChannelAttributeUtil.getRemoteServerKey(server.getChannel()), message);
+        logger.debug("向{}注册服务", ChannelAttributeUtil.getRemoteServerKey(server.getChannel()));
+        for (HandleMessage handleMessage : handleMessages) {
+            logger.debug(handleMessage.toString());
+        }
         server.getChannel().writeAndFlush(gatewayMessage);
     }
 

@@ -1,6 +1,8 @@
 package com.senpure.io.producer;
 
+import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.producer.handler.ProducerMessageHandler;
+import com.senpure.io.protocol.Constant;
 import com.senpure.io.protocol.Message;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ public class ProducerMessageExecutor {
     private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
     private ScheduledExecutorService service;
     private int serviceRefCount = 0;
+    private GatewayManager gatewayManager;
 
     public ProducerMessageExecutor() {
 
@@ -20,6 +23,10 @@ public class ProducerMessageExecutor {
 
     public ScheduledExecutorService getService() {
         return service;
+    }
+
+    public void setGatewayManager(GatewayManager gatewayManager) {
+        this.gatewayManager = gatewayManager;
     }
 
     public void setService(ScheduledExecutorService service) {
@@ -45,6 +52,10 @@ public class ProducerMessageExecutor {
                 handler.execute(channel, gsMessage.getToken(), userId, message);
             } catch (Exception e) {
                 logger.error("执行handler[" + handler.getClass().getName() + "]逻辑出错 ", e);
+                SCInnerErrorMessage scInnerErrorMessage = new SCInnerErrorMessage();
+                scInnerErrorMessage.setType(Constant.ERROR_SERVER_ERROR);
+                scInnerErrorMessage.setMessage("服务器执行错误:" + e.getMessage());
+                gatewayManager.sendMessage2GatewayByToken(gsMessage.getToken(), scInnerErrorMessage);
             }
 
         });
