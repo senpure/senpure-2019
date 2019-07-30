@@ -163,7 +163,7 @@ public class ProducerManager {
             CSBreakUserGatewayMessage breakUserGatewayMessage = new CSBreakUserGatewayMessage();
             breakUserGatewayMessage.setRelationToken(serverRelation.relationToken);
             breakUserGatewayMessage.setUserId(userId);
-            breakUserGatewayMessage.setToken(token);
+            breakUserGatewayMessage.setToken(localRemove?token:0);
             breakUserGatewayMessage.setType(type);
             Client2GatewayMessage client2GatewayMessage = new Client2GatewayMessage();
             client2GatewayMessage.setMessageId(breakUserGatewayMessage.getMessageId());
@@ -176,8 +176,8 @@ public class ProducerManager {
             client2GatewayMessage.setData(data);
             serverRelation.serverChannelManager.sendMessage(client2GatewayMessage);
         } else {
-            logger.info("{} {} 没有对{} 没有关联 :token{} userId:{} ",
-                    serverName, serverRelation.serverChannelManager.getServerKey(), clientChannel, token, userId);
+            logger.info("{} 没有对{} 有关联 :token{} userId:{} ",
+                    serverName, clientChannel, token, userId);
 
         }
     }

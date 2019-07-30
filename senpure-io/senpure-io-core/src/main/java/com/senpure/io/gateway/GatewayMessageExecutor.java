@@ -235,8 +235,8 @@ public class GatewayMessageExecutor {
 
     private void userOffline(Channel channel, Long token, Long userId) {
         for (Map.Entry<String, ProducerManager> entry : serverInstanceMap.entrySet()) {
-            ProducerManager serverManager = entry.getValue();
-            serverManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_OFFlINE);
+            ProducerManager producerManager = entry.getValue();
+            producerManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_OFFlINE);
         }
     }
 
@@ -249,11 +249,11 @@ public class GatewayMessageExecutor {
      */
     private void userChange(Channel channel, Long token, Long userId) {
         for (Map.Entry<String, ProducerManager> entry : serverInstanceMap.entrySet()) {
-            ProducerManager serverManager = entry.getValue();
-            if (serverManager.getHandleIds().contains(csLoginMessageId)) {
-                serverManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_CHANGE, false);
+            ProducerManager producerManager = entry.getValue();
+            if (producerManager.getHandleIds().contains(csLoginMessageId)) {
+                producerManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_CHANGE, false);
             } else {
-                serverManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_CHANGE);
+                producerManager.breakUserGateway(channel, token, userId, Constant.BREAK_TYPE_USER_CHANGE);
             }
         }
     }
