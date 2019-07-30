@@ -10,7 +10,7 @@ public interface ProducerMessageHandler<T extends Message> {
 
     T getEmptyMessage();
 
-    void execute(Channel channel, long token, long playerId, T message) throws  Exception;
+    void execute(Channel channel, long token, long userId, T message) throws  Exception;
 
     int handlerId();
 

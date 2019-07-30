@@ -26,6 +26,18 @@ public class ServerProperties {
         private String remoteName = "gateway";
         private boolean setReadableName = false;
         /**
+         * 自动连接服务
+         */
+        private boolean autoConnect = true;
+        /**
+         * 连接目标失败后下一次连接间隔毫秒(手动连接时自己处理)
+         */
+        private long connectFailInterval = 20000;
+        /**
+         * 与目标建立的channel 数量(手动连接时自己处理)
+         */
+        private int remoteChannel = 2;
+        /**
          * 服务器名
          */
         private String readableName = "consumerServer";
@@ -50,14 +62,7 @@ public class ServerProperties {
          * 逻辑处理线程数
          */
         private int executorThreadPoolSize = 0;
-        /**
-         * 连接目标失败后下一次连接间隔毫秒
-         */
-        private long connectFailInterval = 20000;
-        /**
-         * 与目标建立的channel 数量
-         */
-        private int remoteChannel = 2;
+
         /**
          * 没有channel时下一个可用channel重发消息的时间限制
          */
@@ -223,6 +228,14 @@ public class ServerProperties {
 
         public void setRemoteChannel(int remoteChannel) {
             this.remoteChannel = remoteChannel;
+        }
+
+        public boolean isAutoConnect() {
+            return autoConnect;
+        }
+
+        public void setAutoConnect(boolean autoConnect) {
+            this.autoConnect = autoConnect;
         }
     }
 

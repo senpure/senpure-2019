@@ -1,14 +1,7 @@
 
-<#list fields as field>
-<#if field.list>
-<#assign hasNextIndent= true>
-<#break >
-</#if>
-</#list>
-
     @Override
     public String toString(String indent) {
-<#if hasBean||hasNextIndent!false>
+<#if hasNextIndent>
         //${fieldMaxLen} + 3 = ${fieldMaxLen+3} 个空格
         String nextIndent ="<#list 1..fieldMaxLen+3 as i> </#list>";
 </#if>

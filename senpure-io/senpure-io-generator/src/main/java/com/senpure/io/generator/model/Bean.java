@@ -35,6 +35,31 @@ public class Bean extends TemplateBean {
     //协议文件全路径
     private String filePath;
 
+
+    public void setExplain(String explain) {
+        this.explain = explain;
+        if (explain != null && explain.trim().length() > 0) {
+            hasExplain = true;
+        }
+    }
+
+
+    public boolean isHasNextIndent() {
+
+        for (Field field : fields) {
+            if (field.isList()) {
+                return true;
+            }
+            if (!field.isBaseField()) {
+                Bean bean = field.getBean();
+                if (!(bean instanceof Enum)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isEnum() {
         return false;
     }
@@ -80,12 +105,6 @@ public class Bean extends TemplateBean {
         this.singleField = singleField;
     }
 
-    public void setExplain(String explain) {
-        this.explain = explain;
-        if (explain != null && explain.trim().length() > 0) {
-            hasExplain = true;
-        }
-    }
 
     public boolean isHasBean() {
         return hasBean;
@@ -94,6 +113,7 @@ public class Bean extends TemplateBean {
     public void setHasBean(boolean hasBean) {
         this.hasBean = hasBean;
     }
+
 
     public int getFieldMaxLen() {
         return fieldMaxLen;

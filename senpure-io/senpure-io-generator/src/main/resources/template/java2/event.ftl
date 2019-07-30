@@ -3,7 +3,7 @@ package ${javaPack};
 <#list singleField?values as field>
     <#if !field.baseField>
         <#if field.bean.javaPack!=javaPack>
-import ${field.bean.javaPack}.${field.classType};
+import ${field.bean.javaPack}.${field.fieldType};
         </#if>
     </#if>
 </#list >

@@ -6,7 +6,7 @@ public class Field {
     private boolean hasExplain;
     private String explain;
     //协议文件中的类型
-    private String classType;
+    private String fieldType;
 
     private String name;
     private boolean baseField;
@@ -35,12 +35,12 @@ public class Field {
         }
     }
 
-    public String getClassType() {
-        return classType;
+    public String getFieldType() {
+        return fieldType;
     }
 
-    public void setClassType(String classType) {
-        this.classType = classType;
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
     }
 
     public String getName() {
@@ -156,7 +156,7 @@ public class Field {
         return "Field{" +
                 "hasExplain=" + hasExplain +
                 ", explain='" + explain + '\'' +
-                ", classType='" + classType + '\'' +
+                ", fieldType='" + fieldType + '\'' +
                 ", name='" + name + '\'' +
                 ", baseField=" + baseField +
                 ", list=" + list +

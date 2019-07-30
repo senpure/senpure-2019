@@ -188,19 +188,19 @@ public class IoProtocolReader extends IoBaseListener {
 
     @Override
     public void enterFieldType(IoParser.FieldTypeContext ctx) {
-        field.setClassType(ctx.getText());
+        field.setFieldType(ctx.getText());
         Token token = ctx.getStart();
 
         field.getTypeLocation().setLine(token.getLine());
         field.getTypeLocation().setPosition(token.getCharPositionInLine());
 
-        field.setBaseField(ProtocolUtil.isBaseField(field.getClassType()));
+        field.setBaseField(ProtocolUtil.isBaseField(field.getFieldType()));
         if (field.isBaseField()) {
             bean.setHasBean(false);
         } else {
             bean.setHasBean(true);
         }
-        bean.getSingleField().put(field.getClassType(), field);
+        bean.getSingleField().put(field.getFieldType(), field);
     }
 
     @Override
@@ -266,14 +266,14 @@ public class IoProtocolReader extends IoBaseListener {
             bean.setFieldMaxLen(fieldLen);
         }
         if (field.isBaseField()) {
-            field.setWriteType(ProtocolUtil.getWriteType(field.getClassType()));
-            field.setJavaType(ProtocolUtil.getJavaType(field.getClassType()));
-            if (field.isList() && !field.getClassType().equals("String")) {
+            field.setWriteType(ProtocolUtil.getWriteType(field.getFieldType()));
+            field.setJavaType(ProtocolUtil.getJavaType(field.getFieldType()));
+            if (field.isList() && !field.getFieldType().equals("String")) {
                 field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
             }
             field.setTag(field.getIndex() << 3 | field.getWriteType());
         } else {
-            field.setJavaType(field.getClassType());
+            field.setJavaType(field.getFieldType());
             field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
             field.setTag(field.getIndex() << 3 | ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
         }
@@ -465,7 +465,7 @@ public class IoProtocolReader extends IoBaseListener {
         for (Bean bean : beans) {
             for (Field field : bean.getFields()) {
                 if (!field.isBaseField()) {
-                    List<Bean> finds = findBean(field.getClassType(), allBeans);
+                    List<Bean> finds = findBean(field.getFieldType(), allBeans);
                     if (finds.size() == 1) {
                         Bean b = finds.get(0);
                         if (b instanceof Enum) {
@@ -479,7 +479,7 @@ public class IoProtocolReader extends IoBaseListener {
                                 .append(field.getTypeLocation()).append(" ");
                         errorBuilder.append(bean.getName()).append(".").append(field.getName());
                         errorBuilder.append("[");
-                        errorBuilder.append(field.getClassType())
+                        errorBuilder.append(field.getFieldType())
                                 .append("] Type,引用不明确");
                         for (Bean find : finds) {
                             errorBuilder.append(find.getFilePath()).append(" ").append(find.getNameLocation()).append(" ");
@@ -491,10 +491,10 @@ public class IoProtocolReader extends IoBaseListener {
                                 .append(field.getTypeLocation()).append(" ");
                         errorBuilder.append(bean.getName()).append(".").append(field.getName());
                         errorBuilder.append("[");
-                        errorBuilder.append(field.getClassType())
+                        errorBuilder.append(field.getFieldType())
                                 .append("] Type,未定义，或未引用 ");
                         // Assert.error(filePath + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
-                        //      + "[" + field.getClassType() + "] Type,未定义，或未引用");
+                        //      + "[" + field.getFieldType() + "] Type,未定义，或未引用");
                     }
 
                 }

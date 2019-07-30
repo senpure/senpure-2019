@@ -1,14 +1,14 @@
-  <#if field.classType="boolean">
-  <#elseif field.classType="byte">
-  <#elseif field.classType="short">
-  <#elseif field.classType="int">
-  <#elseif field.classType="long">
-  <#elseif field.classType="sint">
-  <#elseif field.classType="slong">
-  <#elseif field.classType="float">
-  <#elseif field.classType="double">
-  <#elseif field.classType="sfixed32">
-  <#elseif field.classType="sfixed64">
-  <#elseif field.classType="String">
+  <#if field.fieldType="boolean">
+  <#elseif field.fieldType="byte">
+  <#elseif field.fieldType="short">
+  <#elseif field.fieldType="int">
+  <#elseif field.fieldType="long">
+  <#elseif field.fieldType="sint">
+  <#elseif field.fieldType="slong">
+  <#elseif field.fieldType="float">
+  <#elseif field.fieldType="double">
+  <#elseif field.fieldType="sfixed32">
+  <#elseif field.fieldType="sfixed64">
+  <#elseif field.fieldType="String">
   <#else>
   </#if>
