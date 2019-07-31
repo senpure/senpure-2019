@@ -12,6 +12,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("server.io")
 public class ServerProperties {
     @Value("${spring.application.name:}")
+    /**
+     * 该值不用配置读取spring.application.name
+     */
     private String name;
 
     private Consumer consumer = new Consumer();

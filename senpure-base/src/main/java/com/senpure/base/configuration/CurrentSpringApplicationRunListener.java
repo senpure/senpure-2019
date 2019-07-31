@@ -48,7 +48,7 @@ public class CurrentSpringApplicationRunListener implements SpringApplicationRun
         }
         AppEvn.markClassRootPath(clazz);
         AppEvn.installAnsiConsole(clazz);
-        logger.debug("{}={}", "spring.output.ansi.enabled", environment.getProperty("spring.output.ansi.enabled"));
+        //logger.debug("{}={}", "spring.output.ansi.enabled", environment.getProperty("spring.output.ansi.enabled"));
 
     }
 

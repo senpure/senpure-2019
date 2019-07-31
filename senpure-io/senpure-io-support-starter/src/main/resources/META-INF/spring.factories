@@ -1,0 +1,6 @@
+org.springframework.boot.SpringApplicationRunListener=\
+  com.senpure.io.support.configure.PropertiesCompletionConfiguration
+
+
+
+
