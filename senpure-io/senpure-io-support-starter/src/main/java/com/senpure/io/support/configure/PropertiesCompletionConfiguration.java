@@ -84,28 +84,25 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
             if (tempCsPort == null) {
                 tempCsPort = environment.getProperty("server.io.gateway.csPort", Integer.class);
             }
-            Integer csPort = tempCsPort;
+            Integer csPort;
             //tempCsPort == null ||非网关服务就不用计算了
             if (tempCsPort!=null&&tempCsPort == 0) {
                 csPort = getPort(gateway.getCsPort());
-
-            }
-            if (tempCsPort != null) {
+                ioMap.put("server.io.gateway.cs-port", csPort);
                 ioMap.put("eureka.instance.metadataMap[csPort]", csPort);
-                // System.setProperty("eureka.instance.metadataMap[csPort]", csPort + "");
+
             }
             Integer tempScPort = environment.getProperty("server.io.gateway.sc-port", Integer.class);
             if (tempScPort == null) {
                 tempScPort = environment.getProperty("server.io.gateway.scPort", Integer.class);
             }
-            Integer scPort = tempScPort;
+            Integer scPort;
             if (tempScPort!=null&&tempScPort == 0) {
                 scPort = getPort(gateway.getScPort());
-            }
-            if (tempScPort != null) {
+                ioMap.put("server.io.gateway.scPort", scPort);
                 ioMap.put("eureka.instance.metadataMap[scPort]", scPort);
-                //System.setProperty("eureka.instance.metadataMap[scPort]", scPort + "");
             }
+
             if (ioMap.size() > 0) {
                 PropertySource propertySource = new MapPropertySource("senpure-io-proofing", ioMap);
                 environment.getPropertySources().addFirst(propertySource);
