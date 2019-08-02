@@ -12,9 +12,16 @@
     <modules>
         <module>senpure-base</module>
         <module>senpure-io</module>
-        <module>senpure-template</module>
-        <module>senpure-result</module>
-        <module>senpure-web</module>
+
+<module>senpure-template</module>
+<module>senpure-result</module>
+<module>senpure-web</module>
+
+<module>senpure-database</module>
+<module>senpure-code-generator</module>
+<module>senpure-dispatcher</module>
+        <!--
+-->
     </modules>
     <!--
     <repositories>
@@ -63,6 +70,16 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>2.9.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>1.1.18</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>2.1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

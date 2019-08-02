@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.client.ServiceInstance;
@@ -48,7 +49,8 @@ public class ProducerServerStarter implements ApplicationRunner {
     private GatewayManager gatewayManager;
     @Autowired
     private ProducerMessageExecutor messageExecutor;
-
+    @Value("${server.port:0}")
+    private int httpPort;
     private ServerProperties.Producer producer;
     private ServerProperties.Gateway gateway = new ServerProperties.Gateway();
     private ScheduledExecutorService service;
@@ -171,6 +173,7 @@ public class ProducerServerStarter implements ApplicationRunner {
                         producerServer.setProperties(producer);
                         producerServer.setMessageExecutor(messageExecutor);
                         producerServer.setServerName(serverProperties.getName());
+                        producerServer.setHttpPort(httpPort);
                         producerServer.setReadableServerName(producer.getReadableName());
                         if (producerServer.start(instance.getHost(), port)) {
                             servers.add(producerServer);

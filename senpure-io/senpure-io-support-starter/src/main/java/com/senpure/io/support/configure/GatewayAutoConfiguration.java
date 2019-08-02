@@ -1,12 +1,12 @@
 package com.senpure.io.support.configure;
 
-import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.support.GatewayServerStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -39,7 +39,8 @@ import java.util.Map;
 public class GatewayAutoConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-
+    @Value("${server.port:0}")
+    private int httpPort;
 
     public GatewayAutoConfiguration(RestTemplateBuilder restTemplateBuilder, List<RestTemplateCustomizer> restTemplateCustomizers) {
         restTemplate = restTemplateBuilder.build();
@@ -52,8 +53,8 @@ public class GatewayAutoConfiguration {
 
     @Autowired
     private ServerProperties properties;
-   // @Autowired
-   // private DiscoveryClient discoveryClient;
+    // @Autowired
+    // private DiscoveryClient discoveryClient;
 
     // @Autowired
     // private RestTemplateBuilder restTemplateBuilder;
@@ -79,12 +80,12 @@ public class GatewayAutoConfiguration {
             Map<String, String> params = new LinkedHashMap<>();
             params.put("serverName", properties.getName());
             String serverKey;
-            if (AppEvn.classInJar(AppEvn.getStartClass())) {
-                serverKey = AppEvn.getClassPath(AppEvn.getStartClass());
-            } else {
-                serverKey = AppEvn.getClassRootPath();
-            }
-            serverKey = getLocalHostLANAddress().getHostAddress() + "->" + serverKey;
+//            if (AppEvn.classInJar(AppEvn.getStartClass())) {
+//                serverKey = AppEvn.getClassPath(AppEvn.getStartClass());
+//            } else {
+//                serverKey = AppEvn.getClassRootPath();
+//            }
+            serverKey =properties.getName()+" "+ getLocalHostLANAddress().getHostAddress() + ":" + (httpPort>0?httpPort:properties.getGateway().getCsPort());
             params.put("serverKey", serverKey);
             //  ObjectNode nodes = restTemplate.getForObject(url, ObjectNode.class, params);
             // logger.debug("雪花调度返回 {}", JSON.toJSONString(nodes));

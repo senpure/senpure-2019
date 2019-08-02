@@ -13,7 +13,9 @@ import org.springframework.core.env.PropertySource;
 
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,7 +60,19 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
             if (port != null && port == 0) {
                 Integer tempPort = port;
                 //  port = RandomUtil.random(1, 65536);
-                port = getPort();
+                String ports = environment.getProperty("server.ports");
+                List<Integer> portList = new ArrayList<>();
+                if (ports != null) {
+                    String portsStr[] = ports.split(",");
+                    for (String s : portsStr) {
+                        try {
+                            portList.add(Integer.valueOf(s));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                port = getPort(portList);
                 logger.info("{} 没有配置端口使用随机端口{}", tempPort, port);
                 Map<String, Object> map = new HashMap<>();
                 map.put("server.port", port);
@@ -86,7 +100,7 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
             }
             Integer csPort;
             //tempCsPort == null ||非网关服务就不用计算了
-            if (tempCsPort!=null&&tempCsPort == 0) {
+            if (tempCsPort != null && tempCsPort == 0) {
                 csPort = getPort(gateway.getCsPort());
                 ioMap.put("server.io.gateway.cs-port", csPort);
                 ioMap.put("eureka.instance.metadataMap[csPort]", csPort);
@@ -97,7 +111,7 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
                 tempScPort = environment.getProperty("server.io.gateway.scPort", Integer.class);
             }
             Integer scPort;
-            if (tempScPort!=null&&tempScPort == 0) {
+            if (tempScPort != null && tempScPort == 0) {
                 scPort = getPort(gateway.getScPort());
                 ioMap.put("server.io.gateway.scPort", scPort);
                 ioMap.put("eureka.instance.metadataMap[scPort]", scPort);
@@ -109,6 +123,15 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
             }
         }
 
+    }
+
+    private int getPort(List<Integer> ports) {
+        for (Integer port : ports) {
+            if (!isPortUsing("127.0.0.1", port)) {
+                return port;
+            }
+        }
+        return getPort();
     }
 
     private int getPort(int prior) {

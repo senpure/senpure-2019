@@ -1,6 +1,5 @@
 package com.senpure.io.producer;
 
-import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.io.ChannelAttributeUtil;
 import com.senpure.io.ServerProperties;
@@ -26,9 +25,10 @@ public class ProducerServer {
 
     private ChannelFuture channelFuture;
     private String serverName = "producerServer";
-    private String readableServerName = "producerSServer";
+    private String readableServerName = "producerServer";
     private boolean setReadableServerName = false;
     private ProducerMessageExecutor messageExecutor;
+    private int httpPort = 0;
 
     private Channel channel;
     private GatewayManager gatewayManager;
@@ -39,6 +39,7 @@ public class ProducerServer {
     private static final Object groupLock = new Object();
 
     private static int serverRefCont = 0;
+    private static int firstPort;
 
     public final boolean start(String host, int port) {
         Assert.notNull(gatewayManager);
@@ -73,7 +74,7 @@ public class ProducerServer {
                                     }
                                     p.addLast(new ProducerMessageDecoder());
                                     p.addLast(new ProducerMessageEncoder());
-                                   // p.addLast(new RealityMessageLoggingHandler(LogLevel.DEBUG, ioMessageProperties));
+                                    // p.addLast(new RealityMessageLoggingHandler(LogLevel.DEBUG, ioMessageProperties));
                                     if (properties.isEnableHeartCheck()) {
                                         p.addLast(new IdleStateHandler(0, properties.getWriterIdleTime(), 0, TimeUnit.MILLISECONDS));
                                     }
@@ -95,15 +96,17 @@ public class ProducerServer {
             }
             InetSocketAddress address = (InetSocketAddress) channel.localAddress();
 
-            String gatewayKey = gatewayManager.getGatewayKey(host, port);
-            String path;
-            if (AppEvn.classInJar(AppEvn.getStartClass())) {
-                path = AppEvn.getClassPath(AppEvn.getStartClass());
-            } else {
-                path = AppEvn.getClassRootPath();
-            }
-            String serverKey = address.getAddress().getHostAddress() + "->" + path;
+            int localPort = address.getPort();
+            markFirstPort(localPort);
 
+            String gatewayKey = gatewayManager.getGatewayKey(host, port);
+//            String path;
+//            if (AppEvn.classInJar(AppEvn.getStartClass())) {
+//                path = AppEvn.getClassPath(AppEvn.getStartClass());
+//            } else {
+//                path = AppEvn.getClassRootPath();
+//            }
+            String serverKey = serverName + " " + address.getAddress().getHostAddress() + ":" + (httpPort > 0 ? httpPort : firstPort);
             ChannelAttributeUtil.setRemoteServerKey(channel, gatewayKey);
             ChannelAttributeUtil.setLocalServerKey(channel, serverKey);
             logger.info("{}启动完成 localServerKey {} address {}", getReadableServerName(), serverKey, address);
@@ -181,6 +184,18 @@ public class ProducerServer {
     public void setReadableServerName(String readableServerName) {
         this.readableServerName = readableServerName;
         setReadableServerName = true;
+    }
+
+    public void setHttpPort(int httpPort) {
+
+        this.httpPort = httpPort;
+    }
+
+    private static synchronized void markFirstPort(int port) {
+        if (firstPort > 0) {
+            return;
+        }
+        firstPort = port;
     }
 
     public static void main(String[] args) {
