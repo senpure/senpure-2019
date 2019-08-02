@@ -1,7 +1,7 @@
 package com.senpure.dispatcher.criteria;
 
 import com.senpure.base.criterion.Criteria;
-import com.senpure.dispatcher.model.SnowflakeLock;
+import com.senpure.dispatcher.model.DispatcherLock;
 
 import java.io.Serializable;
 
@@ -9,9 +9,9 @@ import java.io.Serializable;
  * SnowflakeLock
  *
  * @author senpure-generator
- * @version 2019-3-12 13:43:04
+ * @version 2019-8-2 11:22:32
  */
-public class SnowflakeLockCriteria extends Criteria implements Serializable {
+public class DispatcherLockCriteria extends Criteria implements Serializable {
     private static final long serialVersionUID = 0L;
 
     //(主键)
@@ -19,35 +19,35 @@ public class SnowflakeLockCriteria extends Criteria implements Serializable {
     //乐观锁，版本控制
     private Integer version;
 
-    public static SnowflakeLock toSnowflakeLock(SnowflakeLockCriteria criteria, SnowflakeLock snowflakeLock) {
-        snowflakeLock.setId(criteria.getId());
-        snowflakeLock.setVersion(criteria.getVersion());
-        return snowflakeLock;
+    public static DispatcherLock toDispatcherLock(DispatcherLockCriteria criteria, DispatcherLock dispatcherLock) {
+        dispatcherLock.setId(criteria.getId());
+        dispatcherLock.setVersion(criteria.getVersion());
+        return dispatcherLock;
     }
 
-    public SnowflakeLock toSnowflakeLock() {
-        SnowflakeLock snowflakeLock = new SnowflakeLock();
-        return toSnowflakeLock(this, snowflakeLock);
+    public DispatcherLock toDispatcherLock() {
+        DispatcherLock dispatcherLock = new DispatcherLock();
+        return toDispatcherLock(this, dispatcherLock);
     }
 
     /**
-     * 将SnowflakeLockCriteria 的有效值(不为空),赋值给 SnowflakeLock
+     * 将DispatcherLockCriteria 的有效值(不为空),赋值给 DispatcherLock
      *
-     * @return SnowflakeLock
+     * @return DispatcherLock
      */
-    public SnowflakeLock effective(SnowflakeLock snowflakeLock) {
+    public DispatcherLock effective(DispatcherLock dispatcherLock) {
         if (getId() != null) {
-            snowflakeLock.setId(getId());
+            dispatcherLock.setId(getId());
         }
         if (getVersion() != null) {
-            snowflakeLock.setVersion(getVersion());
+            dispatcherLock.setVersion(getVersion());
         }
-        return snowflakeLock;
+        return dispatcherLock;
     }
 
     @Override
     protected void beforeStr(StringBuilder sb) {
-        sb.append("SnowflakeLockCriteria{");
+        sb.append("DispatcherLockCriteria{");
         if (id != null) {
             sb.append("id=").append(id).append(",");
         }
@@ -70,7 +70,7 @@ public class SnowflakeLockCriteria extends Criteria implements Serializable {
      *
      * @return
      */
-    public SnowflakeLockCriteria setId(Long id) {
+    public DispatcherLockCriteria setId(Long id) {
         this.id = id;
         return this;
     }
@@ -89,7 +89,7 @@ public class SnowflakeLockCriteria extends Criteria implements Serializable {
      *
      * @return
      */
-    public SnowflakeLockCriteria setVersion(Integer version) {
+    public DispatcherLockCriteria setVersion(Integer version) {
         this.version = version;
         return this;
     }

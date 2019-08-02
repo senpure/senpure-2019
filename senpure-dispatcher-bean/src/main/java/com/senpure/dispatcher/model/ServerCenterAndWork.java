@@ -9,14 +9,14 @@ import java.io.Serializable;
  * WorkId
  * 
  * @author senpure-generator
- * @version 2019-3-12 9:58:25
+ * @version 2019-8-2 11:22:32
  */
 @ApiModel(description = "WorkId")
 public class ServerCenterAndWork implements Serializable {
     private static final long serialVersionUID = 1562592198L;
 
     //(主键)
-    private Long id;
+    private Integer id;
     //乐观锁，版本控制
     @ApiModelProperty(hidden = true )
     private Integer version;
@@ -34,7 +34,7 @@ public class ServerCenterAndWork implements Serializable {
      *
      * @return
      */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -43,7 +43,7 @@ public class ServerCenterAndWork implements Serializable {
      *
      * @return
      */
-    public ServerCenterAndWork setId(Long id) {
+    public ServerCenterAndWork setId(Integer id) {
         this.id = id;
         return this;
     }

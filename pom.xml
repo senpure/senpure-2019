@@ -12,14 +12,13 @@
     <modules>
         <module>senpure-base</module>
         <module>senpure-io</module>
-
-<module>senpure-template</module>
-<module>senpure-result</module>
-<module>senpure-web</module>
-
-<module>senpure-database</module>
-<module>senpure-code-generator</module>
-<module>senpure-dispatcher</module>
+        <module>senpure-template</module>
+        <module>senpure-result</module>
+        <module>senpure-web</module>
+        <module>senpure-database</module>
+        <module>senpure-code-generator</module>
+        <module>senpure-dispatcher-bean</module>
+        <module>senpure-dispatcher</module>
         <!--
 -->
     </modules>

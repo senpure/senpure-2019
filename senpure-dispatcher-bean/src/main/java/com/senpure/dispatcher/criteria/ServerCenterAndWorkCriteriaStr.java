@@ -3,28 +3,25 @@ package com.senpure.dispatcher.criteria;
 import com.senpure.base.criterion.CriteriaStr;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
  * WorkId
  *
  * @author senpure-generator
- * @version 2019-3-12 9:58:25
+ * @version 2019-8-2 11:22:32
  */
 public class ServerCenterAndWorkCriteriaStr extends CriteriaStr implements Serializable {
     private static final long serialVersionUID = 1562592198L;
 
     //(主键)
-    @ApiModelProperty(value = "(主键)", dataType = "long", example = "666666", position = 5)
+    @ApiModelProperty(value = "(主键)", dataType = "int", example = "666666", position = 5)
     private String id;
     //乐观锁，版本控制
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(hidden = true )
     private String version;
-    @NotEmpty
     @ApiModelProperty(example = "serverName", position = 6)
     private String serverName;
-    @NotEmpty
     @ApiModelProperty(example = "serverKey", position = 7)
     private String serverKey;
     @ApiModelProperty(dataType = "int", example = "666666", position = 8)
@@ -32,16 +29,16 @@ public class ServerCenterAndWorkCriteriaStr extends CriteriaStr implements Seria
     @ApiModelProperty(dataType = "int", example = "666666", position = 9)
     private String workId;
     //table [server_center_and_work][column = server_name] criteriaOrder
-    @ApiModelProperty(value = "serverName 排序", allowableValues = "ASC,DESC", position = 10)
+    @ApiModelProperty(value = "serverName 排序" , allowableValues = "ASC,DESC", position = 10)
     private String serverNameOrder;
     //table [server_center_and_work][column = server_key] criteriaOrder
-    @ApiModelProperty(value = "serverKey 排序", allowableValues = "ASC,DESC", position = 11)
+    @ApiModelProperty(value = "serverKey 排序" , allowableValues = "ASC,DESC", position = 11)
     private String serverKeyOrder;
     //table [server_center_and_work][column = center_id] criteriaOrder
-    @ApiModelProperty(value = "centerId 排序", allowableValues = "ASC,DESC", position = 12)
+    @ApiModelProperty(value = "centerId 排序" , allowableValues = "ASC,DESC", position = 12)
     private String centerIdOrder;
     //table [server_center_and_work][column = work_id] criteriaOrder
-    @ApiModelProperty(value = "workId 排序", allowableValues = "ASC,DESC", position = 13)
+    @ApiModelProperty(value = "workId 排序" , allowableValues = "ASC,DESC", position = 13)
     private String workIdOrder;
 
     public ServerCenterAndWorkCriteria toServerCenterAndWorkCriteria() {
@@ -50,7 +47,7 @@ public class ServerCenterAndWorkCriteriaStr extends CriteriaStr implements Seria
         criteria.setPageSize(Integer.valueOf(getPageSize()));
         //(主键)
         if (id != null) {
-            criteria.setId(Long.valueOf(id));
+            criteria.setId(Integer.valueOf(id));
         }
         //乐观锁，版本控制
         if (version != null) {

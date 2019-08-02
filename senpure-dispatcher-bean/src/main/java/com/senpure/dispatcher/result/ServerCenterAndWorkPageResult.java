@@ -12,10 +12,12 @@ import java.util.Locale;
  * WorkId
  *
  * @author senpure-generator
- * @version 2019-3-12 9:58:25
+ * @version 2019-8-2 11:22:32
  */
 public class ServerCenterAndWorkPageResult extends ActionResult {
     private static final long serialVersionUID = 1562592198L;
+
+    public static final String RECORDS_NAME = "serverCenterAndWorks";
 
     @ApiModelProperty(position = 3, value = "结果集总数", example = "1086")
     private int total;

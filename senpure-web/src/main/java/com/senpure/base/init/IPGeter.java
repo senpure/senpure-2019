@@ -2,7 +2,6 @@ package com.senpure.base.init;
 
 import com.senpure.base.spring.SpringContextRefreshEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-@Component
+
 public class IPGeter extends SpringContextRefreshEvent {
     private static String ip;
 

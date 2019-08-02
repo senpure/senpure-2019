@@ -16,6 +16,10 @@ public class DispatcherCodeGenerator {
         CodeGenerator codeGenerator = new CodeGenerator();
         GeneratorConfig config = new GeneratorConfig();
 
+        String path="../senpure-dispatcher-bean/src/main/java";
+        config.setModelRootPath(path);
+        config.setCriteriaRootPath(path);
+        config.setResultRootPath(path);
         ModelConfig modelConfig = new ModelConfig();
 
         config.setDefaultModelConfig(modelConfig);

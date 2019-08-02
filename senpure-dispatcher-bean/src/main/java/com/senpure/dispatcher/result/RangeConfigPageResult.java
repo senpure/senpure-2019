@@ -12,7 +12,7 @@ import java.util.Locale;
  * RangeConfig
  *
  * @author senpure-generator
- * @version 2019-8-1 16:02:59
+ * @version 2019-8-2 11:22:32
  */
 public class RangeConfigPageResult extends ActionResult {
     private static final long serialVersionUID = 2087653624L;

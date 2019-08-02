@@ -9,7 +9,7 @@ import java.io.Serializable;
  * RangeValue
  * 
  * @author senpure-generator
- * @version 2019-8-1 20:52:01
+ * @version 2019-8-2 11:22:32
  */
 @ApiModel(description = "RangeValue")
 public class RangeValue implements Serializable {

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * RangeValue
  *
  * @author senpure-generator
- * @version 2019-8-1 20:52:01
+ * @version 2019-8-2 11:22:32
  */
 public class RangeValueCriteriaStr extends CriteriaStr implements Serializable {
     private static final long serialVersionUID = 963940855L;

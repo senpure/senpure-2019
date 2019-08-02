@@ -9,7 +9,7 @@ import java.io.Serializable;
  * SnowflakeLock
  * 
  * @author senpure-generator
- * @version 2019-8-1 16:02:58
+ * @version 2019-8-2 11:22:32
  */
 @ApiModel(description = "SnowflakeLock")
 public class DispatcherLock implements Serializable {

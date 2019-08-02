@@ -505,7 +505,7 @@ public class ServerProperties {
         /**
          * 雪花算法的服务名
          */
-        private String snowflakeDispatcherName = "snowflake-dispatcher";
+        private String snowflakeDispatcherName = "dispatcher";
         /**
          * 是否直接是配置文件中的雪花算法的dataCenterId 与workId
          */
