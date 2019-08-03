@@ -18,7 +18,8 @@
         <module>senpure-database</module>
         <module>senpure-code-generator</module>
         <module>senpure-dispatcher-bean</module>
-        <module>senpure-dispatcher</module>
+        <module>senpure-dispathcer</module>
+
         <!--
 -->
     </modules>

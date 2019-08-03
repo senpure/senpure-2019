@@ -8,8 +8,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>senpure-dispatcher</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+    <artifactId>senpure-dispathcer</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>com.senpure</groupId>
@@ -52,23 +53,23 @@
     </dependencies>
     <build>
         <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-                <mainClass>com.senpure.dispatcher.DispatcherBoot</mainClass>
-                <layout>ZIP</layout>
-                <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.senpure.dispatcher.DispatcherBoot</mainClass>
+                    <layout>ZIP</layout>
+                    <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
 
-            </configuration>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>repackage</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
