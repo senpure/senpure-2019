@@ -2,8 +2,6 @@ package com.senpure.io.support.configure;
 
 import com.senpure.base.util.RandomUtil;
 import com.senpure.io.ServerProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -13,9 +11,7 @@ import org.springframework.core.env.PropertySource;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +22,7 @@ import java.util.Map;
  */
 public class PropertiesCompletionConfiguration implements SpringApplicationRunListener {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+  //  Logger logger = LoggerFactory.getLogger(getClass());
 
     public PropertiesCompletionConfiguration() {
     }
@@ -52,46 +48,6 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
             }
         }
         if (current) {
-            //统一用0表示随机值
-            String name = environment.getProperty("spring.application.name");
-            logger.debug("{}={}", "spring.application.name", name);
-            Integer port = environment.getProperty("server.port", Integer.class);
-            // port == null || 统一用0配置随机
-            if (port != null && port == 0) {
-                Integer tempPort = port;
-                //  port = RandomUtil.random(1, 65536);
-                String ports = environment.getProperty("server.ports");
-                List<Integer> portList = new ArrayList<>();
-                if (ports != null) {
-                    String portsStr[] = ports.split(",");
-                    for (String s : portsStr) {
-                        try {
-                            portList.add(Integer.valueOf(s));
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                port = getPort(portList);
-                logger.info("{} 没有配置端口使用随机端口{}", tempPort, port);
-                Map<String, Object> map = new HashMap<>();
-                map.put("server.port", port);
-                PropertySource propertySource = new MapPropertySource("serverPort", map);
-                //其他框架可能会更改该值所以放在相对靠后的位置
-                for (PropertySource<?> temp : environment.getPropertySources()) {
-                    if (temp.containsProperty("server.port")) {
-                        logger.info("addBefore {} {}{}", temp.getName(), propertySource.getName(), port);
-                        environment.getPropertySources().addBefore(temp.getName(), propertySource);
-                        break;
-                    }
-                }
-//                if (tempPort == null) {
-//                    logger.info("addLast {} {}", propertySource.getName(), port);
-//                    environment.getPropertySources().addLast(propertySource);
-//                } else {
-//
-//                }
-            }
             Map<String, Object> ioMap = new HashMap<>();
             ServerProperties.Gateway gateway = new ServerProperties.Gateway();
             Integer tempCsPort = environment.getProperty("server.io.gateway.cs-port", Integer.class);
@@ -123,15 +79,6 @@ public class PropertiesCompletionConfiguration implements SpringApplicationRunLi
             }
         }
 
-    }
-
-    private int getPort(List<Integer> ports) {
-        for (Integer port : ports) {
-            if (!isPortUsing("127.0.0.1", port)) {
-                return port;
-            }
-        }
-        return getPort();
     }
 
     private int getPort(int prior) {

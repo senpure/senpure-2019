@@ -14,8 +14,8 @@
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
         </Console>
-        <RollingFile name="ROLLING" fileName="/data/logs/snowflake/snowflake.log"
-                     filePattern="/data/logs/snowflake/snowflake.%d{yyyy-MM-dd}_%i.log">
+        <RollingFile name="ROLLING" fileName="/data/logs/dispatcher/dispatcher.log"
+                     filePattern="/data/logs/dispatcher/dispatcher.%d{yyyy-MM-dd}_%i.log">
             <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy modulate="true" interval="24"/>

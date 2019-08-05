@@ -24,7 +24,7 @@ public class DispatcherCodeGenerator {
 
         config.setDefaultModelConfig(modelConfig);
         ModelConfig  overwriteAllInstance = ModelConfig.getOverwriteAllInstance();
-      //  config.getModelConfigMap().put("RangeValue", overwriteAllInstance);
+        config.getModelConfigMap().put("RangeValue", overwriteAllInstance);
         codeGenerator.generate("com.senpure.dispatcher",config);
     }
 }
