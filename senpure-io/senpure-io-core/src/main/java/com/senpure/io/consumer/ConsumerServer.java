@@ -9,6 +9,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -17,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -32,13 +35,16 @@ public class ConsumerServer {
 
     private Channel channel;
     private RemoteServerManager remoteServerManager;
+    private boolean addLoggingHandler = true;
 
+    private List<ChannelHandler> extHandlers = new ArrayList<>();
 
     private static EventLoopGroup group;
     private static Bootstrap bootstrap;
     private static final Object groupLock = new Object();
 
     private static int serverRefCont = 0;
+
 
     public final boolean start(String host, int port) {
         Assert.notNull(remoteServerManager);
@@ -72,7 +78,13 @@ public class ConsumerServer {
                                     }
                                     p.addLast(new ConsumerMessageDecoder());
                                     p.addLast(new ConsumerMessageEncoder());
-                                    // p.addLast(new RealityMessageLoggingHandler(LogLevel.DEBUG, ioMessageProperties));
+                                    if (addLoggingHandler) {
+                                        p.addLast(new ConsumerLoggingHandler(LogLevel.DEBUG, properties.isInFormat(), properties.isOutFormat()));
+                                    }
+                                    for (ChannelHandler extHandler : extHandlers) {
+                                        p.addLast(extHandler);
+                                    }
+
                                     if (properties.isEnableHeartCheck()) {
                                         p.addLast(new IdleStateHandler(0, properties.getWriterIdleTime(), 0, TimeUnit.MILLISECONDS));
                                     }
@@ -92,7 +104,7 @@ public class ConsumerServer {
             synchronized (groupLock) {
                 serverRefCont++;
             }
-            String remoteServerKey =remoteServerManager.getRemoteServerKey(host,port);
+            String remoteServerKey = remoteServerManager.getRemoteServerKey(host, port);
             InetSocketAddress address = (InetSocketAddress) channel.localAddress();
             String path;
             if (AppEvn.classInJar(AppEvn.getStartClass())) {
@@ -178,6 +190,14 @@ public class ConsumerServer {
     public void setReadableServerName(String readableServerName) {
         this.readableServerName = readableServerName;
         setReadableServerName = true;
+    }
+
+    public void setAddLoggingHandler(boolean addLoggingHandler) {
+        this.addLoggingHandler = addLoggingHandler;
+    }
+
+    public void addExtHandler(ChannelHandler extHandler) {
+        extHandlers.add(extHandler);
     }
 
     public static void main(String[] args) {

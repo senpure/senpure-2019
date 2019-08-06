@@ -45,8 +45,7 @@ public class ProducerMessageExecutor {
                 logger.warn("没有找到消息处理程序{} userId:{}", gsMessage.getMessageId(), userId);
                 return;
             }
-            Message message = handler.getEmptyMessage();
-            message.read(gsMessage.getBuf(), gsMessage.getBuf().writerIndex());
+            Message message = gsMessage.getMessage();
             try {
                 GatewayManager.setRequestId(gsMessage.getRequestId());
                 handler.execute(channel, gsMessage.getToken(), userId, message);

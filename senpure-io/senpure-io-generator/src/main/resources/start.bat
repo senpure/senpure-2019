@@ -12,6 +12,7 @@ if %fileName% =="" (
 
 ::echo %fileName%
 start javaw -jar %fileName%
+:end
 echo 程序启动中请稍后
 ping /n 1 127.1 >nul
 cls
@@ -20,4 +21,3 @@ ping /n 2 127.1 >nul
 cls
 echo 程序启动中请稍后。。
 ping /n 2 127.1 >nul
-:end

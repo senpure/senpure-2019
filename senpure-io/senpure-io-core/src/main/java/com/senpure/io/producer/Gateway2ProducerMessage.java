@@ -1,6 +1,6 @@
 package com.senpure.io.producer;
 
-import io.netty.buffer.ByteBuf;
+import com.senpure.io.protocol.Message;
 
 /**
  * Gateway2ProducerMessage
@@ -16,7 +16,8 @@ public class Gateway2ProducerMessage {
     private long token;
     private long userId;
     private int messageId;
-    private ByteBuf buf;
+    private Message message;
+
 
     public int  getRequestId() {
         return requestId;
@@ -42,12 +43,12 @@ public class Gateway2ProducerMessage {
         this.userId = userId;
     }
 
-    public ByteBuf getBuf() {
-        return buf;
+    public Message getMessage() {
+        return message;
     }
 
-    public void setBuf(ByteBuf buf) {
-        this.buf = buf;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     public int getMessageId() {
@@ -57,4 +58,6 @@ public class Gateway2ProducerMessage {
     public void setMessageId(int messageId) {
         this.messageId = messageId;
     }
+
+
 }

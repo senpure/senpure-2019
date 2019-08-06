@@ -8,6 +8,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -29,7 +30,7 @@ public class ProducerServer {
     private boolean setReadableServerName = false;
     private ProducerMessageExecutor messageExecutor;
     private int httpPort = 0;
-
+    private boolean addLoggingHandler = true;
     private Channel channel;
     private GatewayManager gatewayManager;
 
@@ -74,6 +75,9 @@ public class ProducerServer {
                                     }
                                     p.addLast(new ProducerMessageDecoder());
                                     p.addLast(new ProducerMessageEncoder());
+                                    if (addLoggingHandler) {
+                                        p.addLast(new ProducerLoggingHandler(LogLevel.DEBUG, properties.isInFormat(), properties.isOutFormat()));
+                                    }
                                     // p.addLast(new RealityMessageLoggingHandler(LogLevel.DEBUG, ioMessageProperties));
                                     if (properties.isEnableHeartCheck()) {
                                         p.addLast(new IdleStateHandler(0, properties.getWriterIdleTime(), 0, TimeUnit.MILLISECONDS));
@@ -157,6 +161,13 @@ public class ProducerServer {
 
     }
 
+    public boolean isAddLoggingHandler() {
+        return addLoggingHandler;
+    }
+
+    public void setAddLoggingHandler(boolean addLoggingHandler) {
+        this.addLoggingHandler = addLoggingHandler;
+    }
 
     public void setGatewayManager(GatewayManager gatewayManager) {
         this.gatewayManager = gatewayManager;

@@ -47,8 +47,7 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
                 in.skipBytes(messageLength);
             } else {
                 try {
-                    message.read(in, in.readerIndex() + packageLength - 8);
-                    // getValue.read(in.copy(in.readerIndex(), packageLength - 4));
+                    message.read(in, in.readerIndex() + messageLength);
                     MessageFrame frame = new MessageFrame();
                     frame.setRequestId(requestId);
                     frame.setMessage(message);

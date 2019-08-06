@@ -1,6 +1,7 @@
 package com.senpure.io.producer;
 
 import com.senpure.base.util.Assert;
+import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -19,8 +20,9 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 
         int rl = in.readableBytes();
+
         if (rl < 4) {
-            this.logger.debug("数据过短 s{}", Integer.valueOf(rl));
+            this.logger.debug("数据过短 {}", rl);
         } else {
             in.markReaderIndex();
             int packageLength = in.readInt();
@@ -32,29 +34,29 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
                     ctx.close().sync();
                     return;
                 }
-                this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", Integer.valueOf(packageLength), Integer.valueOf(in.readableBytes()));
+                this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", packageLength, in.readableBytes());
                 in.resetReaderIndex();
             } else {
                 int requestId = in.readInt();
                 int messageId = in.readInt();
-                long channelId = in.readLong();
+                long channelToken = in.readLong();
                 long userId = in.readLong();
-                ByteBuf buf = in.readBytes(packageLength - 24);
+                int messageLen = packageLength - 24;
+                Message message = ProducerMessageHandlerUtil.getEmptyMessage(messageId);
+                if (message == null) {
+                    logger.warn("没有找到消息处理程序{} token:{} userId:{}", channelToken, messageId, userId);
+                    in.skipBytes(messageLen);
+                    return;
+                }
+                message.read(in,in.readerIndex()+messageLen);
                 Gateway2ProducerMessage frame = new Gateway2ProducerMessage();
                 frame.setRequestId(requestId);
                 frame.setMessageId(messageId);
-                frame.setToken(channelId);
+                frame.setToken(channelToken);
                 frame.setUserId(userId);
-                frame.setBuf(buf);
+                frame.setMessage(message);
                 out.add(frame);
 
-//                Gateway2ServerMessage getValue = new Gateway2ServerMessage();
-//                ByteBuf buf = in.readBytes(packageLength - 20);
-//                getValue.setMessageId(messageId);
-//                getValue.setToken(token);
-//                getValue.setBuf(buf);
-//                getValue.setUserId(userId);
-//                out.add(getValue);
             }
 
         }

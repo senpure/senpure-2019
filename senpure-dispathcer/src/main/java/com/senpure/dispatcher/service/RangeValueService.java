@@ -67,8 +67,8 @@ public class RangeValueService implements ApplicationRunner {
                 RangeValue last = rangeValues.get(rangeValues.size() - 1);
                 find = new RangeValue();
                 RangeConfig rangeConfig = rangeConfigService.find(configId);
-                if (last.getEnd() >= rangeConfig.getStart()) {
-                    logger.info(" {}{} {} : {}  没有可用范围了", rangeConfig.getId(), rangeConfig.getName(), serverName, serverKey);
+                if (last.getEnd() >= rangeConfig.getEnd()) {
+                    logger.info(" {} {} {} : {}  没有可用范围了", rangeConfig.getId(), rangeConfig.getName(), serverName, serverKey);
                     return null;
                 }
                 value(find, serverName, serverKey, last.getEnd(), rangeConfig);
