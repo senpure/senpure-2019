@@ -1,6 +1,5 @@
 package com.senpure.io.consumer;
 
-import com.senpure.io.protocol.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.logging.LogLevel;
@@ -28,10 +27,11 @@ public class ConsumerLoggingHandler extends LoggingHandler {
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
 
         if (this.logger.isEnabled(this.internalLevel)) {
-            if (msg instanceof Message) {
+            if (msg instanceof MessageFrame) {
+                MessageFrame frame= (MessageFrame) msg;
                 if (outFormat) {
                     this.logger.log(this.internalLevel, "{} {}{}",
-                            "WRITE", "\n", ((Message) msg).toString(null));
+                            "WRITE", "\n", frame.getMessage().toString(null));
                     //this.logger.log(this.internalLevel, this.format(ctx, ChannelAttributeUtil.getChannelPlayerStr(ctx.channel())+" WRITE", "\n"+((Message) msg).toString(null)));
                 } else {
                     this.logger.log(this.internalLevel, "{} {}",
@@ -53,10 +53,11 @@ public class ConsumerLoggingHandler extends LoggingHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
         if (this.logger.isEnabled(this.internalLevel)) {
-            if (msg instanceof Message) {
+            if (msg instanceof MessageFrame) {
+                MessageFrame frame= (MessageFrame) msg;
                 if (inFormat) {
                     this.logger.log(this.internalLevel, "{} {}{}",
-                            "RECEIVED", "\n", ((Message) msg).toString(null));
+                            "RECEIVED", "\n", frame.getMessage().toString(null));
                     // this.logger.log(this.internalLevel, this.format(ctx, ChannelAttributeUtil.getChannelPlayerStr(ctx.channel()) + " RECEIVED", "\n" + ((Message) msg).toString(null)));
 
                 } else {
