@@ -1,7 +1,6 @@
 package com.senpure.io.producer;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
@@ -14,9 +13,11 @@ public class ProducerMessageEncoder extends MessageToByteEncoder<Producer2Gatewa
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Producer2GatewayMessage frame, ByteBuf out) throws Exception {
-        ByteBuf buf = Unpooled.buffer(frame.getMessage().getSerializedSize());
-        frame.getMessage().write(buf);
-        int length = buf.writerIndex();
+      //  ByteBuf buf = Unpooled.buffer(frame.getMessage().getSerializedSize());
+       // frame.getMessage().write(buf);
+       // int length = buf.writerIndex();
+
+        int length=frame.getMessage().getSerializedSize();
         //head 4 +requestId 4 +messageId 4 channelId 8+ playerLen 2+userLen*8+ content length
         int userLen = frame.getUserIds().length;
         int packageLen = 22 + (userLen << 3) + length;
@@ -29,7 +30,8 @@ public class ProducerMessageEncoder extends MessageToByteEncoder<Producer2Gatewa
         for (long i : frame.getUserIds()) {
             out.writeLong(i);
         }
-        out.writeBytes(buf);
+        frame.getMessage().write(out);
+       // out.writeBytes(buf);
     }
 
 
