@@ -42,6 +42,7 @@ public class IoProtocolReader extends IoBaseListener {
     private Event event;
     private String namespace = "com.senpure.io";
     private String javaPackage = "com.senpure.io";
+    private String luaNamespace = "MSG";
     private boolean enterJavaPackage = false;
     private boolean enterNamespace = false;
     private Field field;

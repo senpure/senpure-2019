@@ -4,7 +4,7 @@ protocol
     headContent*
     entity*EOF
     ;
-headContent:importIo|javaPack|namespace;
+headContent:importIo|namespace|javaPack|luaNamespace;
 entity:message|event|bean|enumSymbol;
 importIo:'import'importValue';';
 importValue: filePath'.''io';
@@ -19,6 +19,12 @@ namespaceValue
     :fileName
     |namespaceValue '.'fileName
     ;
+luaNamespace:'luaNamespace'luaNamespaceValue ';';
+luaNamespaceValue
+     :fileName
+     |luaNamespaceValue '.'fileName
+     ;
+
 fileName:(Number* Identifier*)|'cs'|'CS'|'sc'|'SC'|'bean'|'message'|'event'|'io'|'namespace';
 filePath:fileName|filePath ('-'|'.'|'../'|'/'|'\\') fileName;
 

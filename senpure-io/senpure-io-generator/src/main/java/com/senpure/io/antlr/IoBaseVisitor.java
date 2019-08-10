@@ -80,6 +80,20 @@ public class IoBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements IoV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitLuaNamespace(IoParser.LuaNamespaceContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitFileName(IoParser.FileNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

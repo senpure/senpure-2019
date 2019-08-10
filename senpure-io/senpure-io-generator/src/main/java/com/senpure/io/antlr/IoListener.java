@@ -98,6 +98,26 @@ public interface IoListener extends ParseTreeListener {
 	 */
 	void exitNamespaceValue(IoParser.NamespaceValueContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IoParser#luaNamespace}.
+	 * @param ctx the parse tree
+	 */
+	void enterLuaNamespace(IoParser.LuaNamespaceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#luaNamespace}.
+	 * @param ctx the parse tree
+	 */
+	void exitLuaNamespace(IoParser.LuaNamespaceContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#luaNamespaceValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#luaNamespaceValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link IoParser#fileName}.
 	 * @param ctx the parse tree
 	 */

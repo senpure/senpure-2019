@@ -19,7 +19,8 @@ public class Bean extends TemplateBean {
 
     //所在的java包
     private String javaPack;
-
+    //lua命名空间
+    private String luaNamespace;
 
     private List<Field> fields = new ArrayList<>();
     private boolean hasExplain;
@@ -171,6 +172,14 @@ public class Bean extends TemplateBean {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getLuaNamespace() {
+        return luaNamespace;
+    }
+
+    public void setLuaNamespace(String luaNamespace) {
+        this.luaNamespace = luaNamespace;
     }
 
     @Override

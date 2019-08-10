@@ -124,6 +124,30 @@ public class IoBaseListener implements IoListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLuaNamespace(IoParser.LuaNamespaceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLuaNamespace(IoParser.LuaNamespaceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterFileName(IoParser.FileNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
