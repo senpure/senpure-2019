@@ -5,10 +5,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.*;
 
 
 public abstract class Bean {
+
+    public static Charset charset = Charset.forName("utf-8");
+
     public abstract void write(ByteBuf buf);
 
     public abstract void read(ByteBuf buf, int endIndex);
@@ -16,6 +20,27 @@ public abstract class Bean {
     public abstract String toString(String indent);
 
     public abstract int getSerializedSize();
+
+
+    public static int encodeZigZag32(int value) {
+        return value << 1 ^ value >> 31;
+    }
+
+    public static long encodeZigZag64(long value) {
+        return value << 1 ^ value >> 63;
+    }
+
+    public static void writeVar32(ByteBuf buf, int tag, int value) {
+        //Constant.WIRETYPE_VARINT
+        writeVar32(buf, tag);
+        writeVar32(buf, value);
+    }
+
+    public static void writeVar64(ByteBuf buf, int tag, long value) {
+        writeVar32(buf, tag);
+        writeVar64(buf, value);
+    }
+
 
     public static void writeBean(ByteBuf buf, int tag, Bean value) {
         if (value != null) {
@@ -28,25 +53,11 @@ public abstract class Bean {
     public static void writeBoolean(ByteBuf buf, int tag, boolean value) {
         writeVar32(buf, tag);
         writeBoolean(buf, value);
-
     }
 
     public static void writeBoolean(ByteBuf buf, boolean value) {
         buf.writeByte(value ? 1 : 0);
     }
-
-    public static void writeVar32(ByteBuf buf, int tag, int value) {
-        //Constant.WIRETYPE_VARINT
-        writeVar32(buf, tag);
-        writeVar32(buf, value);
-    }
-
-
-    public static void writeVar64(ByteBuf buf, int tag, long value) {
-        writeVar32(buf, tag);
-        writeVar64(buf, value);
-    }
-
 
     public static void writeSInt(ByteBuf buf, int tag, int value) {
         writeVar32(buf, tag);
@@ -112,14 +123,13 @@ public abstract class Bean {
     }
 
     public static void writeString(ByteBuf buf, String value) {
-        try {
-            byte[] bytes = value.getBytes("utf-8");
-            writeVar32(buf, bytes.length);
-            buf.writeBytes(bytes);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not supported.", e);
+        writeString(buf, value, charset);
+    }
 
-        }
+    public static void writeString(ByteBuf buf, String value, Charset charset) {
+        byte[] bytes = value.getBytes(charset);
+        writeVar32(buf, bytes.length);
+        buf.writeBytes(bytes);
     }
 
     public static void writeVar64(ByteBuf buf, long value) {
@@ -195,14 +205,15 @@ public abstract class Bean {
     }
 
     public static String readString(ByteBuf buf) {
+        return readString(buf, charset);
+    }
+
+    public static String readString(ByteBuf buf, Charset charset) {
         byte[] bytes = new byte[readVar32(buf)];
         buf.readBytes(bytes);
-        try {
-            return new String(bytes, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not supported.", e);
-        }
+        return new String(bytes, charset);
     }
+
 
     public static boolean readBoolean(ByteBuf buf) {
         return buf.readBoolean();
@@ -243,13 +254,6 @@ public abstract class Bean {
 
     }
 
-    public static int encodeZigZag32(int value) {
-        return value << 1 ^ value >> 31;
-    }
-
-    public static long encodeZigZag64(long value) {
-        return value << 1 ^ value >> 63;
-    }
 
     public static int decodeZigZag32(int value) {
         return value >>> 1 ^ -(value & 1);
