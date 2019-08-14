@@ -14,7 +14,10 @@ public class Event extends Bean {
     public void setId(int id) {
         this.id = id;
     }
-
+    @Override
+    public String getType() {
+        return Constant.ENTITY_TYPE_EVENT;
+    }
     @Override
     public String getJavaName() {
         return getName() + "Event";
@@ -24,10 +27,6 @@ public class Event extends Bean {
         return getName() + "EventHandler";
     }
 
-    @Override
-    public String getType() {
-        return Constant.ENTITY_TYPE_EVENT;
-    }
 
     public String getJavaHandlerPack() {
         return javaHandlerPack;
@@ -36,4 +35,7 @@ public class Event extends Bean {
     public void setJavaHandlerPack(String javaHandlerPack) {
         this.javaHandlerPack = javaHandlerPack;
     }
+
+
+
 }

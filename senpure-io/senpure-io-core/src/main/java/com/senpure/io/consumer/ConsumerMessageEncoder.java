@@ -1,6 +1,7 @@
 package com.senpure.io.consumer;
 
 
+import com.senpure.io.protocol.Bean;
 import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,6 +16,18 @@ public class ConsumerMessageEncoder extends MessageToByteEncoder<MessageFrame> {
     //包长int ,消息Id int, 二进制数据
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, MessageFrame frame, ByteBuf out) throws Exception {
+        Message message = frame.getMessage();
+        int headLength = Bean.computeVar32SizeNoTag(frame.getRequestId());
+        headLength += Bean.computeVar32SizeNoTag(message.getMessageId());
+        int packageLength = headLength + message.getSerializedSize();
+        out.ensureWritable(Bean.computeVar32SizeNoTag(packageLength) + packageLength);
+        Bean.writeVar32(out, packageLength);
+        Bean.writeVar32(out, frame.getRequestId());
+        Bean.writeVar32(out, message.getMessageId());
+        message.write(out);
+    }
+
+    protected void encode2(ChannelHandlerContext channelHandlerContext, MessageFrame frame, ByteBuf out) throws Exception {
 
 
         Message message = frame.getMessage();

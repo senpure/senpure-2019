@@ -1,5 +1,6 @@
 package com.senpure.io.producer;
 
+import com.senpure.io.protocol.Bean;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -13,11 +14,34 @@ public class ProducerMessageEncoder extends MessageToByteEncoder<Producer2Gatewa
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Producer2GatewayMessage frame, ByteBuf out) throws Exception {
-      //  ByteBuf buf = Unpooled.buffer(frame.getMessage().getSerializedSize());
-       // frame.getMessage().write(buf);
-       // int length = buf.writerIndex();
+        int dataLength = frame.getMessage().getSerializedSize();
+        int headLength = Bean.computeVar32SizeNoTag(frame.getRequestId());
+        headLength += Bean.computeVar32SizeNoTag(frame.getMessageId());
+        headLength += Bean.computeVar64SizeNoTag(frame.getToken());
+        headLength += Bean.computeVar32SizeNoTag(frame.getUserIds().length);
+        for (Long userId : frame.getUserIds()) {
+            headLength += Bean.computeVar64SizeNoTag(userId);
+        }
+        int packageLength = headLength + dataLength;
+        out.ensureWritable(Bean.computeVar32Size(packageLength) + packageLength);
 
-        int length=frame.getMessage().getSerializedSize();
+        Bean.writeVar32(out, packageLength);
+        Bean.writeVar32(out, frame.getRequestId());
+        Bean.writeVar32(out, frame.getMessageId());
+        Bean.writeVar64(out, frame.getToken());
+        Bean.writeVar32(out, frame.getUserIds().length);
+        for (Long userId : frame.getUserIds()) {
+            Bean.writeVar64(out, userId);
+        }
+        frame.getMessage().write(out);
+    }
+
+    protected void encode2(ChannelHandlerContext ctx, Producer2GatewayMessage frame, ByteBuf out) throws Exception {
+        //  ByteBuf buf = Unpooled.buffer(frame.getMessage().getSerializedSize());
+        // frame.getMessage().write(buf);
+        // int length = buf.writerIndex();
+
+        int length = frame.getMessage().getSerializedSize();
         //head 4 +requestId 4 +messageId 4 channelId 8+ playerLen 2+userLen*8+ content length
         int userLen = frame.getUserIds().length;
         int packageLen = 22 + (userLen << 3) + length;
@@ -31,7 +55,7 @@ public class ProducerMessageEncoder extends MessageToByteEncoder<Producer2Gatewa
             out.writeLong(i);
         }
         frame.getMessage().write(out);
-       // out.writeBytes(buf);
+        // out.writeBytes(buf);
     }
 
 

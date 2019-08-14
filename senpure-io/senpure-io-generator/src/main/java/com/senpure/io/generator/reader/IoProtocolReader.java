@@ -42,9 +42,11 @@ public class IoProtocolReader extends IoBaseListener {
     private Event event;
     private String namespace = "com.senpure.io";
     private String javaPackage = "com.senpure.io";
-    private String luaNamespace = "MSG";
-    private boolean enterJavaPackage = false;
+    private String luaNamespace = "Io";
+
     private boolean enterNamespace = false;
+    private boolean enterJavaPackage = false;
+    private boolean enterLuaNamespace = false;
     private Field field;
 
     private int fieldIndex = 1;
@@ -69,11 +71,14 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
     private void setBeanValue() {
-        bean.setJavaPack(javaPackage);
         bean.setNamespace(namespace);
+        bean.setJavaPack(javaPackage);
         bean.setFilePath(filePath);
         fieldIndex = 1;
 
+        Lua lua = new Lua(bean);
+        bean.setLua(lua);
+        bean.getLua().setNamespace(luaNamespace);
     }
 
     private void setBeanName(ParserRuleContext ctx) {
@@ -104,6 +109,30 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
 
+
+
+    @Override
+    public void enterNamespaceValue(IoParser.NamespaceValueContext ctx) {
+        if (enterNamespace) {
+            return;
+        }
+        enterNamespace = true;
+        namespace = ctx.getText();
+        String[] temp = namespace.split("\\.");
+        for (String s : temp) {
+            if (s.length() > 0) {
+                if (Character.isDigit(s.charAt(0))) {
+                    return;
+                }
+            }
+        }
+        if (!enterJavaPackage) {
+            javaPackage = namespace+".protocol";
+        }
+        if (!enterLuaNamespace) {
+            luaNamespace=StringUtil.toUpperFirstLetter(temp[temp.length-1]);
+        }
+    }
     @Override
     public void enterJavaPackageValue(IoParser.JavaPackageValueContext ctx) {
         if (enterJavaPackage) {
@@ -115,26 +144,13 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
     @Override
-    public void enterNamespaceValue(IoParser.NamespaceValueContext ctx) {
-        if (enterNamespace) {
+    public void enterLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx) {
+        if (enterLuaNamespace) {
             return;
         }
-        enterNamespace = true;
-        namespace = ctx.getText();
-        if (!enterJavaPackage) {
-            String[] temp = namespace.split("\\.");
-            for (String s : temp) {
-                if (s.length() > 0) {
-                    if (Character.isDigit(s.charAt(0))) {
-                        return;
-                    }
-                }
-
-            }
-            javaPackage = namespace+".protocol";
-        }
+        enterLuaNamespace = true;
+        luaNamespace = ctx.getText();
     }
-
 
     @Override
     public void enterMessage(IoParser.MessageContext ctx) {

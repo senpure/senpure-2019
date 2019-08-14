@@ -1,5 +1,6 @@
 package com.senpure.io.gateway;
 
+import com.senpure.io.protocol.Bean;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -15,6 +16,18 @@ public class GatewayAndClientMessageEncoder extends MessageToByteEncoder<Server2
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Server2GatewayMessage msg, ByteBuf out) {
+        int headlength = Bean.computeVar32SizeNoTag(msg.getRequestId());
+        headlength += Bean.computeVar32SizeNoTag(msg.getMessageId());
+        int packageLength = headlength + msg.getData().length;
+        out.ensureWritable(Bean.computeVar32SizeNoTag(packageLength) + packageLength);
+
+        Bean.writeVar32(out, packageLength);
+        Bean.writeVar32(out, msg.getRequestId());
+        Bean.writeVar32(out, msg.getMessageId());
+        out.writeBytes(msg.getData());
+    }
+
+    protected void encode2(ChannelHandlerContext ctx, Server2GatewayMessage msg, ByteBuf out) {
         //head 4 +requestId 4 +messageId 4 +  data
         out.ensureWritable(12 + msg.getData().length);
         out.writeInt(8 + msg.getData().length);

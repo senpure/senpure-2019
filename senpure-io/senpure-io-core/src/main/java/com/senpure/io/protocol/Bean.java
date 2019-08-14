@@ -156,7 +156,58 @@ public abstract class Bean {
         }
     }
 
-
+    public static int tryReadVar32(ByteBuf buf) {
+        if (!buf.isReadable()) {
+            return 0;
+        }
+        byte tmp = buf.readByte();
+        if (tmp >= 0) {
+            return tmp;
+        } else {
+            int result = tmp & 127;
+            if (!buf.isReadable()) {
+                buf.resetReaderIndex();
+                return 0;
+            }
+            if ((tmp = buf.readByte()) >= 0) {
+                result |= tmp << 7;
+            } else {
+                result |= (tmp & 127) << 7;
+                if (!buf.isReadable()) {
+                    buf.resetReaderIndex();
+                    return 0;
+                }
+                if ((tmp = buf.readByte()) >= 0) {
+                    result |= tmp << 14;
+                } else {
+                    result |= (tmp & 127) << 14;
+                    if (!buf.isReadable()) {
+                        buf.resetReaderIndex();
+                        return 0;
+                    }
+                    if ((tmp = buf.readByte()) >= 0) {
+                        result |= tmp << 21;
+                    } else {
+                        result |= (tmp & 127) << 21;
+                        if (!buf.isReadable()) {
+                            buf.resetReaderIndex();
+                            return 0;
+                        }
+                        result |= (tmp = buf.readByte()) << 28;
+                        if (tmp < 0) {
+                            // Discard upper 32 bits.
+                            for (int i = 0; i < 5; i++) {
+                                if (buf.readByte() >= 0) {
+                                    return result;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+    }
     public static int readVar32(ByteBuf buf) {
         byte tmp = buf.readByte();
         if (tmp >= 0) {

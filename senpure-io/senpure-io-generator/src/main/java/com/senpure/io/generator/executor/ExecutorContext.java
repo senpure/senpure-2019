@@ -1,6 +1,7 @@
 package com.senpure.io.generator.executor;
 
 import com.senpure.io.generator.habit.JavaConfig;
+import com.senpure.io.generator.habit.LuaConfig;
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Event;
@@ -24,7 +25,9 @@ public class ExecutorContext {
 
     private String projectName;
     private String javaTemplateDir = "java";
+    private String luaTemplateDir = "lua";
     private JavaConfig javaConfig;
+    private LuaConfig luaConfig;
 
 
 
@@ -115,5 +118,21 @@ public class ExecutorContext {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public String getLuaTemplateDir() {
+        return luaTemplateDir;
+    }
+
+    public void setLuaTemplateDir(String luaTemplateDir) {
+        this.luaTemplateDir = luaTemplateDir;
+    }
+
+    public LuaConfig getLuaConfig() {
+        return luaConfig;
+    }
+
+    public void setLuaConfig(LuaConfig luaConfig) {
+        this.luaConfig = luaConfig;
     }
 }

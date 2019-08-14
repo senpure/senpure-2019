@@ -2,6 +2,7 @@ package com.senpure.io.consumer;
 
 
 import com.senpure.base.util.Assert;
+import com.senpure.io.protocol.Bean;
 import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,6 +19,44 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        in.markReaderIndex();
+        int preIndex = in.readerIndex();
+        int packageLength = Bean.tryReadVar32(in);
+        if (preIndex == in.readerIndex()) {
+            return;
+        }
+        if (packageLength == 0) {
+            Assert.error("错误，数据包长度不能为0");
+        }
+        if (packageLength > in.readableBytes()) {
+            this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", packageLength, in.readableBytes());
+            in.resetReaderIndex();
+        } else {
+            int requestId = Bean.readVar32(in);
+            int messageId = Bean.readVar32(in);
+            int headSize = Bean.computeVar32SizeNoTag(requestId) + Bean.computeVar32SizeNoTag(messageId);
+            Message message = ConsumerMessageHandlerUtil.getEmptyMessage(messageId);
+            int messageLength = packageLength - headSize;
+            if (message == null) {
+                in.skipBytes(messageLength);
+                logger.warn("没有找到消息处理程序 messageId {}", messageId);
+            } else {
+                try {
+                    message.read(in, in.readerIndex() + messageLength);
+                    MessageFrame frame = new MessageFrame();
+                    frame.setRequestId(requestId);
+                    frame.setMessage(message);
+                    out.add(frame);
+                } catch (Exception e) {
+                    ctx.close();
+                    logger.debug("二进制转换为消息失败 messageId {}, getValue{}", messageId, message);
+                    logger.error("error", e);
+                }
+            }
+        }
+    }
+
+    protected void decode2(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int rl = in.readableBytes();
         if (rl < 4) {
             logger.debug("数据过短 s{}", rl);
@@ -37,7 +76,7 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
             logger.info("数据不够一个数据包 pl={} ,rl={}", packageLength, in.readableBytes());
             in.resetReaderIndex();
         } else {
-            int requestId=in.readInt();
+            int requestId = in.readInt();
             int messageId = in.readInt();
             Message message = ConsumerMessageHandlerUtil.getEmptyMessage(messageId);
             int messageLength = packageLength - 8;

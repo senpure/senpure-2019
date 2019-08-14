@@ -29,7 +29,7 @@ public class Generator {
 
         generateFile(bean, template, file);
         if (checkSovereignty && !bean.checkSovereignty()) {
-            logger.error("{} 没有调用 ${sovereignty}", template.getName());
+            logger.error("{} 没有调用 ${sovereignty} 或者没有${sovereignty}没有执行", template.getSourceName());
             if (file.exists()) {
                 file.delete();
             }

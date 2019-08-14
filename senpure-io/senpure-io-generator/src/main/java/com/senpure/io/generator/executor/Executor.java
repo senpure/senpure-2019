@@ -3,6 +3,7 @@ package com.senpure.io.generator.executor;
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.io.generator.habit.JavaConfig;
+import com.senpure.io.generator.habit.LuaConfig;
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Event;
@@ -39,9 +40,13 @@ public class Executor {
     private ExecutorContext context;
     private JavaConfig javaConfig;
 
+    private LuaConfig luaConfig;
+
+
     public Executor(ExecutorContext context) {
         this.context = context;
         this.javaConfig = context.getJavaConfig();
+        this.luaConfig = context.getLuaConfig();
         CheckUtil.loadData(context.getProjectName());
         cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         TemplateUtil.share(cfg);
@@ -55,6 +60,7 @@ public class Executor {
             Assert.error(e);
         }
     }
+
 
     public boolean check() {
         boolean check = true;
@@ -113,6 +119,11 @@ public class Executor {
         } else {
 
             logger.debug("不生成java代码");
+        }
+
+        if (luaConfig != null) {
+            generateLua();
+
         }
     }
 
@@ -278,6 +289,12 @@ public class Executor {
 
     }
 
+    private void generateLua() {
+
+        LuaExecutor luaExecutor = new LuaExecutor(cfg, context);
+        luaExecutor.generate();
+    }
+
     public static void main(String[] args) {
         AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
@@ -285,14 +302,19 @@ public class Executor {
         List<String> paths = new ArrayList<>();
         //paths.add("hello.io");
         // paths.add("hello3.io");
-        paths.add("ioMessage.io");
+      //  paths.add("sample.io");
+
         for (String path : paths) {
-            IoReader.getInstance().read(new File(AppEvn.getClassRootPath(), path));
+            IoReader.getInstance().read(FileUtil.file("../../src/main/resources/" + path, AppEvn.getClassRootPath()));
         }
+        IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data-cshape.io"));
+        //IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data.io"));
+
         Map<String, IoProtocolReader> ioProtocolReaderMap = IoReader.getInstance().getIoProtocolReaderMap();
 
         ExecutorContext context = new ExecutorContext();
 
+        context.setProjectName("test");
         for (IoProtocolReader value : ioProtocolReaderMap.values()) {
             context.addBeans(value.getBeans());
             context.addEnums(value.getEnums());
@@ -301,7 +323,12 @@ public class Executor {
         }
         // context.setJavaEventHandlerRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
         // context.setJavaBeanCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
-        Executor executer = new Executor(context);
-        executer.generate();
+
+        String path = FileUtil.file("../../src/test/java").getAbsolutePath();
+        LuaConfig luaConfig = new LuaConfig();
+        luaConfig.setLuaBeanCodeRootPath(path);
+        context.setLuaConfig(luaConfig);
+        Executor executor = new Executor(context);
+        executor.generate();
     }
 }
