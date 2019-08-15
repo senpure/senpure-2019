@@ -18,7 +18,7 @@ public class ProjectConfig {
     private List<ProtocolFile> protocolFiles;
     private int tabPaneConfigIndex=0;
     private JavaConfig javaConfig = new JavaConfig();
-
+    private LuaConfig luaConfig = new LuaConfig();
     public String getProjectName() {
         return projectName;
     }
@@ -66,5 +66,13 @@ public class ProjectConfig {
 
     public void setProtocolFiles(List<ProtocolFile> protocolFiles) {
         this.protocolFiles = protocolFiles;
+    }
+
+    public LuaConfig getLuaConfig() {
+        return luaConfig;
+    }
+
+    public void setLuaConfig(LuaConfig luaConfig) {
+        this.luaConfig = luaConfig;
     }
 }

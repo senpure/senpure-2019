@@ -50,10 +50,10 @@ public class Boot {
             boolean useOverwrite = false;
             String overwrite = System.getProperty("overwrite");
             if (overwrite == null) {
-                if (hasCover(config)) {
-                    logger.info("静默模式要使覆盖设置生效请使用参数-Dsilence=true");
-                    logger.info("静默模式要使覆盖设置生效请使用参数-Dsilence=true");
-                    logger.info("静默模式要使覆盖设置生效请使用参数-Dsilence=true");
+                if (hasExtraOverwrite(config)) {
+                    logger.info("(1)静默模式要使额外覆盖设置生效请使用参数-DextraOverwrite=true");
+                    logger.info("(2)静默模式要使额外覆盖设置生效请使用参数-DextraOverwrite=true");
+                    logger.info("(3)静默模式要使额外覆盖设置生效请使用参数-DextraOverwrite=true");
                 }
 
             } else {
@@ -127,7 +127,7 @@ public class Boot {
         // SpringApplication.run(Boot.class, args);
     }
 
-    private static boolean hasCover(ProjectConfig config) {
+    private static boolean hasExtraOverwrite(ProjectConfig config) {
         JavaConfig javaConfig = config.getJavaConfig();
 
         if (javaConfig.isJavaCSMessageHandlerOverwrite()) {

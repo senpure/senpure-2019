@@ -142,7 +142,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getBeans()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaProtocolCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 bean {} {}", file.getName(), file.getAbsoluteFile());
@@ -160,7 +160,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getEnums()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaProtocolCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 enum {} {}", file.getName(), file.getAbsoluteFile());
@@ -179,7 +179,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getMessages()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaProtocolCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 message {} {}", file.getName(), file.getAbsoluteFile());
@@ -246,7 +246,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getEvents()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaProtocolCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 event {} {}", file.getName(), file.getAbsoluteFile());
@@ -308,7 +308,7 @@ public class Executor {
             IoReader.getInstance().read(FileUtil.file("../../src/main/resources/" + path, AppEvn.getClassRootPath()));
         }
         IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data-cshape.io"));
-        //IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data.io"));
+        IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data.io"));
 
         Map<String, IoProtocolReader> ioProtocolReaderMap = IoReader.getInstance().getIoProtocolReaderMap();
 
@@ -322,11 +322,12 @@ public class Executor {
             context.addMessages(value.getMessages());
         }
         // context.setJavaEventHandlerRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
-        // context.setJavaBeanCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
+        // context.setJavaProtocolCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
 
         String path = FileUtil.file("../../src/test/java").getAbsolutePath();
         LuaConfig luaConfig = new LuaConfig();
-        luaConfig.setLuaBeanCodeRootPath(path);
+        luaConfig.setType(LuaConfig.TYPE_NAMESPACE);
+        luaConfig.setLuaProtocolCodeRootPath(path);
         context.setLuaConfig(luaConfig);
         Executor executor = new Executor(context);
         executor.generate();

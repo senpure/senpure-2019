@@ -8,14 +8,17 @@ package com.senpure.io.generator.habit;
  */
 public class LuaConfig {
 
+    public final static String TYPE_MIX = "MIX";
+    public final  static String TYPE_FILE = "FILE";
+    public final  static String TYPE_NAMESPACE = "NAMESPACE";
+    public String type = TYPE_MIX;
     /**
      * 合并
      */
-    private  String luaMixFileName="Protocol";
-    private boolean luaMixFileOverwrite = true;
+    private String luaMixFileName = "protocol";
 
-    private String luaBeanCodeRootPath;
-    private String luaBeanCodeRootChooserPath;
+    private String luaProtocolCodeRootPath;
+    private String luaProtocolCodeRootChooserPath;
     private String luaCSMessageHandlerCodeRootPath;
     private String luaCSMessageHandlerCodeRootChooserPath;
     private String luaSCMessageHandlerCodeRootPath;
@@ -43,20 +46,20 @@ public class LuaConfig {
     private boolean luaSCMessageHandlerOverwrite = false;
     private boolean luaEventHandlerOverwrite = false;
 
-    public String getLuaBeanCodeRootPath() {
-        return luaBeanCodeRootPath;
+    public String getLuaProtocolCodeRootPath() {
+        return luaProtocolCodeRootPath;
     }
 
-    public void setLuaBeanCodeRootPath(String luaBeanCodeRootPath) {
-        this.luaBeanCodeRootPath = luaBeanCodeRootPath;
+    public void setLuaProtocolCodeRootPath(String luaProtocolCodeRootPath) {
+        this.luaProtocolCodeRootPath = luaProtocolCodeRootPath;
     }
 
-    public String getLuaBeanCodeRootChooserPath() {
-        return luaBeanCodeRootChooserPath;
+    public String getLuaProtocolCodeRootChooserPath() {
+        return luaProtocolCodeRootChooserPath;
     }
 
-    public void setLuaBeanCodeRootChooserPath(String luaBeanCodeRootChooserPath) {
-        this.luaBeanCodeRootChooserPath = luaBeanCodeRootChooserPath;
+    public void setLuaProtocolCodeRootChooserPath(String luaProtocolCodeRootChooserPath) {
+        this.luaProtocolCodeRootChooserPath = luaProtocolCodeRootChooserPath;
     }
 
     public String getLuaCSMessageHandlerCodeRootPath() {
@@ -253,11 +256,14 @@ public class LuaConfig {
         this.luaMixFileName = luaMixFileName;
     }
 
-    public boolean isLuaMixFileOverwrite() {
-        return luaMixFileOverwrite;
+
+    public String getType() {
+        return type;
     }
 
-    public void setLuaMixFileOverwrite(boolean luaMixFileOverwrite) {
-        this.luaMixFileOverwrite = luaMixFileOverwrite;
+    public void setType(String type) {
+        this.type = type;
     }
+
+
 }

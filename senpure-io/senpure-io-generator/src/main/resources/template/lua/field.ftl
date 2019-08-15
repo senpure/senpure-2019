@@ -61,7 +61,8 @@ ${bean.lua.namespace}.${bean.lua.name} = {
 
 --${bean.lua.namespace}.${bean.lua.name}构造方法
 function ${bean.lua.namespace}.${bean.lua.name}:new()
-    local ${bean.lua.name?uncap_first} = setmetatable({}, {__index=self}) ;
+<#assign objName>${lowerCamelCase(bean.lua.name)}</#assign>
+    local ${objName} = setmetatable({}, {__index=self}) ;
 <#list bean.fields as field>
     <#if field.list >
     --[Comment]
@@ -71,40 +72,40 @@ function ${bean.lua.namespace}.${bean.lua.name}:new()
     --类型:<#if field.baseField>${rightPad(field.javaType,7)}<#else>${field.bean.lua.namespace}${field.bean.lua.name} </#if><#if field.hasExplain>${field.explain}</#if>
     </#if>
     <#if field.list >
-    ${bean.lua.name?uncap_first}.${field.name} = nil;
+    ${objName}.${field.name} = nil;
     <#else ><#--不是list-->
         <#if field.baseField>
             <#if field.javaType == "String">
-    ${bean.lua.name?uncap_first}.${field.name} = "";
+    ${objName}.${field.name} = "";
             <#elseif field.fieldType == "boolean">
-    ${bean.lua.name?uncap_first}.${field.name} = false;
+    ${objName}.${field.name} = false;
             <#else >
-    ${bean.lua.name?uncap_first}.${field.name} = 0;
+    ${objName}.${field.name} = 0;
             </#if>
         <#else>
             <#if field.bean.enum>
-    ${bean.lua.name?uncap_first}.${field.name} = ${field.bean.lua.namespace}.${field.bean.lua.name}.${field.bean.defaultField.name} ;
+    ${objName}.${field.name} = ${field.bean.lua.namespace}.${field.bean.lua.name}.${field.bean.defaultField.name};
             <#else >
-    ${bean.lua.name?uncap_first}.${field.name} = nil ;<#--bean 引用-->
+    ${objName}.${field.name} = nil;<#--bean 引用-->
             </#if>
         </#if>
     </#if>
 </#list>
-    serializedSize = -1;
+    ${objName}.serializedSize = -1;
 <#list bean.fields as field>
     <#if field.list >
         <#if field.baseField >
             <#if field.javaType != "String" >
-    ${field.name}SerializedSize = 0;
+    ${objName}.${field.name}SerializedSize = 0;
             </#if>
         <#else>
             <#if field.bean.enum>
-    ${field.name}SerializedSize = 0;
+    ${objName}.${field.name}SerializedSize = 0;
             </#if>
         </#if>
     </#if>
 </#list>
-    return ${bean.lua.name?uncap_first};
+    return ${objName};
 end
 
 --${bean.lua.namespace}.${bean.lua.name}写入字节缓存

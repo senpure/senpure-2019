@@ -7,8 +7,8 @@ package com.senpure.io.generator.habit;
  * @time 2019-07-09 17:00:01
  */
 public class JavaConfig {
-    private String javaBeanCodeRootPath;
-    private String javaBeanCodeRootChooserPath;
+    private String javaProtocolCodeRootPath;
+    private String javaProtocolCodeRootChooserPath;
     private String javaCSMessageHandlerCodeRootPath;
     private String javaCSMessageHandlerCodeRootChooserPath;
     private String javaSCMessageHandlerCodeRootPath;
@@ -44,12 +44,12 @@ public class JavaConfig {
         this.javaEventHandlerCodeRootPath = javaEventHandlerCodeRootPath;
     }
 
-    public String getJavaBeanCodeRootPath() {
-        return javaBeanCodeRootPath;
+    public String getJavaProtocolCodeRootPath() {
+        return javaProtocolCodeRootPath;
     }
 
-    public void setJavaBeanCodeRootPath(String javaBeanCodeRootPath) {
-        this.javaBeanCodeRootPath = javaBeanCodeRootPath;
+    public void setJavaProtocolCodeRootPath(String javaProtocolCodeRootPath) {
+        this.javaProtocolCodeRootPath = javaProtocolCodeRootPath;
     }
 
     public String getJavaBeanTemplate() {
@@ -124,12 +124,12 @@ public class JavaConfig {
         this.javaEventHandlerCodeRootChooserPath = javaEventHandlerCodeRootChooserPath;
     }
 
-    public String getJavaBeanCodeRootChooserPath() {
-        return javaBeanCodeRootChooserPath;
+    public String getJavaProtocolCodeRootChooserPath() {
+        return javaProtocolCodeRootChooserPath;
     }
 
-    public void setJavaBeanCodeRootChooserPath(String javaBeanCodeRootChooserPath) {
-        this.javaBeanCodeRootChooserPath = javaBeanCodeRootChooserPath;
+    public void setJavaProtocolCodeRootChooserPath(String javaProtocolCodeRootChooserPath) {
+        this.javaProtocolCodeRootChooserPath = javaProtocolCodeRootChooserPath;
     }
 
     public boolean isGenerateJavaEnum() {

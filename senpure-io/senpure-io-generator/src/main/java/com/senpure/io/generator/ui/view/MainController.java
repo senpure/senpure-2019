@@ -93,7 +93,7 @@ public class MainController implements Initializable {
 
     //java--↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     @FXML
-    private TextField textFieldJavaBeanCodeRootPath;
+    private TextField textFieldJavaProtocolCodeRootPath;
     @FXML
     private TextField textFieldJavaEventHandlerCodeRootPath;
     @FXML
@@ -218,7 +218,7 @@ public class MainController implements Initializable {
     }
 
     private void initTextFieldValue() {
-        textFieldJavaBeanCodeRootPath.setText(javaConfig.getJavaBeanCodeRootPath());
+        textFieldJavaProtocolCodeRootPath.setText(javaConfig.getJavaProtocolCodeRootPath());
         textFieldJavaEventHandlerCodeRootPath.setText(javaConfig.getJavaEventHandlerCodeRootPath());
         textFieldJavaCSMessageHandlerCodeRootPath.setText(javaConfig.getJavaCSMessageHandlerCodeRootPath());
         textFieldJavaSCMessageHandlerCodeRootPath.setText(javaConfig.getJavaSCMessageHandlerCodeRootPath());
@@ -237,7 +237,7 @@ public class MainController implements Initializable {
 //        directoryChooserJavaEventHandlerCodeRootPath = new DirectoryChooser();
 //        directoryChooserJavaEventHandlerCodeRootPath.setInitialDirectory(new File(javaConfig.getJavaEventHandlerCodeRootChooserPath()));
 //        directoryChooserJavaBeanCodeRootPath = new DirectoryChooser();
-//        directoryChooserJavaBeanCodeRootPath.setInitialDirectory(new File(javaConfig.getJavaBeanCodeRootChooserPath()));
+//        directoryChooserJavaBeanCodeRootPath.setInitialDirectory(new File(javaConfig.getJavaProtocolCodeRootChooserPath()));
 
     }
 
@@ -569,11 +569,11 @@ public class MainController implements Initializable {
     }
 
     public void choiceJavaBeanCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaBeanCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaProtocolCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setJavaBeanCodeRootChooserPath(file.getParent());
-            textFieldJavaBeanCodeRootPath.setText(file.getAbsolutePath());
+            javaConfig.setJavaProtocolCodeRootChooserPath(file.getParent());
+            textFieldJavaProtocolCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
@@ -791,8 +791,8 @@ public class MainController implements Initializable {
 
         JavaConfig javaConfig = config.getJavaConfig();
         File codeFile = new File(file, "src/main/java");
-        javaConfig.setJavaBeanCodeRootPath(codeFile.getAbsolutePath());
-        javaConfig.setJavaBeanCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setJavaProtocolCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setJavaProtocolCodeRootChooserPath(file.getAbsolutePath());
         javaConfig.setJavaCSMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
         javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
         javaConfig.setJavaSCMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
@@ -993,7 +993,7 @@ public class MainController implements Initializable {
 
     private void javaConfigValue(JavaConfig javaConfig) {
         javaConfig.setJavaEventHandlerCodeRootPath(textFieldJavaEventHandlerCodeRootPath.getText());
-        javaConfig.setJavaBeanCodeRootPath(textFieldJavaBeanCodeRootPath.getText());
+        javaConfig.setJavaProtocolCodeRootPath(textFieldJavaProtocolCodeRootPath.getText());
         javaConfig.setJavaCSMessageHandlerCodeRootPath(textFieldJavaCSMessageHandlerCodeRootPath.getText());
         javaConfig.setJavaSCMessageHandlerCodeRootPath(textFieldJavaSCMessageHandlerCodeRootPath.getText());
         javaConfig.setJavaEnumTemplate(choiceJavaEnum.getSelectionModel().getSelectedItem().getName());
