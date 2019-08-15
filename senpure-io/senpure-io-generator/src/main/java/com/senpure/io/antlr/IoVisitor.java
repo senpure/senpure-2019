@@ -41,11 +41,11 @@ public interface IoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitImportValue(IoParser.ImportValueContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IoParser#javaPack}.
+	 * Visit a parse tree produced by {@link IoParser#javaPackage}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitJavaPack(IoParser.JavaPackContext ctx);
+	T visitJavaPackage(IoParser.JavaPackageContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link IoParser#javaPackageValue}.
 	 * @param ctx the parse tree

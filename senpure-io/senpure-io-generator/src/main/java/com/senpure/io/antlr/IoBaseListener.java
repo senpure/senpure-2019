@@ -76,13 +76,13 @@ public class IoBaseListener implements IoListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterJavaPack(IoParser.JavaPackContext ctx) { }
+	@Override public void enterJavaPackage(IoParser.JavaPackageContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitJavaPack(IoParser.JavaPackContext ctx) { }
+	@Override public void exitJavaPackage(IoParser.JavaPackageContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

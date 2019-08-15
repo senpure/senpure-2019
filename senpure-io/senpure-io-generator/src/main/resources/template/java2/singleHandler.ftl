@@ -1,6 +1,6 @@
-package ${javaHandlerPack};
+package ${javaHandlerPackage};
 
-import ${javaPack}.${type}${name}Message;
+import ${javaPackage}.${type}${name}Message;
 import com.senpure.io.handler.AbstractMessageHandler;
 import io.netty.channel.Channel;
 import org.springframework.stereotype.Component;

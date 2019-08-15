@@ -3,7 +3,7 @@ null
 ';'
 '.'
 'io'
-'javaPack'
+'javaPackage'
 'namespace'
 'luaNamespace'
 'cs'
@@ -188,7 +188,7 @@ headContent
 entity
 importIo
 importValue
-javaPack
+javaPackage
 javaPackageValue
 namespace
 namespaceValue

@@ -58,15 +58,15 @@ public interface IoListener extends ParseTreeListener {
 	 */
 	void exitImportValue(IoParser.ImportValueContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link IoParser#javaPack}.
+	 * Enter a parse tree produced by {@link IoParser#javaPackage}.
 	 * @param ctx the parse tree
 	 */
-	void enterJavaPack(IoParser.JavaPackContext ctx);
+	void enterJavaPackage(IoParser.JavaPackageContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link IoParser#javaPack}.
+	 * Exit a parse tree produced by {@link IoParser#javaPackage}.
 	 * @param ctx the parse tree
 	 */
-	void exitJavaPack(IoParser.JavaPackContext ctx);
+	void exitJavaPackage(IoParser.JavaPackageContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link IoParser#javaPackageValue}.
 	 * @param ctx the parse tree

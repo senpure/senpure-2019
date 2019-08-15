@@ -1,5 +1,5 @@
 namespace com.senpure.io;
-javaPack  com.senpure.io;
+javaPackage  com.senpure.io;
 
 bean HandleMessage {
     int     handleMessageId;            //可以处理的消息ID

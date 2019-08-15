@@ -4,12 +4,12 @@ protocol
     headContent*
     entity*EOF
     ;
-headContent:importIo|namespace|javaPack|luaNamespace;
+headContent:importIo|namespace|javaPackage|luaNamespace;
 entity:message|event|bean|enumSymbol;
 importIo:'import'importValue';';
 importValue: filePath'.''io';
 
-javaPack:'javaPack'javaPackageValue';';
+javaPackage:'javaPackage'javaPackageValue';';
 javaPackageValue
 	:fileName
 	|javaPackageValue '.'fileName

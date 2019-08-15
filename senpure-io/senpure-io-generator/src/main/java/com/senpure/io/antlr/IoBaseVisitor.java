@@ -52,7 +52,7 @@ public class IoBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements IoV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitJavaPack(IoParser.JavaPackContext ctx) { return visitChildren(ctx); }
+	@Override public T visitJavaPackage(IoParser.JavaPackageContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

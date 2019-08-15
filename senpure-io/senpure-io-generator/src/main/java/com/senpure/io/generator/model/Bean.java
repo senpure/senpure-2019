@@ -18,7 +18,7 @@ public class Bean extends TemplateBean {
     private String name;
 
     //所在的java包
-    private String javaPack;
+    private String javaPackage;
 
 
     private List<Field> fields = new ArrayList<>();
@@ -133,12 +133,12 @@ public class Bean extends TemplateBean {
     }
 
 
-    public String getJavaPack() {
-        return javaPack;
+    public String getJavaPackage() {
+        return javaPackage;
     }
 
-    public void setJavaPack(String javaPack) {
-        this.javaPack = javaPack;
+    public void setJavaPackage(String javaPackage) {
+        this.javaPackage = javaPackage;
     }
 
 

@@ -32,8 +32,8 @@ public class IoParser extends Parser {
 		LINE_COMMENT=88, CODE_COMMENT=89;
 	public static final int
 		RULE_protocol = 0, RULE_headContent = 1, RULE_entity = 2, RULE_importIo = 3, 
-		RULE_importValue = 4, RULE_javaPack = 5, RULE_javaPackageValue = 6, RULE_namespace = 7, 
-		RULE_namespaceValue = 8, RULE_luaNamespace = 9, RULE_luaNamespaceValue = 10, 
+		RULE_importValue = 4, RULE_javaPackage = 5, RULE_javaPackageValue = 6, 
+		RULE_namespace = 7, RULE_namespaceValue = 8, RULE_luaNamespace = 9, RULE_luaNamespaceValue = 10, 
 		RULE_fileName = 11, RULE_filePath = 12, RULE_message = 13, RULE_messageHead = 14, 
 		RULE_messageType = 15, RULE_messageName = 16, RULE_messageId = 17, RULE_entityComment = 18, 
 		RULE_event = 19, RULE_eventHead = 20, RULE_eventName = 21, RULE_eventId = 22, 
@@ -43,7 +43,7 @@ public class IoParser extends Parser {
 		RULE_enumName = 35;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"protocol", "headContent", "entity", "importIo", "importValue", "javaPack", 
+			"protocol", "headContent", "entity", "importIo", "importValue", "javaPackage", 
 			"javaPackageValue", "namespace", "namespaceValue", "luaNamespace", "luaNamespaceValue", 
 			"fileName", "filePath", "message", "messageHead", "messageType", "messageName", 
 			"messageId", "entityComment", "event", "eventHead", "eventName", "eventId", 
@@ -55,7 +55,7 @@ public class IoParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "';'", "'.'", "'io'", "'javaPack'", "'namespace'", "'luaNamespace'", 
+			null, "';'", "'.'", "'io'", "'javaPackage'", "'namespace'", "'luaNamespace'", 
 			"'cs'", "'CS'", "'sc'", "'SC'", "'bean'", "'message'", "'event'", "'-'", 
 			"'../'", "'/'", "'\\'", "'{'", "'}'", "'='", "'['", "']'", "'sint'", 
 			"'slong'", "'sfixed32'", "'sfixed64'", "'String'", "'string'", "'abstract'", 
@@ -227,8 +227,8 @@ public class IoParser extends Parser {
 		public NamespaceContext namespace() {
 			return getRuleContext(NamespaceContext.class,0);
 		}
-		public JavaPackContext javaPack() {
-			return getRuleContext(JavaPackContext.class,0);
+		public JavaPackageContext javaPackage() {
+			return getRuleContext(JavaPackageContext.class,0);
 		}
 		public LuaNamespaceContext luaNamespace() {
 			return getRuleContext(LuaNamespaceContext.class,0);
@@ -277,7 +277,7 @@ public class IoParser extends Parser {
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(88);
-				javaPack();
+				javaPackage();
 				}
 				break;
 			case T__5:
@@ -479,32 +479,32 @@ public class IoParser extends Parser {
 		return _localctx;
 	}
 
-	public static class JavaPackContext extends ParserRuleContext {
+	public static class JavaPackageContext extends ParserRuleContext {
 		public JavaPackageValueContext javaPackageValue() {
 			return getRuleContext(JavaPackageValueContext.class,0);
 		}
-		public JavaPackContext(ParserRuleContext parent, int invokingState) {
+		public JavaPackageContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_javaPack; }
+		@Override public int getRuleIndex() { return RULE_javaPackage; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof IoListener ) ((IoListener)listener).enterJavaPack(this);
+			if ( listener instanceof IoListener ) ((IoListener)listener).enterJavaPackage(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof IoListener ) ((IoListener)listener).exitJavaPack(this);
+			if ( listener instanceof IoListener ) ((IoListener)listener).exitJavaPackage(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof IoVisitor ) return ((IoVisitor<? extends T>)visitor).visitJavaPack(this);
+			if ( visitor instanceof IoVisitor ) return ((IoVisitor<? extends T>)visitor).visitJavaPackage(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final JavaPackContext javaPack() throws RecognitionException {
-		JavaPackContext _localctx = new JavaPackContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_javaPack);
+	public final JavaPackageContext javaPackage() throws RecognitionException {
+		JavaPackageContext _localctx = new JavaPackageContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_javaPackage);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

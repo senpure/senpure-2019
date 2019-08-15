@@ -72,7 +72,7 @@ public class IoProtocolReader extends IoBaseListener {
 
     private void setBeanValue() {
         bean.setNamespace(namespace);
-        bean.setJavaPack(javaPackage);
+        bean.setJavaPackage(javaPackage);
         bean.setFilePath(filePath);
         fieldIndex = 1;
 
@@ -158,12 +158,12 @@ public class IoProtocolReader extends IoBaseListener {
         messages.add(message);
         bean = message;
         setBeanValue();
-        message.setJavaHandlerPack(javaPackage);
+        message.setJavaHandlerPackage(javaPackage);
         if (Constant.JAVA_PACK_MESSAGE.trim().length() > 0) {
-            message.setJavaPack(message.getJavaPack() + "." + Constant.JAVA_PACK_MESSAGE);
+            message.setJavaPackage(message.getJavaPackage() + "." + Constant.JAVA_PACK_MESSAGE);
         }
         if (Constant.JAVA_PACK_HANDLER.trim().length() > 0) {
-            message.setJavaHandlerPack(message.getJavaHandlerPack() + "." + Constant.JAVA_PACK_HANDLER);
+            message.setJavaHandlerPackage(message.getJavaHandlerPackage() + "." + Constant.JAVA_PACK_HANDLER);
         }
 
 
@@ -310,7 +310,7 @@ public class IoProtocolReader extends IoBaseListener {
         beans.add(bean);
         setBeanValue();
         if (Constant.JAVA_PACK_BEAN.trim().length() > 0) {
-            bean.setJavaPack(bean.getJavaPack() + "." + Constant.JAVA_PACK_BEAN);
+            bean.setJavaPackage(bean.getJavaPackage() + "." + Constant.JAVA_PACK_BEAN);
         }
     }
 
@@ -326,7 +326,7 @@ public class IoProtocolReader extends IoBaseListener {
         enums.add(anEnum);
         setBeanValue();
         if (Constant.JAVA_PACK_ENUM.trim().length() > 0) {
-            bean.setJavaPack(bean.getJavaPack() + "." + Constant.JAVA_PACK_ENUM);
+            bean.setJavaPackage(bean.getJavaPackage() + "." + Constant.JAVA_PACK_ENUM);
         }
 
     }
@@ -368,7 +368,7 @@ public class IoProtocolReader extends IoBaseListener {
         setBeanValue();
         event.setJavaHandlerPack(javaPackage);
         if (Constant.JAVA_PACK_EVENT.trim().length() > 0) {
-            event.setJavaPack(event.getJavaPack() + "." + Constant.JAVA_PACK_EVENT);
+            event.setJavaPackage(event.getJavaPackage() + "." + Constant.JAVA_PACK_EVENT);
         }
         if (Constant.JAVA_PACK_EVENT_HANDLER.trim().length() > 0) {
             event.setJavaHandlerPack(event.getJavaHandlerPack() + "." + Constant.JAVA_PACK_EVENT_HANDLER);

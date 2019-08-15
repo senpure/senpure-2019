@@ -142,7 +142,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getBeans()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 bean {} {}", file.getName(), file.getAbsoluteFile());
@@ -160,7 +160,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getEnums()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 enum {} {}", file.getName(), file.getAbsoluteFile());
@@ -179,7 +179,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getMessages()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 message {} {}", file.getName(), file.getAbsoluteFile());
@@ -198,7 +198,7 @@ public class Executor {
         }
         for (Message message : context.getMessages()) {
             if (message.getType().equals(type)) {
-                File file = new File(codeRootPath, FileUtil.fullFileEnd(message.getJavaHandlerPack().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
+                File file = new File(codeRootPath, FileUtil.fullFileEnd(message.getJavaHandlerPackage().replace(".", File.separator)) + message.getJavaHandlerName() + ".java");
                 boolean cover = false;
                 if (file.exists()) {
                     if (!fileCover) {
@@ -246,7 +246,7 @@ public class Executor {
             Assert.error(e);
         }
         for (Bean bean : context.getEvents()) {
-            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPack().replace(".", File.separator)) + bean.getJavaName() + ".java");
+            File file = new File(javaConfig.getJavaBeanCodeRootPath(), FileUtil.fullFileEnd(bean.getJavaPackage().replace(".", File.separator)) + bean.getJavaName() + ".java");
             checkFile(file);
             bean.setSovereignty(Sovereignty.getInstance().sovereigntyJavaComment());
             logger.info("生成 event {} {}", file.getName(), file.getAbsoluteFile());

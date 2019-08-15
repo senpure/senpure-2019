@@ -1,6 +1,6 @@
-package ${javaHandlerPack};
+package ${javaHandlerPackage};
 
-import ${javaPack}.${name}Event;
+import ${javaPackage}.${name}Event;
 import com.senpure.io.handler.AbstractEventHandler;
 import org.springframework.stereotype.Component;
 

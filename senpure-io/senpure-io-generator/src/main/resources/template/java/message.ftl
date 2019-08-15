@@ -1,9 +1,9 @@
-package ${javaPack};
+package ${javaPackage};
 
 <#list singleField?values as field>
     <#if !field.baseField>
-        <#if field.bean.javaPack!=javaPack>
-import ${field.bean.javaPack}.${field.bean.javaName};
+        <#if field.bean.javaPackage!=javaPackage>
+import ${field.bean.javaPackage}.${field.bean.javaName};
         </#if>
     </#if>
 </#list >

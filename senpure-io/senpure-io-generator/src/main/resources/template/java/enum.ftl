@@ -1,4 +1,4 @@
-package ${javaPack};
+package ${javaPackage};
 
 /**<#if hasExplain>
  * ${explain}
