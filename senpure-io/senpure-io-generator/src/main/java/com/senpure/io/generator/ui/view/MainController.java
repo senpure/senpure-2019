@@ -45,6 +45,7 @@ import java.util.*;
 
 /**
  * MainController
+ * 以后有机会在分模块吧.
  *
  * @author senpure
  * @time 2019-07-05 14:19:11
@@ -144,6 +145,37 @@ public class MainController implements Initializable {
     //java--↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 
+    //lua--↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    @FXML
+    private TextField textFieldLuaProtocolCodeRootPath;
+
+    @FXML
+    private TextField textFieldLuaSCMessageHandlerCodeRootPath;
+
+    @FXML
+    private ChoiceBox<File> choiceLuaSCMessageHandler;
+    @FXML
+    private ChoiceBox<String> choiceLuaType;
+    @FXML
+    private ChoiceBox<File> choiceLuaRequire;
+    @FXML
+    private ChoiceBox<File> choiceLuaProtocol;
+
+    @FXML
+    private CheckBox checkLuaRequire;
+    @FXML
+    private CheckBox checkLuaProtocol;
+    @FXML
+    private CheckBox checkLuaSCMessageHandler;
+
+    @FXML
+    private CheckBox checkLuaRequireOverwrite;
+    @FXML
+    private CheckBox checkLuaSCMessageHandlerOverwrite;
+    @FXML
+    private CheckBox checkLuaAppendNamespace;
+    //lua--↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
     private FileChooser fileChooserIoFile;
     private DirectoryChooser directoryChooser;
     // private DirectoryChooser directoryChooserJavaBeanCodeRootPath;
@@ -153,7 +185,7 @@ public class MainController implements Initializable {
     private ResourceBundle resources;
     private Habit habit;
     private JavaConfig javaConfig;
-
+    private LuaConfig luaConfig;
     private ProjectConfig config;
 
     private Set<File> protocolFiles = new HashSet<>();
@@ -184,12 +216,12 @@ public class MainController implements Initializable {
         habit = HabitUtil.getHabit();
         config = HabitUtil.getUseConfig();
         javaConfig = config.getJavaConfig();
+        luaConfig = config.getLuaConfig();
 
     }
 
     private void intProjectName() {
         projectName.getItems().clear();
-
         for (ProjectConfig habitConfig : habit.getConfigs()) {
             projectName.getItems().add(habitConfig.getProjectName());
             if (habitConfig.getProjectName().equals(config.getProjectName())) {
@@ -222,6 +254,10 @@ public class MainController implements Initializable {
         textFieldJavaEventHandlerCodeRootPath.setText(javaConfig.getJavaEventHandlerCodeRootPath());
         textFieldJavaCSMessageHandlerCodeRootPath.setText(javaConfig.getJavaCSMessageHandlerCodeRootPath());
         textFieldJavaSCMessageHandlerCodeRootPath.setText(javaConfig.getJavaSCMessageHandlerCodeRootPath());
+
+        textFieldLuaProtocolCodeRootPath.setText(luaConfig.getLuaProtocolCodeRootPath());
+        textFieldLuaSCMessageHandlerCodeRootPath.setText(luaConfig.getLuaSCMessageHandlerCodeRootPath());
+
     }
 
     private void initChooser() {
@@ -243,6 +279,7 @@ public class MainController implements Initializable {
 
     private void initTemplate() {
         initJavaTemplate();
+        initLuaTemplate();
     }
 
     private void initJavaTemplate() {
@@ -308,6 +345,48 @@ public class MainController implements Initializable {
         // checkJavaCSMessageHandlerOverwrite.setSelected(javaConfig.isJavaCSMessageHandlerOverwrite());
         // checkJavaSCMessageHandlerOverwrite.setSelected(javaConfig.isJavaSCMessageHandlerOverwrite());
         // checkJavaEventHandlerOverwrite.setSelected(javaConfig.isJavaEventHandlerOverwrite());
+    }
+
+    private void initLuaTemplate() {
+        File luaFolder = new File(TemplateUtil.templateDir(), "lua");
+        File[] files = luaFolder.listFiles();
+        for (File file : files) {
+            if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
+                choiceLuaSCMessageHandler.getItems().add(file);
+                if (file.getName().equals(luaConfig.getLuaSCMessageHandlerTemplate())) {
+                    choiceLuaSCMessageHandler.getSelectionModel().select(file);
+                }
+            } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
+                choiceLuaRequire.getItems().add(file);
+                if (file.getName().equals(luaConfig.getLuaRequireTemplate())) {
+                    choiceLuaRequire.getSelectionModel().select(file);
+                }
+            } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
+                choiceLuaProtocol.getItems().add(file);
+                if (file.getName().equals(luaConfig.getLuaProtocolTemplate())) {
+                    choiceLuaProtocol.getSelectionModel().select(file);
+                }
+            }
+        }
+
+        checkLuaAppendNamespace.setSelected(luaConfig.isAppendNamespace());
+
+        choiceLuaType.getItems().add(LuaConfig.TYPE_MIX);
+        choiceLuaType.getItems().add(LuaConfig.TYPE_FILE);
+        choiceLuaType.getItems().add(LuaConfig.TYPE_NAMESPACE);
+        choiceLuaType.getSelectionModel().select(luaConfig.type);
+
+        FileConverter fileConverter = new FileConverter();
+        choiceLuaSCMessageHandler.setConverter(fileConverter);
+        choiceLuaRequire.setConverter(fileConverter);
+        choiceLuaProtocol.setConverter(fileConverter);
+
+
+        checkLuaProtocol.setSelected(luaConfig.isGenerateLuaProtocol());
+        checkLuaRequire.setSelected(luaConfig.isGenerateLuaRequire());
+        checkLuaSCMessageHandler.setSelected(luaConfig.isGenerateLuaSCMessageHandler());
+
+
     }
 
     private void initPlane() {
@@ -568,7 +647,7 @@ public class MainController implements Initializable {
         accordionMessage.setExpandedPane(titledPaneProtocolConfig);
     }
 
-    public void choiceJavaBeanCodeRootPath() {
+    public void choiceJavaProtocolCodeRootPath() {
         directoryChooser.setInitialDirectory(new File(javaConfig.getJavaProtocolCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
@@ -604,6 +683,25 @@ public class MainController implements Initializable {
         }
     }
 
+
+    public void choiceLuaProtocolCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(luaConfig.getLuaProtocolCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+           luaConfig.setLuaProtocolCodeRootChooserPath(file.getParent());
+            textFieldLuaProtocolCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+
+    public void choiceLuaSCMessageHandlerCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(luaConfig.getLuaSCMessageHandlerCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(file.getParent());
+            textFieldLuaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
 
     public void updateProjectName() {
         TextInputDialog dialog = new TextInputDialog(projectName.getSelectionModel().getSelectedItem());
@@ -800,6 +898,11 @@ public class MainController implements Initializable {
         javaConfig.setJavaEventHandlerCodeRootPath(codeFile.getAbsolutePath());
         javaConfig.setJavaEventHandlerCodeRootChooserPath(file.getAbsolutePath());
 
+        LuaConfig luaConfig = config.getLuaConfig();
+        luaConfig.setLuaProtocolCodeRootPath(file.getAbsolutePath());
+        luaConfig.setLuaProtocolCodeRootPath(file.getAbsolutePath());
+        luaConfig.setLuaSCMessageHandlerCodeRootPath(file.getAbsolutePath());
+        luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
     }
 
     public void clearLog() {
@@ -823,14 +926,12 @@ public class MainController implements Initializable {
     }
 
 
-    public void generateJavaCode() {
-        //String str="messageHandler 存在不能生成 CSVolletballChatMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\volleyball\\protocol\\message\\handler\\CSVolletballChatMessageHandlermessageHandler 存在不能生成 CSJoinRoomMessageHandler.java E:\\Projects\\mm\\src\\main\\resources\\src\\main\\java\\com\\senpure\\sport\\protocol\\message\\handler\\CSJoinRoomMessageHandler.java";
-        //logger.info(str);
-        ExecutorContext executorContext;
+    public ExecutorContext executorContext() {
+        ExecutorContext executorContext = null;
         if (tableViewProtocolView.getItems().size() == 0) {
             if (protocolFiles.size() == 0) {
                 logger.warn("没有选择协议文件");
-                return;
+                return null;
             }
             IoReader.getInstance().getIoProtocolReaderMap().clear();
             boolean error = false;
@@ -862,32 +963,25 @@ public class MainController implements Initializable {
             }
             if (error) {
                 logger.error("协议错误\n{}", errorBuilder.toString());
-                return;
+                return null;
             }
-            // JavaConfig javaConfig = new JavaConfig();
-            javaConfigValue(javaConfig);
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
-            executorContext.setJavaConfig(javaConfig);
             for (IoProtocolReader ioProtocolReader : ioProtocolReaders) {
                 executorContext.getEnums().addAll(ioProtocolReader.getEnums());
                 executorContext.getBeans().addAll(ioProtocolReader.getBeans());
                 executorContext.getMessages().addAll(ioProtocolReader.getMessages());
                 executorContext.getEvents().addAll(ioProtocolReader.getEvents());
             }
-
-
         } else {
-
             if (enums.size() + beans.size() + events.size() + messages.size() == 0) {
                 logger.warn("未选择任何可生产的对象");
-                return;
+                return null;
             }
             //JavaConfig javaConfig = new JavaConfig();
-            javaConfigValue(javaConfig);
+
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
-            executorContext.setJavaConfig(javaConfig);
             for (Enum anEnum : enums) {
                 if (anEnum.isGenerate()) {
                     executorContext.getEnums().add(anEnum);
@@ -908,28 +1002,47 @@ public class MainController implements Initializable {
                     executorContext.getEvents().add(event);
                 }
             }
-
-
         }
-        Executor executor = new Executor(executorContext);
+        return executorContext;
+    }
 
+    private  void generateCode(Executor executor) {
         try {
             executor.generate();
             logger.info("代码生成完成");
         } catch (CheckException e) {
-
             Platform.runLater(() -> {
                 btnDelRecord.setVisible(true);
                 btnDelRecord.requestFocus();
                 animation(btnDelRecord);
 
             });
-
-
             logger.error("代码检查不通过");
         } catch (Exception e) {
             logger.error("代码生成失败", e);
         }
+    }
+
+    public void generateJavaCode() {
+        ExecutorContext executorContext = executorContext();
+        if (executorContext == null) {
+            return;
+        }
+        javaConfigValue(javaConfig);
+        executorContext.setJavaConfig(javaConfig);
+        Executor executor = new Executor(executorContext);
+        generateCode(executor);
+    }
+
+    public void generateLuaCode() {
+        ExecutorContext executorContext = executorContext();
+        if (executorContext == null) {
+            return;
+        }
+        luaConfigValue(luaConfig);
+        executorContext.setLuaConfig(luaConfig);
+        Executor executor = new Executor(executorContext);
+        generateCode(executor);
     }
 
     private void animation(Node node) {
@@ -988,7 +1101,9 @@ public class MainController implements Initializable {
         //java
         javaConfigValue(javaConfig);
         //java
-
+        //lua
+        luaConfigValue(luaConfig);
+        //lua
     }
 
     private void javaConfigValue(JavaConfig javaConfig) {
@@ -996,6 +1111,7 @@ public class MainController implements Initializable {
         javaConfig.setJavaProtocolCodeRootPath(textFieldJavaProtocolCodeRootPath.getText());
         javaConfig.setJavaCSMessageHandlerCodeRootPath(textFieldJavaCSMessageHandlerCodeRootPath.getText());
         javaConfig.setJavaSCMessageHandlerCodeRootPath(textFieldJavaSCMessageHandlerCodeRootPath.getText());
+
         javaConfig.setJavaEnumTemplate(choiceJavaEnum.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaBeanTemplate(choiceJavaBean.getSelectionModel().getSelectedItem().getName());
         javaConfig.setJavaMessageTemplate(choiceJavaMessage.getSelectionModel().getSelectedItem().getName());
@@ -1015,5 +1131,26 @@ public class MainController implements Initializable {
         javaConfig.setGenerateJavaEventHandler(checkJavaEventHandler.isSelected());
         javaConfig.setGenerateJavaCSMessageHandler(checkJavaCSMessageHandler.isSelected());
         javaConfig.setGenerateJavaSCMessageHandler(checkJavaSCMessageHandler.isSelected());
+    }
+
+    private void luaConfigValue(LuaConfig luaConfig) {
+
+        luaConfig.setType(choiceLuaType.getSelectionModel().getSelectedItem());
+
+        luaConfig.setAppendNamespace(checkLuaAppendNamespace.isSelected());
+
+        luaConfig.setLuaProtocolCodeRootPath(textFieldLuaProtocolCodeRootPath.getText());
+        luaConfig.setLuaSCMessageHandlerCodeRootPath(textFieldLuaSCMessageHandlerCodeRootPath.getText());
+
+        luaConfig.setLuaProtocolTemplate(choiceLuaProtocol.getSelectionModel().getSelectedItem().getName());
+        luaConfig.setLuaSCMessageHandlerTemplate(choiceLuaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
+        luaConfig.setLuaRequireTemplate(choiceLuaRequire.getSelectionModel().getSelectedItem().getName());
+
+        luaConfig.setGenerateLuaProtocol(checkLuaProtocol.isSelected());
+        luaConfig.setGenerateLuaSCMessageHandler(checkLuaSCMessageHandler.isSelected());
+        luaConfig.setGenerateLuaRequire(checkLuaSCMessageHandler.isSelected());
+
+        luaConfig.setLuaCSMessageHandlerOverwrite(checkLuaSCMessageHandlerOverwrite.isSelected());
+        luaConfig.setLuaRequireOverwrite(checkLuaRequireOverwrite.isSelected());
     }
 }

@@ -96,7 +96,8 @@ public class HabitUtil {
         LuaConfig luaConfig = projectConfig.getLuaConfig();
         luaConfig.setLuaProtocolCodeRootPath(AppEvn.getClassRootPath());
         luaConfig.setLuaProtocolCodeRootChooserPath(new File(luaConfig.getLuaProtocolCodeRootPath()).getParent());
-
+        luaConfig.setLuaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(new File(luaConfig.getLuaProtocolCodeRootPath()).getParent());
     }
 
     public static void checkConfig(ProjectConfig projectConfig) {
@@ -123,10 +124,11 @@ public class HabitUtil {
 
         LuaConfig luaConfig = projectConfig.getLuaConfig();
         if (!new File(luaConfig.getLuaProtocolCodeRootPath()).exists()) {
-
             luaConfig.setLuaProtocolCodeRootChooserPath(new File(luaConfig.getLuaProtocolCodeRootPath()).getParent());
         }
-
+        if (!new File(luaConfig.getLuaSCMessageHandlerCodeRootPath()).exists()) {
+            luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(new File(luaConfig.getLuaSCMessageHandlerCodeRootPath()).getParent());
+        }
         //其他的 如模板路径 不用检查了
     }
 

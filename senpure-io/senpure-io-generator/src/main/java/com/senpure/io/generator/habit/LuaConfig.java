@@ -25,15 +25,21 @@ public class LuaConfig {
     private String luaSCMessageHandlerCodeRootChooserPath;
     private String luaEventHandlerCodeRootPath;
     private String luaEventHandlerCodeRootChooserPath;
-
+    private String luaProtocolTemplate = "protocol.ftl";
+    private String luaRequireTemplate = "require.ftl";
     private String luaEnumTemplate = "enum.ftl";
     private String luaBeanTemplate = "bean.ftl";
     private String luaMessageTemplate = "message.ftl";
     private String luaEventTemplate = "event.ftl";
-    private String luaCSMessageHandlerTemplate = "messageHandler.ftl";
-    private String luaSCMessageHandlerTemplate = "consumerMessageHandler.ftl";
+    private String luaCSMessageHandlerTemplate = "csMessageHandler.ftl";
+    private String luaSCMessageHandlerTemplate = "scMessageHandler.ftl";
     private String luaEventHandlerTemplate = "eventHandler.ftl";
 
+
+    private boolean appendNamespace=true;
+
+    private boolean generateLuaRequire= true;
+    private boolean generateLuaProtocol= true;
     private boolean generateLuaEnum = true;
     private boolean generateLuaBean = true;
     private boolean generateLuaEvent = true;
@@ -41,6 +47,8 @@ public class LuaConfig {
     private boolean generateLuaEventHandler = true;
     private boolean generateLuaCSMessageHandler = true;
     private boolean generateLuaSCMessageHandler = false;
+
+    private boolean luaRequireOverwrite = true;
 
     private boolean luaCSMessageHandlerOverwrite = false;
     private boolean luaSCMessageHandlerOverwrite = false;
@@ -265,5 +273,51 @@ public class LuaConfig {
         this.type = type;
     }
 
+    public String getLuaProtocolTemplate() {
+        return luaProtocolTemplate;
+    }
 
+    public void setLuaProtocolTemplate(String luaProtocolTemplate) {
+        this.luaProtocolTemplate = luaProtocolTemplate;
+    }
+
+    public String getLuaRequireTemplate() {
+        return luaRequireTemplate;
+    }
+
+    public void setLuaRequireTemplate(String luaRequireTemplate) {
+        this.luaRequireTemplate = luaRequireTemplate;
+    }
+
+    public boolean isGenerateLuaRequire() {
+        return generateLuaRequire;
+    }
+
+    public void setGenerateLuaRequire(boolean generateLuaRequire) {
+        this.generateLuaRequire = generateLuaRequire;
+    }
+
+    public boolean isGenerateLuaProtocol() {
+        return generateLuaProtocol;
+    }
+
+    public void setGenerateLuaProtocol(boolean generateLuaProtocol) {
+        this.generateLuaProtocol = generateLuaProtocol;
+    }
+
+    public boolean isAppendNamespace() {
+        return appendNamespace;
+    }
+
+    public void setAppendNamespace(boolean appendNamespace) {
+        this.appendNamespace = appendNamespace;
+    }
+
+    public boolean isLuaRequireOverwrite() {
+        return luaRequireOverwrite;
+    }
+
+    public void setLuaRequireOverwrite(boolean luaRequireOverwrite) {
+        this.luaRequireOverwrite = luaRequireOverwrite;
+    }
 }

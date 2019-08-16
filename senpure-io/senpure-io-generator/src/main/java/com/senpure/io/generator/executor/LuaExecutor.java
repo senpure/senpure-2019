@@ -6,6 +6,7 @@ import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Message;
 import com.senpure.io.generator.util.TemplateUtil;
+import com.senpure.template.FileUtil;
 import com.senpure.template.Generator;
 import com.senpure.template.sovereignty.Sovereignty;
 import com.senpure.template.sovereignty.TemplateBean;
@@ -106,8 +107,13 @@ public class LuaExecutor {
         bean.setEnums(context.getEnums());
         bean.getMessages().addAll(context.getMessages());
         bean.compute();
-        File file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() + ".lua");
-
+        File file;
+        if (luaConfig.isAppendNamespace()) {
+            file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() +
+                    File.separator + luaConfig.getLuaMixFileName() + ".lua");
+        } else {
+            file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() + ".lua");
+        }
         generate(bean, template, file, true);
     }
 
@@ -124,11 +130,22 @@ public class LuaExecutor {
         dispatchByFile(fileMap, context.getMessages());
         Map<File, LuaMixBean> luaMixBeanMap = new HashMap<>();
         for (Map.Entry<String, List<Bean>> entry : fileMap.entrySet()) {
+            List<Bean> beans = entry.getValue();
+            if (beans.size() == 0) {
+                continue;
+            }
             String fileName = new File(entry.getKey()).getName();
             fileName = fileName.substring(0, fileName.length() - 3);
-            File file = new File(luaConfig.getLuaProtocolCodeRootPath(), fileName + ".lua");
+            File file;
+            if (luaConfig.isAppendNamespace()) {
+                file = new File(luaConfig.getLuaProtocolCodeRootPath(),
+                        FileUtil.fullFileEnd(beans.get(0).getLua().getNamespace().replace(".", File.separator)) +
+                                fileName + ".lua");
+            } else {
+                file = new File(luaConfig.getLuaProtocolCodeRootPath(), fileName + ".lua");
+            }
             LuaMixBean bean = new LuaMixBean();
-            List<Bean> beans = entry.getValue();
+
             for (Bean b : beans) {
                 if (b instanceof Message) {
                     bean.getMessages().add((Message) b);
