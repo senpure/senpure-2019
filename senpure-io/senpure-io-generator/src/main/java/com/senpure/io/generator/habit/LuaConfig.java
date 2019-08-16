@@ -9,8 +9,8 @@ package com.senpure.io.generator.habit;
 public class LuaConfig {
 
     public final static String TYPE_MIX = "MIX";
-    public final  static String TYPE_FILE = "FILE";
-    public final  static String TYPE_NAMESPACE = "NAMESPACE";
+    public final static String TYPE_FILE = "FILE";
+    public final static String TYPE_NAMESPACE = "NAMESPACE";
     public String type = TYPE_MIX;
     /**
      * 合并
@@ -36,10 +36,10 @@ public class LuaConfig {
     private String luaEventHandlerTemplate = "eventHandler.ftl";
 
 
-    private boolean appendNamespace=true;
+    private boolean appendNamespace = false;
 
-    private boolean generateLuaRequire= true;
-    private boolean generateLuaProtocol= true;
+    private boolean generateLuaRequire = true;
+    private boolean generateLuaProtocol = true;
     private boolean generateLuaEnum = true;
     private boolean generateLuaBean = true;
     private boolean generateLuaEvent = true;

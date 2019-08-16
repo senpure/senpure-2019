@@ -97,6 +97,7 @@ public class Executor {
             throw new CheckException("检查不通过");
         }
         if (javaConfig != null) {
+            logger.debug("开始生产java代码");
             if (javaConfig.isGenerateJavaBean()) {
                 generateJavaEnum();
                 generateJavaBean();
@@ -118,7 +119,7 @@ public class Executor {
             }
         } else {
 
-            logger.debug("不生成java代码");
+            // logger.debug("不生成java代码");
         }
 
         if (luaConfig != null) {
@@ -290,7 +291,7 @@ public class Executor {
     }
 
     private void generateLua() {
-
+        logger.debug("开始生产lua代码");
         LuaExecutor luaExecutor = new LuaExecutor(cfg, context);
         luaExecutor.generate();
     }
@@ -302,7 +303,7 @@ public class Executor {
         List<String> paths = new ArrayList<>();
         //paths.add("hello.io");
         // paths.add("hello3.io");
-      //  paths.add("sample.io");
+        //  paths.add("sample.io");
 
         for (String path : paths) {
             IoReader.getInstance().read(FileUtil.file("../../src/main/resources/" + path, AppEvn.getClassRootPath()));
@@ -326,7 +327,8 @@ public class Executor {
 
         String path = FileUtil.file("../../src/test/java").getAbsolutePath();
         LuaConfig luaConfig = new LuaConfig();
-        luaConfig.setType(LuaConfig.TYPE_NAMESPACE);
+        luaConfig.setAppendNamespace(true);
+        luaConfig.setType(LuaConfig.TYPE_FILE);
         luaConfig.setLuaProtocolCodeRootPath(path);
         context.setLuaConfig(luaConfig);
         Executor executor = new Executor(context);

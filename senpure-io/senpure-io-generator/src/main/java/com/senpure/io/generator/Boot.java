@@ -110,6 +110,10 @@ public class Boot {
                 javaConfig.setJavaEventHandlerOverwrite(false);
                 javaConfig.setJavaCSMessageHandlerOverwrite(false);
                 javaConfig.setJavaSCMessageHandlerOverwrite(false);
+
+                LuaConfig luaConfig = config.getLuaConfig();
+                luaConfig.setLuaSCMessageHandlerOverwrite(false);
+
             } else {
                 logger.info("不使用覆盖设置");
             }
@@ -117,6 +121,10 @@ public class Boot {
             String generateJava = System.getProperty("generateJava");
             if (generateJava == null || Objects.equals(generateJava, "true")) {
                 executorContext.setJavaConfig(config.getJavaConfig());
+            }
+            String generateLua = System.getProperty("generateLua");
+            if (generateLua == null || Objects.equals(generateLua, "true")) {
+                executorContext.setLuaConfig(config.getLuaConfig());
             }
             Executor executor = new Executor(executorContext);
             executor.generate();
@@ -139,6 +147,11 @@ public class Boot {
         }
         if (javaConfig.isJavaEventHandlerOverwrite()) {
 
+            return true;
+        }
+
+        LuaConfig luaConfig = config.getLuaConfig();
+        if (luaConfig.isLuaSCMessageHandlerOverwrite()) {
             return true;
         }
 

@@ -1,10 +1,12 @@
 package com.senpure.io.generator.executor;
 
 import com.senpure.base.util.Assert;
+import com.senpure.base.util.StringUtil;
 import com.senpure.io.generator.habit.LuaConfig;
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Message;
+import com.senpure.io.generator.util.LowerCamelCaseNameRule;
 import com.senpure.io.generator.util.TemplateUtil;
 import com.senpure.template.FileUtil;
 import com.senpure.template.Generator;
@@ -32,6 +34,8 @@ public class LuaExecutor {
 
     private LuaConfig luaConfig;
 
+    private RequireBean requireBean = new RequireBean();
+
     public LuaExecutor(Configuration cfg, ExecutorContext context) {
         this.cfg = cfg;
         this.context = context;
@@ -55,7 +59,7 @@ public class LuaExecutor {
     public void generate() {
         changeTemplateDir2Lua();
 
-
+        requireBean.fileNames.clear();
         switch (luaConfig.getType()) {
             case LuaConfig.TYPE_MIX:
                 generateByMix();
@@ -70,10 +74,13 @@ public class LuaExecutor {
                 generateByFile();
                 break;
         }
+        if (luaConfig.isGenerateLuaRequire()&& requireBean.fileNames.size()>0) {
+            generateRequire();
+        }
 
     }
 
-    private void generate(LuaMixBean bean, Template template, File file, boolean overwrite) {
+    private void generate(TemplateBean bean, Template template, File file, boolean overwrite) {
         boolean thisOverwrite = false;
         if (file.exists()) {
             if (!overwrite) {
@@ -98,7 +105,7 @@ public class LuaExecutor {
     public void generateByMix() {
         Template template = null;
         try {
-            template = cfg.getTemplate(luaConfig.getLuaBeanTemplate(), "utf-8");
+            template = cfg.getTemplate(luaConfig.getLuaProtocolTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -106,12 +113,24 @@ public class LuaExecutor {
         bean.setBeans(context.getBeans());
         bean.setEnums(context.getEnums());
         bean.getMessages().addAll(context.getMessages());
+        NameShort nameShort = new NameShort();
+        Collections.sort(bean.getEnums(), nameShort);
+        Collections.sort(bean.getBeans(), nameShort);
+        Collections.sort(bean.getMessages(), (x, y) -> {
+            int result = x.getLua().getNamespace().compareTo(y.getLua().getNamespace());
+            if (result == 0) {
+                return Integer.compare(x.getId(), y.getId());
+            }
+            return result;
+        });
         bean.compute();
         File file;
         if (luaConfig.isAppendNamespace()) {
+            requireBean.fileNames.add(luaConfig.getLuaMixFileName() + "." + luaConfig.getLuaMixFileName() + ".lua");
             file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() +
                     File.separator + luaConfig.getLuaMixFileName() + ".lua");
         } else {
+            requireBean.fileNames.add(luaConfig.getLuaMixFileName() + ".lua");
             file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() + ".lua");
         }
         generate(bean, template, file, true);
@@ -120,7 +139,7 @@ public class LuaExecutor {
     public void generateByFile() {
         Template template = null;
         try {
-            template = cfg.getTemplate(luaConfig.getLuaBeanTemplate(), "utf-8");
+            template = cfg.getTemplate(luaConfig.getLuaProtocolTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -138,10 +157,14 @@ public class LuaExecutor {
             fileName = fileName.substring(0, fileName.length() - 3);
             File file;
             if (luaConfig.isAppendNamespace()) {
+                String temp = LowerCamelCaseNameRule.nameRule(beans.get(0).getLua().getNamespace());
+                requireBean.fileNames.add(temp + "." + fileName + ".lua");
                 file = new File(luaConfig.getLuaProtocolCodeRootPath(),
-                        FileUtil.fullFileEnd(beans.get(0).getLua().getNamespace().replace(".", File.separator)) +
+                        FileUtil.fullFileEnd(temp
+                                .replace(".", File.separator)) +
                                 fileName + ".lua");
             } else {
+                requireBean.fileNames.add(fileName + ".lua");
                 file = new File(luaConfig.getLuaProtocolCodeRootPath(), fileName + ".lua");
             }
             LuaMixBean bean = new LuaMixBean();
@@ -182,7 +205,7 @@ public class LuaExecutor {
     public void generateByNamespace() {
         Template template = null;
         try {
-            template = cfg.getTemplate(luaConfig.getLuaBeanTemplate(), "utf-8");
+            template = cfg.getTemplate(luaConfig.getLuaProtocolTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
@@ -192,7 +215,21 @@ public class LuaExecutor {
         dispatchByNamespace(namespaceMap, context.getMessages());
 
         for (Map.Entry<String, List<Bean>> entry : namespaceMap.entrySet()) {
-            File file = new File(luaConfig.getLuaProtocolCodeRootPath(), entry.getKey().replace(".", File.separator) + ".lua");
+            File file;
+            if (luaConfig.isAppendNamespace()) {
+                String namespace = LowerCamelCaseNameRule.nameRule(entry.getKey());
+                String name = namespace;
+                int index = StringUtil.indexOf(namespace, ".", 1, true);
+                if (index > -1) {
+                    name = namespace.substring(index + 1);
+                }
+                requireBean.fileNames.add(namespace + "." + name + ".lua");
+                file = new File(luaConfig.getLuaProtocolCodeRootPath(), FileUtil.fullFileEnd(namespace.replace(".", File.separator)) + name + ".lua");
+
+            } else {
+                requireBean.fileNames.add(entry.getKey() + ".lua");
+                file = new File(luaConfig.getLuaProtocolCodeRootPath(), entry.getKey().replace(".", File.separator) + ".lua");
+            }
             LuaMixBean bean = new LuaMixBean();
             List<Bean> beans = entry.getValue();
             for (Bean b : beans) {
@@ -222,6 +259,29 @@ public class LuaExecutor {
                 fileMap.put(bean.getFilePath(), list);
             }
             list.add(bean);
+        }
+    }
+
+    private void generateRequire() {
+
+        Template template = null;
+        try {
+            template = cfg.getTemplate(luaConfig.getLuaRequireTemplate(), "utf-8");
+        } catch (IOException e) {
+            Assert.error(e);
+        }
+        File file = new File(luaConfig.getLuaProtocolCodeRootPath(), "require.lua");
+
+
+        generate(requireBean,template,file,luaConfig.isLuaRequireOverwrite());
+    }
+
+    private class NameShort implements Comparator<Bean> {
+
+        @Override
+        public int compare(Bean x, Bean y) {
+            return (x.getLua().getNamespace() + "." + x.getLua().getName())
+                    .compareTo((y.getLua().getNamespace() + "." + y.getLua().getName()));
         }
     }
 
@@ -334,6 +394,19 @@ public class LuaExecutor {
 
         public void setMessageIdMaxLen(int messageIdMaxLen) {
             this.messageIdMaxLen = messageIdMaxLen;
+        }
+    }
+
+    public class RequireBean extends  TemplateBean {
+
+        List<String> fileNames = new ArrayList<>();
+
+        public List<String> getFileNames() {
+            return fileNames;
+        }
+
+        public void setFileNames(List<String> fileNames) {
+            this.fileNames = fileNames;
         }
     }
 

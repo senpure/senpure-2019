@@ -1,5 +1,6 @@
 package com.senpure.io.generator.habit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class ProjectConfig {
     private String protocolDirectoryChooserPath;
 
     //字符串的写入json是一长串,不好手动修改
-    private List<ProtocolFile> protocolFiles;
+    private List<ProtocolFile> protocolFiles=new ArrayList<>();
     private int tabPaneConfigIndex=0;
     private JavaConfig javaConfig = new JavaConfig();
     private LuaConfig luaConfig = new LuaConfig();
