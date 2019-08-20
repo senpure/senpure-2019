@@ -5,13 +5,8 @@ import com.senpure.base.util.Assert;
 import com.senpure.base.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -21,7 +16,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 
-public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
+public class ResultHelper implements ApplicationRunner {
     public static List<Result> results = new ArrayList<>();
     public static List<FieldAndInstance> fieldAndInstances = new ArrayList<>();
     private static boolean develop = false;
@@ -83,22 +78,15 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
     }
 
 
-    public static void refreshProperties() {
-        ResourceBundle.clearCache();
-    }
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        try {
-            if (event.getApplicationContext().getParent() == null ||
-                    event.getApplicationContext().getParent() instanceof AnnotationConfigApplicationContext) {
-                syncResults();
-            }
-        } catch (Exception e) {
-            logger.error("result解析出错", e);
-            // act.close();
-        }
+    public void run(ApplicationArguments args) throws Exception {
 
+        syncResults();
+    }
+
+    public static void refreshProperties() {
+        ResourceBundle.clearCache();
     }
 
 
@@ -250,6 +238,14 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
         }
@@ -283,13 +279,6 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
 
     }
 
-    private AbstractApplicationContext act;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        act = (AbstractApplicationContext) applicationContext;
-
-    }
 
     private static void report(Result result) {
         Field[] fields = result.getClass().getDeclaredFields();

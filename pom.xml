@@ -81,6 +81,24 @@
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>2.1.0</version>
             </dependency>
+
+
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.18</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.9</version>
+
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
