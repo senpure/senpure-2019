@@ -399,7 +399,7 @@ public class IoProtocolReader extends IoBaseListener {
         if (aName.equals(bName) && a.getNamespace().equals(b.getNamespace())) {
 
             checkErrorBuilder();
-            errorBuilder.append(filePath).append(": 同有命名空间name重复 ").append(aName);
+            errorBuilder.append(filePath).append(": 相同命名空间name重复 ").append(aName);
             errorBuilder.append(a.getNameLocation()).append(" ").append(b.getNameLocation());
         }
     }
