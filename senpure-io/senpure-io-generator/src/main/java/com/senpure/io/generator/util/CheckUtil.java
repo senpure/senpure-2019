@@ -165,7 +165,7 @@ public class CheckUtil {
                 Integer oldIndex = obj.fieldIndexMap.get(field.getName());
                 if (oldIndex != null) {
                     if (oldIndex.intValue() != field.getIndex()) {
-                        logger.error("{} {}field index发生了改变 {} -> {} ", name, field.getName(), oldIndex, field.getIndex());
+                        logger.error("{} {} field index发生了改变 {} -> {} ", name, field.getName(), oldIndex, field.getIndex());
                         logger.info("请注意index的书写,新增字段写在最后或者显示指定index的值\n" +
                                 "如果确定更改index,请删除{} 里面的相关记录", recordPath());
                         return false;
