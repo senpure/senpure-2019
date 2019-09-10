@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 防止失误消息id重复 类名重复等
@@ -27,8 +25,9 @@ public class CheckUtil {
     private static Logger logger = LoggerFactory.getLogger(CheckUtil.class);
     private static String lastProjectName = "";
     private static RandomAccessFile randomFile;
+    private static boolean flush;
     private static File record;
-    private static Map<String, CheckObj> nameMap = new HashMap<>(128);
+    private static Map<String, CheckObj> nameMap = new LinkedHashMap<>(128);
     private static Map<Integer, CheckObj> eventMap = new HashMap<>(128);
     private static Map<Integer, CheckObj> messageMap = new HashMap<>(128);
 
@@ -52,28 +51,34 @@ public class CheckUtil {
                 e.printStackTrace();
             }
         }
+        checkFlush();
         nameMap.clear();
         eventMap.clear();
         messageMap.clear();
+    }
+
+    public static void checkFlush() {
+        if (flush) {
+            List<String> lines = new ArrayList<>();
+            for (CheckObj value : nameMap.values()) {
+                lines.add(JSON.toJSONString(value));
+            }
+            try {
+                FileUtils.writeLines(record, "utf-8", lines);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        flush = false;
     }
 
     public static void loadData(String projectName) {
         if (lastProjectName.equalsIgnoreCase(projectName)) {
             return;
         }
+        closeCheck();
         lastProjectName = projectName;
 
-        if (randomFile != null) {
-            try {
-                randomFile.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        logger.debug("projectName {}  fileSeparator {}", projectName, File.separator);
-        nameMap.clear();
-        eventMap.clear();
-        messageMap.clear();
         record = getProjectNameFile(projectName);
         if (!record.getParentFile().exists()) {
             record.getParentFile().mkdirs();
@@ -88,15 +93,26 @@ public class CheckUtil {
                 e.printStackTrace();
             }
         }
+
+    }
+
+    private static void appendObj(CheckObj obj) {
+        if (randomFile == null) {
+            try {
+                randomFile = new RandomAccessFile(record, "rw");
+                long length = randomFile.length();
+                randomFile.seek(length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
-            randomFile = new RandomAccessFile(record, "rw");
-            long length = randomFile.length();
-            randomFile.seek(length);
+            randomFile.write((JSON.toJSONString(obj) + "\n").getBytes("utf-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
+    }
 
     public static boolean check(Message bean) {
         String name = bean.getNamespace() + "." + bean.getType() + bean.getName();
@@ -154,6 +170,9 @@ public class CheckUtil {
                                 "如果确定更改index,请删除{} 里面的相关记录", recordPath());
                         return false;
                     }
+                } else {
+                    obj.fieldIndexMap.put(field.getName(), field.getIndex());
+                    flush = true;
                 }
 
             }
@@ -172,12 +191,9 @@ public class CheckUtil {
             if (idMap != null) {
                 idMap.put(id, obj);
             }
-            try {
-                randomFile.writeBytes(JSON.toJSONString(obj) + "\n");
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+            if (!flush) {
+                appendObj(obj);
             }
-
         }
         return true;
     }
@@ -210,7 +226,7 @@ public class CheckUtil {
 
         String filePath;
 
-        Map<String, Integer> fieldIndexMap = new HashMap<>();
+        Map<String, Integer> fieldIndexMap = new LinkedHashMap<>();
 
 
         public String getHead() {
@@ -245,7 +261,13 @@ public class CheckUtil {
             this.filePath = filePath;
         }
 
+        public Map<String, Integer> getFieldIndexMap() {
+            return fieldIndexMap;
+        }
 
+        public void setFieldIndexMap(Map<String, Integer> fieldIndexMap) {
+            this.fieldIndexMap = fieldIndexMap;
+        }
     }
 
 

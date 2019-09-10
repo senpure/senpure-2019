@@ -96,6 +96,7 @@ public class Executor {
             CheckUtil.closeCheck();
             throw new CheckException("检查不通过");
         }
+        CheckUtil.checkFlush();
         if (javaConfig != null) {
             logger.debug("开始生产java代码");
             if (javaConfig.isGenerateJavaBean()) {
