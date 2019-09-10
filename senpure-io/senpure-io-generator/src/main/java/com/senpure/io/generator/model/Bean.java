@@ -36,6 +36,7 @@ public class Bean extends TemplateBean {
     private String filePath;
 
     private  Lua lua;
+    private JavaScript js;
 
     public void setExplain(String explain) {
         this.explain = explain;
@@ -205,5 +206,13 @@ public class Bean extends TemplateBean {
 
     public void setLua(Lua lua) {
         this.lua = lua;
+    }
+
+    public JavaScript getJs() {
+        return js;
+    }
+
+    public void setJs(JavaScript js) {
+        this.js = js;
     }
 }

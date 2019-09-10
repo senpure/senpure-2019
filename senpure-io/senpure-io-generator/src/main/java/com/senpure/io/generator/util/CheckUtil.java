@@ -2,10 +2,8 @@ package com.senpure.io.generator.util;
 
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.JSON;
-import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.model.*;
 import com.senpure.io.generator.model.Enum;
-import com.senpure.io.generator.model.Event;
-import com.senpure.io.generator.model.Message;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,10 +145,25 @@ public class CheckUtil {
 
                 return false;
             }
+            for (Field field : bean.getFields()) {
+                Integer oldIndex = obj.fieldIndexMap.get(field.getName());
+                if (oldIndex != null) {
+                    if (oldIndex.intValue() != field.getIndex()) {
+                        logger.error("{} {}field index发生了改变 {} -> {} ", name, field.getName(), oldIndex, field.getIndex());
+                        logger.info("请注意index的书写,新增字段写在最后或者显示指定index的值\n" +
+                                "如果确定更改index,请删除{} 里面的相关记录", recordPath());
+                        return false;
+                    }
+                }
+
+            }
         } else {
             obj = new CheckObj();
             obj.setHead(head);
             obj.setName(name);
+            for (Field field : bean.getFields()) {
+                obj.fieldIndexMap.put(field.getName(), field.getIndex());
+            }
             if (id > 0) {
                 obj.setId(id);
             }
@@ -197,6 +210,9 @@ public class CheckUtil {
 
         String filePath;
 
+        Map<String, Integer> fieldIndexMap = new HashMap<>();
+
+
         public String getHead() {
             return head;
         }
@@ -231,6 +247,7 @@ public class CheckUtil {
 
 
     }
+
 
     public static void main(String[] args) {
 

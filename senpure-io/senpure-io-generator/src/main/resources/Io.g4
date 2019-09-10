@@ -4,7 +4,7 @@ protocol
     headContent*
     entity*EOF
     ;
-headContent:importIo|namespace|javaPackage|luaNamespace;
+headContent:importIo|namespace|javaPackage|luaNamespace|jsNamespace;
 entity:message|event|bean|enumSymbol;
 importIo:'import'importValue';';
 importValue: filePath'.''io';
@@ -24,7 +24,11 @@ luaNamespaceValue
      :fileName
      |luaNamespaceValue '.'fileName
      ;
-
+jsNamespace:'jsNamespace'jsNamespaceValue ';';
+jsNamespaceValue
+     :fileName
+     |jsNamespaceValue '.'fileName
+     ;
 fileName:(Number* Identifier*)|'cs'|'CS'|'sc'|'SC'|'bean'|'message'|'event'|'io'|'namespace';
 filePath:fileName|filePath ('-'|'.'|'../'|'/'|'\\') fileName;
 

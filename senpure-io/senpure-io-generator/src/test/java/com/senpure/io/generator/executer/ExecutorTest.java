@@ -52,7 +52,7 @@ public class ExecutorTest {
 
         File bean = new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\java");
        // context.setJavaEventHandlerRootPath(data.getAbsolutePath());
-      //  context.setJavaBeanCodeRootPath(bean.getAbsolutePath());
+      //  context.setJavaProtocolCodeRootPath(bean.getAbsolutePath());
         Executor executor = new Executor(context);
         executor.generate();
     }
@@ -66,7 +66,7 @@ public class ExecutorTest {
 
         File bean = new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\java");
 //        context.setJavaEventHandlerRootPath(data.getAbsolutePath());
-//        context.setJavaBeanCodeRootPath(bean.getAbsolutePath());
+//        context.setJavaProtocolCodeRootPath(bean.getAbsolutePath());
 //        context.setJavaMessageHandlerTemplate("consumerMessageHandler.ftl");
 //        context.setGenerateJavaBean(false);
 //        context.setGenerateJavaCSMessageHandler(false);

@@ -43,10 +43,11 @@ public class IoProtocolReader extends IoBaseListener {
     private String namespace = "com.senpure.io";
     private String javaPackage = "com.senpure.io";
     private String luaNamespace = "Io";
-
+    private String jsNamespace = "Io";
     private boolean enterNamespace = false;
     private boolean enterJavaPackage = false;
     private boolean enterLuaNamespace = false;
+    private boolean enterJsNamespace = false;
     private Field field;
 
     private int fieldIndex = 1;
@@ -79,6 +80,9 @@ public class IoProtocolReader extends IoBaseListener {
         Lua lua = new Lua(bean);
         bean.setLua(lua);
         bean.getLua().setNamespace(luaNamespace);
+        JavaScript js = new JavaScript(bean);
+        bean.setJs(js);
+        bean.getJs().setNamespace(jsNamespace);
     }
 
     private void setBeanName(ParserRuleContext ctx) {
@@ -109,8 +113,6 @@ public class IoProtocolReader extends IoBaseListener {
     }
 
 
-
-
     @Override
     public void enterNamespaceValue(IoParser.NamespaceValueContext ctx) {
         if (enterNamespace) {
@@ -127,12 +129,16 @@ public class IoProtocolReader extends IoBaseListener {
             }
         }
         if (!enterJavaPackage) {
-            javaPackage = namespace+".protocol";
+            javaPackage = namespace + ".protocol";
         }
         if (!enterLuaNamespace) {
-            luaNamespace=StringUtil.toUpperFirstLetter(temp[temp.length-1]);
+            luaNamespace = StringUtil.toUpperFirstLetter(temp[temp.length - 1]);
+        }
+        if (!enterJsNamespace) {
+            jsNamespace = StringUtil.toUpperFirstLetter(temp[temp.length - 1]);
         }
     }
+
     @Override
     public void enterJavaPackageValue(IoParser.JavaPackageValueContext ctx) {
         if (enterJavaPackage) {
@@ -150,6 +156,15 @@ public class IoProtocolReader extends IoBaseListener {
         }
         enterLuaNamespace = true;
         luaNamespace = ctx.getText();
+    }
+
+    @Override
+    public void enterJsNamespaceValue(IoParser.JsNamespaceValueContext ctx) {
+        if (enterJsNamespace) {
+            return;
+        }
+        enterJsNamespace = true;
+        jsNamespace = ctx.getText();
     }
 
     @Override

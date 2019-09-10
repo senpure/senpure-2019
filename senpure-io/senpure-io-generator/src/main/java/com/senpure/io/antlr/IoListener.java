@@ -118,6 +118,26 @@ public interface IoListener extends ParseTreeListener {
 	 */
 	void exitLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IoParser#jsNamespace}.
+	 * @param ctx the parse tree
+	 */
+	void enterJsNamespace(IoParser.JsNamespaceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#jsNamespace}.
+	 * @param ctx the parse tree
+	 */
+	void exitJsNamespace(IoParser.JsNamespaceContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IoParser#jsNamespaceValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterJsNamespaceValue(IoParser.JsNamespaceValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IoParser#jsNamespaceValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitJsNamespaceValue(IoParser.JsNamespaceValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link IoParser#fileName}.
 	 * @param ctx the parse tree
 	 */

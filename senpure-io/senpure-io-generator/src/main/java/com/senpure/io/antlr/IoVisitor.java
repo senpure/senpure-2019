@@ -77,6 +77,18 @@ public interface IoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLuaNamespaceValue(IoParser.LuaNamespaceValueContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link IoParser#jsNamespace}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJsNamespace(IoParser.JsNamespaceContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IoParser#jsNamespaceValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJsNamespaceValue(IoParser.JsNamespaceValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link IoParser#fileName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
