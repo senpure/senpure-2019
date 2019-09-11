@@ -3,9 +3,9 @@ package com.senpure.io.protocol;
 import io.netty.buffer.ByteBuf;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -356,12 +356,8 @@ public abstract class Bean {
     }
 
     public static int computeStringSizeNoTag(String value) {
-        try {
-            byte[] bytes = value.getBytes("UTF-8");
-            return computeVar32Size(bytes.length) + bytes.length;
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not supported.", e);
-        }
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        return computeVar32Size(bytes.length) + bytes.length;
     }
 
     public static int computeBeanSize(int tagVar32Size, Bean value) {
