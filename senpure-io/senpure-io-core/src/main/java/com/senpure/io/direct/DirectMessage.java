@@ -1,16 +1,17 @@
-package com.senpure.io.consumer;
+package com.senpure.io.direct;
 
 import com.senpure.io.protocol.Message;
 
 /**
- * MessageFrame
+ * DirectMessage
  *
  * @author senpure
- * @time 2019-06-27 17:43:29
+ * @time 2019-09-17 17:06:53
  */
-public class MessageFrame {
-    private int  requestId;
-   private  Message message;
+public class DirectMessage {
+    private int requestId;
+    private int messageId;
+    private Message message;
 
     public int getRequestId() {
         return requestId;
@@ -28,11 +29,11 @@ public class MessageFrame {
         this.message = message;
     }
 
-    @Override
-    public String toString() {
-        return "MessageFrame{" +
-                "requestId=" + requestId +
-                ", message=" + message +
-                '}';
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
     }
 }

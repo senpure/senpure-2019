@@ -1,9 +1,6 @@
 package com.senpure.io.consumer;
-
-
 import com.senpure.io.ChannelAttributeUtil;
-import com.senpure.io.message.SCHeartMessage;
-import com.senpure.io.producer.Producer2GatewayMessage;
+import com.senpure.io.message.CSHeartMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -12,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFrame> {
+public class ConsumerServerHandler extends SimpleChannelInboundHandler<ConsumerMessage> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private RemoteServerManager remoteServerManager;
@@ -25,7 +22,7 @@ public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFr
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageFrame frame) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ConsumerMessage frame) throws Exception {
 
         messageExecutor.execute(ctx.channel(), frame);
     }
@@ -52,12 +49,11 @@ public class ConsumerServerHandler extends SimpleChannelInboundHandler<MessageFr
             Channel channel = ctx.channel();
             if (channel.isWritable()) {
                 logger.info("维持服务器心跳{} : {}", ChannelAttributeUtil.getRemoteServerKey(channel), channel);
-                SCHeartMessage heartMessage = new SCHeartMessage();
-                Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
-                toGateway.setUserIds(new Long[0]);
-                toGateway.setMessage(heartMessage);
-                toGateway.setMessageId(heartMessage.getMessageId());
-                channel.writeAndFlush(toGateway);
+                CSHeartMessage heartMessage = new CSHeartMessage();
+                ConsumerMessage frame = new ConsumerMessage();
+                frame.setRequestId(0);
+                frame.setMessage(heartMessage);
+                channel.writeAndFlush(frame);
             } else {
                 logger.warn("服务器心跳失败并且channel不可用{}:{}", ChannelAttributeUtil.getRemoteServerKey(channel), channel);
                 channel.close();

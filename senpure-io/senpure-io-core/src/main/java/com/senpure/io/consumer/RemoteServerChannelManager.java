@@ -41,7 +41,7 @@ public class RemoteServerChannelManager {
         this.serverKey = serverKey;
     }
 
-    public void sendMessage(MessageFrame frame) {
+    public void sendMessage(ConsumerMessage frame) {
         Channel channel = nextChannel();
         if (channel != null) {
             channel.writeAndFlush(frame);
@@ -54,7 +54,7 @@ public class RemoteServerChannelManager {
         }
     }
 
-    public void sendMessage(MessageFrame frame, ResponseCallback callback, int timeout) {
+    public void sendMessage(ConsumerMessage frame, ResponseCallback callback, int timeout) {
         Channel channel = nextChannel();
         if (channel != null) {
             DefaultFuture future = new DefaultFuture(frame, channel, timeout);
@@ -72,12 +72,12 @@ public class RemoteServerChannelManager {
 
     }
 
-    public Response sendSyncMessage(MessageFrame frame, int timeout) {
+    public Response sendSyncMessage(ConsumerMessage frame, int timeout) {
 
         return sendSyncMessage(frame, timeout, defaultMessageRetryTimeLimit);
     }
 
-    public Response sendSyncMessage(MessageFrame frame, int timeout, int messageRetryTimeLimit) {
+    public Response sendSyncMessage(ConsumerMessage frame, int timeout, int messageRetryTimeLimit) {
         Channel channel = nextChannel();
         if (channel != null) {
             DefaultFuture future = new DefaultFuture(frame, channel, timeout);
@@ -298,7 +298,7 @@ public class RemoteServerChannelManager {
     }
 
     private static class FailMessage {
-        private MessageFrame frame;
+        private ConsumerMessage frame;
 
         private ResponseCallback callback;
 
@@ -308,7 +308,7 @@ public class RemoteServerChannelManager {
         private SyncFail syncFail;
 
 
-        public void setFrame(MessageFrame frame) {
+        public void setFrame(ConsumerMessage frame) {
             this.frame = frame;
         }
 

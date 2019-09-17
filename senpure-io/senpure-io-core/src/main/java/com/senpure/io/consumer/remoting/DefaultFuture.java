@@ -1,8 +1,8 @@
 package com.senpure.io.consumer.remoting;
 
 import com.senpure.base.util.Spring;
+import com.senpure.io.consumer.ConsumerMessage;
 import com.senpure.io.consumer.ConsumerMessageExecutor;
-import com.senpure.io.consumer.MessageFrame;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.protocol.Constant;
 import io.netty.channel.Channel;
@@ -44,7 +44,7 @@ public class DefaultFuture implements ResponseFuture {
     private volatile ResponseCallback callback;
 
 
-    public DefaultFuture(MessageFrame frame, Channel channel, int timeout) {
+    public DefaultFuture(ConsumerMessage frame, Channel channel, int timeout) {
 
         this.requestId = frame.getRequestId();
         this.messageId = frame.getMessage().getMessageId();
@@ -145,7 +145,7 @@ public class DefaultFuture implements ResponseFuture {
                             errorMessage.setType(Constant.ERROR_TIMEOUT);
                             errorMessage.setMessage("同步请求超时" + future.getTimeout());
                             errorMessage.setId(future.getMessageId());
-                            MessageFrame frame = new MessageFrame();
+                            ConsumerMessage frame = new ConsumerMessage();
                             frame.setRequestId(future.getRequestId());
                             frame.setMessage(errorMessage);
                             ConsumerMessageExecutor messageExecutor = Spring.getBean(ConsumerMessageExecutor.class);

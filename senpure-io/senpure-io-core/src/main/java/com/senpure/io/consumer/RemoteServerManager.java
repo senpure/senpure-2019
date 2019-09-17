@@ -57,7 +57,7 @@ public class RemoteServerManager {
 
 
     public void sendMessage(Message message) {
-        MessageFrame frame = new MessageFrame();
+        ConsumerMessage frame = new ConsumerMessage();
         frame.setMessage(message);
         defaultChannelManager.sendMessage(frame);
     }
@@ -77,7 +77,7 @@ public class RemoteServerManager {
      * @param timeout  超时 毫秒
      */
     public void sendMessage(Message message, ResponseCallback callback, int timeout) {
-        MessageFrame frame = new MessageFrame();
+        ConsumerMessage frame = new ConsumerMessage();
         frame.setRequestId(nextRequestId());
         frame.setMessage(message);
 
@@ -102,7 +102,7 @@ public class RemoteServerManager {
      * @param timeout 超时毫秒
      */
     public Response sendSyncMessage(Message message, int timeout) {
-        MessageFrame frame = new MessageFrame();
+        ConsumerMessage frame = new ConsumerMessage();
         frame.setRequestId(nextRequestId());
         frame.setMessage(message);
         return defaultChannelManager.sendSyncMessage(frame, timeout);
@@ -117,7 +117,7 @@ public class RemoteServerManager {
      * @return
      */
     public Response sendSyncMessage(Message message, int timeout, int messageRetryTimeLimit) {
-        MessageFrame frame = new MessageFrame();
+        ConsumerMessage frame = new ConsumerMessage();
         frame.setRequestId(nextRequestId());
         frame.setMessage(message);
         return defaultChannelManager.sendSyncMessage(frame, timeout, messageRetryTimeLimit);

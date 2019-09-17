@@ -1,7 +1,9 @@
-package com.senpure.io.consumer;
+package com.senpure.io.direct;
 
 
 import com.senpure.base.util.Assert;
+import com.senpure.io.consumer.ConsumerMessage;
+import com.senpure.io.consumer.ConsumerMessageHandlerUtil;
 import com.senpure.io.protocol.Bean;
 import com.senpure.io.protocol.Message;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 
-public class ConsumerMessageDecoder extends ByteToMessageDecoder {
+public class DirectMessageDecoder extends ByteToMessageDecoder {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
 
@@ -35,24 +37,25 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
             int requestId = Bean.readVar32(in);
             int messageId = Bean.readVar32(in);
             int headSize = Bean.computeVar32Size(requestId) + Bean.computeVar32Size(messageId);
-            Message message = ConsumerMessageHandlerUtil.getEmptyMessage(messageId);
+            Message message = DirectMessageHandlerUtil.getEmptyMessage(messageId);
             int messageLength = packageLength - headSize;
+            ConsumerMessage frame = new ConsumerMessage();
+            frame.setRequestId(requestId);
+
             if (message == null) {
                 in.skipBytes(messageLength);
                 logger.warn("没有找到消息处理程序 messageId {}", messageId);
             } else {
                 try {
                     message.read(in, in.readerIndex() + messageLength);
-                    ConsumerMessage frame = new ConsumerMessage();
-                    frame.setRequestId(requestId);
                     frame.setMessage(message);
-                    out.add(frame);
                 } catch (Exception e) {
                     ctx.close();
                     logger.debug("二进制转换为消息失败 messageId {}, getValue{}", messageId, message);
                     logger.error("error", e);
                 }
             }
+            out.add(frame);
         }
     }
 

@@ -208,7 +208,7 @@ public class ProducerServerStarter implements ApplicationRunner {
         message.setReadableServerName(server.getReadableServerName());
         message.setServerKey(ChannelAttributeUtil.getLocalServerKey(server.getChannel()));
         message.setMessages(handleMessages);
-        Producer2GatewayMessage gatewayMessage = new Producer2GatewayMessage();
+        ProducerAndGatewayMessage gatewayMessage = new ProducerAndGatewayMessage();
         gatewayMessage.setMessageId(message.getMessageId());
         gatewayMessage.setMessage(message);
         gatewayMessage.setUserIds(new Long[]{0L});
@@ -234,7 +234,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     }
 
     private void regIdNames(ProducerServer server, SCIdNameMessage message) {
-        Producer2GatewayMessage gatewayMessage = new Producer2GatewayMessage();
+        ProducerAndGatewayMessage gatewayMessage = new ProducerAndGatewayMessage();
         gatewayMessage.setMessageId(message.getMessageId());
         gatewayMessage.setMessage(message);
         gatewayMessage.setUserIds(new Long[]{0L});

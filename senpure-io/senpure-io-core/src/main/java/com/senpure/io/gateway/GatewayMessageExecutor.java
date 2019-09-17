@@ -559,7 +559,7 @@ public class GatewayMessageExecutor {
                             waitAskTask.getAskTimes(), waitAskTask.getAnswerTimes());
                     tokens.add(entry.getKey());
                     SCInnerErrorMessage errorMessage = new SCInnerErrorMessage();
-                    errorMessage.setType(Constant.ERROR_NOT_HANDLE_REQUEST);
+                    errorMessage.setType(Constant.ERROR_NOT_HANDLE_VALUE_REQUEST);
                     errorMessage.setId(waitAskTask.getFromMessageId());
                     errorMessage.setMessage(MessageIdReader.read(waitAskTask.getFromMessageId()));
                     errorMessage.setValue(waitAskTask.getValue());

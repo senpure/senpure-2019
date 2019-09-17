@@ -46,18 +46,19 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
             headSize += Bean.computeVar64Size(userId);
             int messageLen = packageLength - headSize;
             Message message = ProducerMessageHandlerUtil.getEmptyMessage(messageId);
-            if (message == null) {
-                in.skipBytes(messageLen);
-                logger.warn("没有找到消息处理程序{} token:{} userId:{}", channelToken, messageId, userId);
-                return;
-            }
-            message.read(in, in.readerIndex() + messageLen);
             Gateway2ProducerMessage frame = new Gateway2ProducerMessage();
             frame.setRequestId(requestId);
             frame.setMessageId(messageId);
             frame.setToken(channelToken);
             frame.setUserId(userId);
-            frame.setMessage(message);
+            if (message == null) {
+                in.skipBytes(messageLen);
+                logger.warn("没有找到消息处理程序{} token:{} userId:{}", channelToken, messageId, userId);
+            }
+            else {
+                message.read(in, in.readerIndex() + messageLen);
+                frame.setMessage(message);
+            }
             out.add(frame);
         }
 

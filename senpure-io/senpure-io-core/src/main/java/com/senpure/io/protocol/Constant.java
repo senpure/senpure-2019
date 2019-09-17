@@ -19,7 +19,12 @@ public class Constant {
      */
     public final static String ERROR_NOT_FOUND_SERVER = "NOT_FOUND_SERVER";
     /**
-     * 无法处理该请求
+     * 无法处理ASK请求
+     */
+    public final static String ERROR_NOT_HANDLE_VALUE_REQUEST = "NOT_HANDLE_VALUE_REQUEST";
+
+    /**
+     * 无法处理该请求,服务器没有注册该id
      */
     public final static String ERROR_NOT_HANDLE_REQUEST = "NOT_HANDLE_REQUEST";
     /**

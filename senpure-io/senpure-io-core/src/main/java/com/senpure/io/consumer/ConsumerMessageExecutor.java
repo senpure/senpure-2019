@@ -45,7 +45,7 @@ public class ConsumerMessageExecutor {
         service.execute(runnable);
     }
 
-    public void execute(Channel channel, MessageFrame frame) {
+    public void execute(Channel channel, ConsumerMessage frame) {
         service.execute(() -> {
             int requestId = frame.getRequestId();
             Message message = frame.getMessage();

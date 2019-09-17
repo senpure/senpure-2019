@@ -11,16 +11,177 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties("server.io")
 public class ServerProperties {
-    @Value("${spring.application.name:}")
+
     /**
      * 该值不用配置读取spring.application.name
      */
+    @Value("${spring.application.name:}")
     private String name;
 
     private Consumer consumer = new Consumer();
+    private Direct direct = new Direct();
     private Gateway gateway = new Gateway();
     private Producer producer = new Producer();
 
+    public static class Direct {
+
+        private boolean setReadableName = false;
+        /**
+         * 服务器名
+         */
+        private String readableName = "directServer";
+
+        /**
+         * 开启事件
+         */
+        private boolean enableEvent = true;
+        /**
+         * 处理事件的线程数
+         */
+        private int eventThreadPoolSize = 0;
+        /**
+         * netty boosGroup 线程数
+         */
+        private int ioBossThreadPoolSize = 1;
+        /**
+         * netty workGroup 线程数
+         */
+        private int ioWorkThreadPoolSize = 0;
+        /**
+         * 逻辑处理线程数
+         */
+        private int executorThreadPoolSize = 0;
+        /**
+         * 监听端口号
+         */
+        private int port=2222;
+
+        /**
+         * 输出格式化
+         */
+        private boolean outFormat = true;
+        /**
+         * 输入格式化
+         */
+        private boolean inFormat = true;
+        /**
+         * 开启ssl
+         */
+        private boolean ssl = false;
+        /**
+         * 是否开启心跳检查
+         */
+        private boolean enableHeartCheck = false;
+        /**
+         * 心跳读入间隔毫秒
+         */
+        private long readerIdleTime = 5000;
+
+
+        public boolean isSetReadableName() {
+            return setReadableName;
+        }
+
+
+        public String getReadableName() {
+            return readableName;
+        }
+
+        public void setReadableName(String readableName) {
+            this.readableName = readableName;
+            setReadableName = true;
+        }
+
+
+        public boolean isEnableEvent() {
+            return enableEvent;
+        }
+
+        public void setEnableEvent(boolean enableEvent) {
+            this.enableEvent = enableEvent;
+        }
+
+        public int getEventThreadPoolSize() {
+            return eventThreadPoolSize;
+        }
+
+        public void setEventThreadPoolSize(int eventThreadPoolSize) {
+            this.eventThreadPoolSize = eventThreadPoolSize;
+        }
+
+        public int getIoWorkThreadPoolSize() {
+            return ioWorkThreadPoolSize;
+        }
+
+        public void setIoWorkThreadPoolSize(int ioWorkThreadPoolSize) {
+            this.ioWorkThreadPoolSize = ioWorkThreadPoolSize;
+        }
+
+        public int getExecutorThreadPoolSize() {
+            return executorThreadPoolSize;
+        }
+
+        public void setExecutorThreadPoolSize(int executorThreadPoolSize) {
+            this.executorThreadPoolSize = executorThreadPoolSize;
+        }
+
+        public boolean isOutFormat() {
+            return outFormat;
+        }
+
+        public void setOutFormat(boolean outFormat) {
+            this.outFormat = outFormat;
+        }
+
+        public boolean isInFormat() {
+            return inFormat;
+        }
+
+        public void setInFormat(boolean inFormat) {
+            this.inFormat = inFormat;
+        }
+
+        public boolean isSsl() {
+            return ssl;
+        }
+
+        public void setSsl(boolean ssl) {
+            this.ssl = ssl;
+        }
+
+        public boolean isEnableHeartCheck() {
+            return enableHeartCheck;
+        }
+
+        public void setEnableHeartCheck(boolean enableHeartCheck) {
+            this.enableHeartCheck = enableHeartCheck;
+        }
+
+
+        public long getReaderIdleTime() {
+            return readerIdleTime;
+        }
+
+        public void setReaderIdleTime(long readerIdleTime) {
+            this.readerIdleTime = readerIdleTime;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public int getIoBossThreadPoolSize() {
+            return ioBossThreadPoolSize;
+        }
+
+        public void setIoBossThreadPoolSize(int ioBossThreadPoolSize) {
+            this.ioBossThreadPoolSize = ioBossThreadPoolSize;
+        }
+    }
     public static class Consumer {
 
         /**
@@ -320,6 +481,7 @@ public class ServerProperties {
             this.readableName = readableName;
             setReadableName = true;
         }
+
 
         public int getExecutorThreadPoolSize() {
             return executorThreadPoolSize;
@@ -748,5 +910,13 @@ public class ServerProperties {
 
     public void setConsumer(Consumer consumer) {
         this.consumer = consumer;
+    }
+
+    public Direct getDirect() {
+        return direct;
+    }
+
+    public void setDirect(Direct direct) {
+        this.direct = direct;
     }
 }
