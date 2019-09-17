@@ -1,4 +1,4 @@
-package com.senpure.io.gateway;
+package com.senpure.io.direct;
 
 
 import com.senpure.io.ChannelAttributeUtil;
@@ -10,25 +10,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class GatewayAndClientServerHandler extends SimpleChannelInboundHandler<Client2GatewayMessage> {
+public class DirectServerHandler extends SimpleChannelInboundHandler<DirectMessage> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private DirectMessageExecutor messageExecutor;
 
-    private GatewayMessageExecutor messageExecutor;
+    //  private SourceOffline sourceOffline;
 
-
-    public GatewayAndClientServerHandler(GatewayMessageExecutor messageExecuter) {
-        this.messageExecutor = messageExecuter;
+    public DirectServerHandler(DirectMessageExecutor messageExecutor) {
+        this.messageExecutor = messageExecutor;
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        messageExecutor.channelActive(ctx.channel());
-        //super.channelActive(ctx);
-    }
-
-    @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Client2GatewayMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, DirectMessage msg) throws Exception {
+        //  messageExecutor.execute(msg);
         messageExecutor.execute(ctx.channel(), msg);
     }
 
@@ -41,16 +36,15 @@ public class GatewayAndClientServerHandler extends SimpleChannelInboundHandler<C
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        logger.debug("客户端{} 断开连接", channel);
-        messageExecutor.clientOffline(channel);
-
+        logger.debug("{}断开连接 userId:{} ", channel,ChannelAttributeUtil.getUserId(channel));
     }
+
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             Channel channel = ctx.channel();
-            logger.info("客户端{} :{}  :{} 心跳失败", channel, ChannelAttributeUtil.getToken(channel), ChannelAttributeUtil.getUserId(channel));
+            logger.info("{}心跳失败  userId:{}", channel, ChannelAttributeUtil.getUserId(channel));
             ctx.close();
             return;
         }
