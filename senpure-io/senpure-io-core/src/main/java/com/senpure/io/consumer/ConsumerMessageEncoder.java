@@ -17,10 +17,10 @@ public class ConsumerMessageEncoder extends MessageToByteEncoder<MessageFrame> {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, MessageFrame frame, ByteBuf out) throws Exception {
         Message message = frame.getMessage();
-        int headLength = Bean.computeVar32SizeNoTag(frame.getRequestId());
-        headLength += Bean.computeVar32SizeNoTag(message.getMessageId());
+        int headLength = Bean.computeVar32Size(frame.getRequestId());
+        headLength += Bean.computeVar32Size(message.getMessageId());
         int packageLength = headLength + message.getSerializedSize();
-        out.ensureWritable(Bean.computeVar32SizeNoTag(packageLength) + packageLength);
+        out.ensureWritable(Bean.computeVar32Size(packageLength) + packageLength);
         Bean.writeVar32(out, packageLength);
         Bean.writeVar32(out, frame.getRequestId());
         Bean.writeVar32(out, message.getMessageId());

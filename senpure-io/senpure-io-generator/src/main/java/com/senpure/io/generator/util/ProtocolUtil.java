@@ -11,7 +11,7 @@ public class ProtocolUtil {
     public static final int WIRETYPE_FIXED32 = 1;
     public static final int WIRETYPE_FIXED64 = 2;
     public static final int WIRETYPE_LENGTH_DELIMITED = 3;
-    public static String[] baseFields ={"int", "long", "sint", "slong", "sfixed32", "sfixed64", "float", "double","boolean","string","String","byte", "short"};
+    public static String[] baseFields ={"int", "long", "sint", "slong", "fixed32", "fixed64", "float", "double","boolean","string","String","byte", "short"};
 
 
     public static Map<String, Integer> writeType = new HashMap<>();
@@ -27,11 +27,11 @@ public class ProtocolUtil {
         writeType.put("slong",WIRETYPE_VARINT);
 
         writeType.put("float",WIRETYPE_FIXED32);
-        writeType.put("sfixed32",WIRETYPE_FIXED32);
+        writeType.put("fixed32",WIRETYPE_FIXED32);
 
 
         writeType.put("double",WIRETYPE_FIXED64);
-        writeType.put("sfixed64",WIRETYPE_FIXED64);
+        writeType.put("fixed64",WIRETYPE_FIXED64);
         writeType.put("string",WIRETYPE_LENGTH_DELIMITED);
         writeType.put("String",WIRETYPE_LENGTH_DELIMITED);
 
@@ -43,8 +43,8 @@ public class ProtocolUtil {
         javaType.put("byte", "int");
         javaType.put("sort", "int");
 
-        javaType.put("sfixed32", "int");
-        javaType.put("sfixed64", "long");
+        javaType.put("fixed32", "int");
+        javaType.put("fixed64", "long");
 
 
         javaType.put("boolean", "boolean");

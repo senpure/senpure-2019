@@ -41,13 +41,13 @@ public class GatewayAndServerMessageDecoder extends ByteToMessageDecoder {
             for (int i = 0; i < userLen; i++) {
                 userIds[i] = Bean.readVar64(in);
             }
-            int headLength = Bean.computeVar32SizeNoTag(requestId);
-            headLength += Bean.computeVar32SizeNoTag(messageId);
+            int headLength = Bean.computeVar32Size(requestId);
+            headLength += Bean.computeVar32Size(messageId);
 
-            headLength += Bean.computeVar64SizeNoTag(token);
-            headLength += Bean.computeVar32SizeNoTag(userLen);
+            headLength += Bean.computeVar64Size(token);
+            headLength += Bean.computeVar32Size(userLen);
             for (Long userId : userIds) {
-                headLength += Bean.computeVar64SizeNoTag(userId);
+                headLength += Bean.computeVar64Size(userId);
             }
 
             int messageLength = packageLength - headLength;

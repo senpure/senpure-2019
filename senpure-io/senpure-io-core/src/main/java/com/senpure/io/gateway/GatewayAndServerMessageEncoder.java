@@ -16,14 +16,14 @@ public class GatewayAndServerMessageEncoder extends MessageToByteEncoder<Client2
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Client2GatewayMessage msg, ByteBuf out) throws Exception {
-        int headLength = Bean.computeVar32SizeNoTag(msg.getRequestId());
-        headLength += Bean.computeVar32SizeNoTag(msg.getMessageId());
+        int headLength = Bean.computeVar32Size(msg.getRequestId());
+        headLength += Bean.computeVar32Size(msg.getMessageId());
 
-        headLength += Bean.computeVar64SizeNoTag(msg.getToken());
-        headLength += Bean.computeVar64SizeNoTag(msg.getUserId());
+        headLength += Bean.computeVar64Size(msg.getToken());
+        headLength += Bean.computeVar64Size(msg.getUserId());
 
         int allSize = headLength + msg.getData().length;
-        out.ensureWritable(Bean.computeVar32SizeNoTag(allSize) + allSize);
+        out.ensureWritable(Bean.computeVar32Size(allSize) + allSize);
 
         Bean.writeVar32(out, allSize);
         Bean.writeVar32(out, msg.getRequestId());

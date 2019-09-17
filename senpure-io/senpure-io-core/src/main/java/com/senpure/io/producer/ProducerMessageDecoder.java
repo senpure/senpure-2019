@@ -39,11 +39,11 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
             int messageId = Bean.readVar32(in);
             long channelToken = Bean.readVar64(in);
             long userId = Bean.readVar64(in);
-            int headSize = Bean.computeVar32SizeNoTag(requestId);
-            headSize += Bean.computeVar32SizeNoTag(messageId);
+            int headSize = Bean.computeVar32Size(requestId);
+            headSize += Bean.computeVar32Size(messageId);
 
-            headSize += Bean.computeVar64SizeNoTag(channelToken);
-            headSize += Bean.computeVar64SizeNoTag(userId);
+            headSize += Bean.computeVar64Size(channelToken);
+            headSize += Bean.computeVar64Size(userId);
             int messageLen = packageLength - headSize;
             Message message = ProducerMessageHandlerUtil.getEmptyMessage(messageId);
             if (message == null) {

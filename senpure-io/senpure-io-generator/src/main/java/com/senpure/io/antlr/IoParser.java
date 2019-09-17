@@ -59,7 +59,7 @@ public class IoParser extends Parser {
 			null, "';'", "'.'", "'io'", "'javaPackage'", "'namespace'", "'luaNamespace'", 
 			"'jsNamespace'", "'cs'", "'CS'", "'sc'", "'SC'", "'bean'", "'message'", 
 			"'event'", "'-'", "'../'", "'/'", "'\\'", "'{'", "'}'", "'='", "'['", 
-			"']'", "'sint'", "'slong'", "'sfixed32'", "'sfixed64'", "'String'", "'string'", 
+			"']'", "'sint'", "'slong'", "'fixed32'", "'fixed64'", "'String'", "'string'", 
 			"'abstract'", "'assert'", "'boolean'", "'break'", "'byte'", "'case'", 
 			"'catch'", "'char'", "'class'", "'const'", "'continue'", "'default'", 
 			"'do'", "'double'", "'else'", "'enum'", "'extends'", "'final'", "'finally'", 

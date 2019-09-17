@@ -34,7 +34,7 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
         } else {
             int requestId = Bean.readVar32(in);
             int messageId = Bean.readVar32(in);
-            int headSize = Bean.computeVar32SizeNoTag(requestId) + Bean.computeVar32SizeNoTag(messageId);
+            int headSize = Bean.computeVar32Size(requestId) + Bean.computeVar32Size(messageId);
             Message message = ConsumerMessageHandlerUtil.getEmptyMessage(messageId);
             int messageLength = packageLength - headSize;
             if (message == null) {

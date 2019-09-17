@@ -15,12 +15,12 @@ public class ProducerMessageEncoder extends MessageToByteEncoder<Producer2Gatewa
     @Override
     protected void encode(ChannelHandlerContext ctx, Producer2GatewayMessage frame, ByteBuf out) throws Exception {
         int dataLength = frame.getMessage().getSerializedSize();
-        int headLength = Bean.computeVar32SizeNoTag(frame.getRequestId());
-        headLength += Bean.computeVar32SizeNoTag(frame.getMessageId());
-        headLength += Bean.computeVar64SizeNoTag(frame.getToken());
-        headLength += Bean.computeVar32SizeNoTag(frame.getUserIds().length);
+        int headLength = Bean.computeVar32Size(frame.getRequestId());
+        headLength += Bean.computeVar32Size(frame.getMessageId());
+        headLength += Bean.computeVar64Size(frame.getToken());
+        headLength += Bean.computeVar32Size(frame.getUserIds().length);
         for (Long userId : frame.getUserIds()) {
-            headLength += Bean.computeVar64SizeNoTag(userId);
+            headLength += Bean.computeVar64Size(userId);
         }
         int packageLength = headLength + dataLength;
         out.ensureWritable(Bean.computeVar32Size(packageLength) + packageLength);

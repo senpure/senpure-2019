@@ -70,18 +70,18 @@
                 writeVar32(buf, ${field.name}.get(i));
                 <#elseif field.fieldType="long">
                 writeVar64(buf, ${field.name}.get(i));
-                <#elseif field.fieldType="sint">
-                writeSInt(buf, ${field.name}.get(i));
-                <#elseif field.fieldType="slong">
-                writeSLong(buf, ${field.name}.get(i));
+                <#elseif field.fieldType="Sint">
+                writeSint(buf, ${field.name}.get(i));
+                <#elseif field.fieldType="Slong">
+                writeSlong(buf, ${field.name}.get(i));
                 <#elseif field.fieldType="float">
                 writeFloat(buf, ${field.name}.get(i));
                 <#elseif field.fieldType="double">
                 writeDouble(buf, ${field.name}.get(i));
-                <#elseif field.fieldType="sfixed32">
-                writeSFixed32(buf, ${field.name}.get(i));
-                <#elseif field.fieldType="sfixed64">
-                writeSFixed64(buf, ${field.name}.get(i));
+                <#elseif field.fieldType="Fixed32">
+                writeFixed32(buf, ${field.name}.get(i));
+                <#elseif field.fieldType="Fixed64">
+                writeFixed64(buf, ${field.name}.get(i));
                 </#if>
             }
         }
@@ -116,18 +116,18 @@
         writeVar32(buf, ${field.tag}, ${field.name});
         <#elseif field.fieldType="long">
         writeVar64(buf, ${field.tag}, ${field.name});
-        <#elseif field.fieldType="sint">
-        writeSInt(buf, ${field.tag}, ${field.name});
-        <#elseif field.fieldType="slong">
-        writeSLong(buf, ${field.tag}, ${field.name});
+        <#elseif field.fieldType="Sint">
+        writeSint(buf, ${field.tag}, ${field.name});
+        <#elseif field.fieldType="Slong">
+        writeSlong(buf, ${field.tag}, ${field.name});
         <#elseif field.fieldType="float">
         writeFloat(buf, ${field.tag}, ${field.name});
         <#elseif field.fieldType="double">
         writeDouble(buf, ${field.tag}, ${field.name});
-        <#elseif field.fieldType="sfixed32">
-        writeSFixed32(buf, ${field.tag}, ${field.name});
-        <#elseif field.fieldType="sfixed64">
-        writeSFixed64(buf, ${field.tag}, ${field.name});
+        <#elseif field.fieldType="Fixed32">
+        writeFixed32(buf, ${field.tag}, ${field.name});
+        <#elseif field.fieldType="Fixed64">
+        writeFixed64(buf, ${field.tag}, ${field.name});
         <#elseif field.javaType="String">
         if (${field.name} != null) {
             writeString(buf, ${field.tag}, ${field.name});
@@ -168,37 +168,37 @@
                     do {
                         <#if field.fieldType="boolean">
                         boolean temp${field.name?cap_first}Value = readBoolean(buf);
-                        receive${field.name?cap_first}DataSize += computeBooleanSizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeBooleanSize(temp${field.name?cap_first}Value);
                         <#elseif field.fieldType="byte">
                         int temp${field.name?cap_first}Value = readVar32(buf);
-                        receive${field.name?cap_first}DataSize += computeVar32SizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeVar32Size(temp${field.name?cap_first}Value);
                         <#elseif field.fieldType="short">
                         int temp${field.name?cap_first}Value = readVar32(buf);;
-                        receive${field.name?cap_first}DataSize += computeVar32SizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeVar32Size(temp${field.name?cap_first}Value);
                         <#elseif field.fieldType="int">
                         int temp${field.name?cap_first}Value = readVar32(buf);
-                        receive${field.name?cap_first}DataSize += computeVar32SizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeVar32Size(temp${field.name?cap_first}Value);
                         <#elseif field.fieldType="long">
                         long temp${field.name?cap_first}Value = readVar64(buf);
-                        receive${field.name?cap_first}DataSize += computeVar64SizeNoTag(temp${field.name?cap_first}Value);
-                        <#elseif field.fieldType="sint">
-                        int temp${field.name?cap_first}Value = readSInt(buf);
-                        receive${field.name?cap_first}DataSize += computeSIntSizeNoTag(temp${field.name?cap_first}Value);
-                        <#elseif field.fieldType="slong">
-                        long temp${field.name?cap_first}Value = readSLong(buf);
-                        receive${field.name?cap_first}DataSize += computeSLongSizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeVar64Size(temp${field.name?cap_first}Value);
+                        <#elseif field.fieldType="Sint">
+                        int temp${field.name?cap_first}Value = readSint(buf);
+                        receive${field.name?cap_first}DataSize += computeSintSize(temp${field.name?cap_first}Value);
+                        <#elseif field.fieldType="Slong">
+                        long temp${field.name?cap_first}Value = readSlong(buf);
+                        receive${field.name?cap_first}DataSize += computeSlongSize(temp${field.name?cap_first}Value);
                         <#elseif field.fieldType="float">
                         float temp${field.name?cap_first}Value = readFloat(buf);
-                        receive${field.name?cap_first}DataSize += computeFloatSizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeFloatSize(temp${field.name?cap_first}Value);
                         <#elseif field.fieldType="double">
                         double temp${field.name?cap_first}Value = readDouble(buf);
-                        receive${field.name?cap_first}DataSize += computeDoubleSizeNoTag(temp${field.name?cap_first}Value);
-                        <#elseif field.fieldType="sfixed32">
-                        int temp${field.name?cap_first}Value = readSFixed32(buf);
-                        receive${field.name?cap_first}DataSize += computeSFixed32SizeNoTag(temp${field.name?cap_first}Value);
-                        <#elseif field.fieldType="sfixed64">
-                        long temp${field.name?cap_first}Value = readSFixed64(buf);
-                        receive${field.name?cap_first}DataSize += computeSFixed64SizeNoTag(temp${field.name?cap_first}Value);
+                        receive${field.name?cap_first}DataSize += computeDoubleSize(temp${field.name?cap_first}Value);
+                        <#elseif field.fieldType="Fixed32">
+                        int temp${field.name?cap_first}Value = readFixed32(buf);
+                        receive${field.name?cap_first}DataSize += computeFixed32Size(temp${field.name?cap_first}Value);
+                        <#elseif field.fieldType="Fixed64">
+                        long temp${field.name?cap_first}Value = readFixed64(buf);
+                        receive${field.name?cap_first}DataSize += computeFixed64Size(temp${field.name?cap_first}Value);
                         </#if><#--多个选项的-->
                         ${field.name}.add(temp${field.name?cap_first}Value);
                     }
@@ -212,7 +212,7 @@
                     int receive${field.name?cap_first}DataSize = 0;
                     do {
                         int temp${field.name?cap_first} = readVar32(buf);
-                        receive${field.name?cap_first}DataSize += computeVar32SizeNoTag(temp${field.name?cap_first});
+                        receive${field.name?cap_first}DataSize += computeVar32Size(temp${field.name?cap_first});
                         ${field.name}.add(${field.javaType}.get${field.bean.javaName}(temp${field.name?cap_first}));
                     }
                     while(receive${field.name?cap_first}DataSize < ${field.name}DataSize );
@@ -233,18 +233,18 @@
                     ${field.name} = readVar32(buf);
             <#elseif field.fieldType="long">
                     ${field.name} = readVar64(buf);
-            <#elseif field.fieldType="sint">
-                    ${field.name} = readSInt(buf);
-            <#elseif field.fieldType="slong">
-                    ${field.name} = readSLong(buf);
+            <#elseif field.fieldType="Sint">
+                    ${field.name} = readSint(buf);
+            <#elseif field.fieldType="Slong">
+                    ${field.name} = readSlong(buf);
             <#elseif field.fieldType="float">
                     ${field.name} = readFloat(buf);
             <#elseif field.fieldType="double">
                     ${field.name} = readDouble(buf);
-            <#elseif field.fieldType="sfixed32">
-                    ${field.name} = readSFixed32(buf);
-            <#elseif field.fieldType="sfixed64">
-                    ${field.name} = readSFixed64(buf);
+            <#elseif field.fieldType="Fixed32">
+                    ${field.name} = readFixed32(buf);
+            <#elseif field.fieldType="Fixed64">
+                    ${field.name} = readFixed64(buf);
             <#elseif field.javaType="String">
                     ${field.name} = readString(buf);
             <#else>
@@ -297,27 +297,27 @@
             int ${field.name}DataSize = 0;
         for(int i = 0; i < ${field.name}.size(); i++) {
             <#if field.fieldType="boolean">
-            ${field.name}DataSize += computeBooleanSizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeBooleanSize(${field.name}.get(i));
             <#elseif field.fieldType="byte">
-            ${field.name}DataSize += computeVar32SizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeVar32Size(${field.name}.get(i));
             <#elseif field.fieldType="short">
-            ${field.name}DataSize += computeVar32SizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeVar32Size(${field.name}.get(i));
             <#elseif field.fieldType="int">
-            ${field.name}DataSize += computeVar32SizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeVar32Size(${field.name}.get(i));
             <#elseif field.fieldType="long">
-            ${field.name}DataSize += computeVar64SizeNoTag(${field.name}.get(i));
-            <#elseif field.fieldType="sint">
-            ${field.name}DataSize += computeSIntSizeNoTag(${field.name}.get(i));
-            <#elseif field.fieldType="slong">
-            ${field.name}DataSize += computeSLongSizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeVar64Size(${field.name}.get(i));
+            <#elseif field.fieldType="Sint">
+            ${field.name}DataSize += computeSintSize(${field.name}.get(i));
+            <#elseif field.fieldType="Slong">
+            ${field.name}DataSize += computeSlongSize(${field.name}.get(i));
             <#elseif field.fieldType="float">
-            ${field.name}DataSize += computeFloatSizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeFloatSize(${field.name}.get(i));
             <#elseif field.fieldType="double">
-            ${field.name}DataSize += computeDoubleSizeNoTag(${field.name}.get(i));
-            <#elseif field.fieldType="sfixed32">
-            ${field.name}DataSize += computeSFixed32SizeNoTag(${field.name}.get(i));
-            <#elseif field.fieldType="sfixed64">
-            ${field.name}DataSize += computeSFixed64SizeNoTag(${field.name}.get(i));
+            ${field.name}DataSize += computeDoubleSize(${field.name}.get(i));
+            <#elseif field.fieldType="Fixed32">
+            ${field.name}DataSize += computeFixed32Size(${field.name}.get(i));
+            <#elseif field.fieldType="Fixed64">
+            ${field.name}DataSize += computeFixed64Size(${field.name}.get(i));
             </#if><#--多个选项的-->
         }
         ${field.name}SerializedSize = ${field.name}DataSize;
@@ -325,7 +325,7 @@
             //tag size ${field.tag}
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
-            size += computeVar32SizeNoTag(${field.name}SerializedSize);
+            size += computeVar32Size(${field.name}SerializedSize);
         }
             <#else ><#--String-->
         for(int i = 0; i < ${field.name}.size(); i++) {
@@ -336,14 +336,14 @@
             <#if field.bean.enum>
         int ${field.name}DataSize = 0;
         for (int i = 0;i < ${field.name}.size(); i++) {
-            ${field.name}DataSize += computeVar32SizeNoTag(${field.name}.get(i).getValue());
+            ${field.name}DataSize += computeVar32Size(${field.name}.get(i).getValue());
         }
         ${field.name}SerializedSize = ${field.name}DataSize;
         if (${field.name}DataSize > 0 ) {
             //tag size ${field.tag}
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
-            size += computeVar32SizeNoTag(${field.name}SerializedSize);
+            size += computeVar32Size(${field.name}SerializedSize);
         }
             <#else >
         for (int i = 0; i < ${field.name}.size(); i++) {
@@ -362,18 +362,18 @@
         size += computeVar32Size(${var32Size(field.tag)},${field.name});
         <#elseif field.fieldType="long">
         size += computeVar64Size(${var32Size(field.tag)}, ${field.name});
-        <#elseif field.fieldType="sint">
-        size += computeSIntSize(${var32Size(field.tag)}, ${field.name});
-        <#elseif field.fieldType="slong">
-        size += computeSLongSize(${var32Size(field.tag)}, ${field.name});
+        <#elseif field.fieldType="Sint">
+        size += computeSintSize(${var32Size(field.tag)}, ${field.name});
+        <#elseif field.fieldType="Slong">
+        size += computeSlongSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.fieldType="float">
         size += computeFloatSize(${var32Size(field.tag)}, ${field.name});
         <#elseif field.fieldType="double">
         size += computeDoubleSize(${var32Size(field.tag)}, ${field.name});
-        <#elseif field.fieldType="sfixed32">
-        size += computeSFixed32Size(${var32Size(field.tag)}, ${field.name});
-        <#elseif field.fieldType="sfixed64">
-        size += computeSFixed64Size(${var32Size(field.tag)}, ${field.name});
+        <#elseif field.fieldType="Fixed32">
+        size += computeFixed32Size(${var32Size(field.tag)}, ${field.name});
+        <#elseif field.fieldType="Fixed64">
+        size += computeFixed64Size(${var32Size(field.tag)}, ${field.name});
         <#elseif field.javaType="String">
         if (${field.name} != null) {
             size += computeStringSize(${var32Size(field.tag)}, ${field.name});

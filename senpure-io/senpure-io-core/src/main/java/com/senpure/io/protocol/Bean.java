@@ -59,41 +59,41 @@ public abstract class Bean {
         buf.writeByte(value ? 1 : 0);
     }
 
-    public static void writeSInt(ByteBuf buf, int tag, int value) {
+    public static void writeSint(ByteBuf buf, int tag, int value) {
         writeVar32(buf, tag);
         writeVar32(buf, encodeZigZag32(value));
     }
 
-    public static void writeSInt(ByteBuf buf, int value) {
+    public static void writeSint(ByteBuf buf, int value) {
         writeVar32(buf, encodeZigZag32(value));
     }
 
 
-    public static void writeSLong(ByteBuf buf, int tag, long value) {
+    public static void writeSlong(ByteBuf buf, int tag, long value) {
         writeVar32(buf, tag);
         writeVar64(buf, encodeZigZag64(value));
     }
 
-    public static void writeSLong(ByteBuf buf, long value) {
+    public static void writeSlong(ByteBuf buf, long value) {
         writeVar64(buf, encodeZigZag64(value));
     }
 
-    public static void writeSFixed32(ByteBuf buf, int tag, int value) {
+    public static void writeFixed32(ByteBuf buf, int tag, int value) {
         writeVar32(buf, tag);
         buf.writeInt(value);
     }
 
-    public static void writeSFixed32(ByteBuf buf, int value) {
+    public static void writeFixed32(ByteBuf buf, int value) {
         buf.writeInt(value);
     }
 
 
-    public static void writeSFixed64(ByteBuf buf, int tag, long value) {
+    public static void writeFixed64(ByteBuf buf, int tag, long value) {
         writeVar32(buf, tag);
         buf.writeLong(value);
     }
 
-    public static void writeSFixed64(ByteBuf buf, long value) {
+    public static void writeFixed64(ByteBuf buf, long value) {
 
         buf.writeLong(value);
     }
@@ -270,22 +270,22 @@ public abstract class Bean {
         return buf.readBoolean();
     }
 
-    public static int readSInt(ByteBuf buf) {
+    public static int readSint(ByteBuf buf) {
 
         return decodeZigZag32(readVar32(buf));
     }
 
-    public static long readSLong(ByteBuf buf) {
+    public static long readSlong(ByteBuf buf) {
 
         return decodeZigZag64(readVar64(buf));
     }
 
-    public static int readSFixed32(ByteBuf buf) {
+    public static int readFixed32(ByteBuf buf) {
 
         return buf.readInt();
     }
 
-    public static long readSFixed64(ByteBuf buf) {
+    public static long readFixed64(ByteBuf buf) {
 
         return buf.readLong();
     }
@@ -352,95 +352,95 @@ public abstract class Bean {
     }
 
     public static int computeStringSize(int tagVar32Size, String value) {
-        return tagVar32Size + computeStringSizeNoTag(value);
+        return tagVar32Size + computeStringSize(value);
     }
 
-    public static int computeStringSizeNoTag(String value) {
+    public static int computeStringSize(String value) {
         byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-        return computeVar32Size(bytes.length) + bytes.length;
+        return _computeVar32Size(bytes.length) + bytes.length;
     }
 
     public static int computeBeanSize(int tagVar32Size, Bean value) {
-        return tagVar32Size + computeBeanSizeNoTag(value);
+        return tagVar32Size + computeBeanSize(value);
     }
 
-    public static int computeBeanSizeNoTag(Bean value) {
+    public static int computeBeanSize(Bean value) {
         int size = value.getSerializedSize();
-        return computeVar32Size(size) + size;
+        return _computeVar32Size(size) + size;
     }
 
     public static int computeBooleanSize(int tagVar32Size, boolean value) {
-        return tagVar32Size + computeBooleanSizeNoTag(value);
+        return tagVar32Size + computeBooleanSize(value);
     }
 
-    public static int computeBooleanSizeNoTag(boolean value) {
+    public static int computeBooleanSize(boolean value) {
         return 1;
     }
 
     public static int computeDoubleSize(int tagVar32Size, double value) {
-        return tagVar32Size + computeDoubleSizeNoTag(value);
+        return tagVar32Size + computeDoubleSize(value);
     }
 
-    public static int computeDoubleSizeNoTag(double value) {
+    public static int computeDoubleSize(double value) {
         return 8;
     }
 
     public static int computeFloatSize(int tagVar32Size, float value) {
-        return tagVar32Size + computeFloatSizeNoTag(value);
+        return tagVar32Size + computeFloatSize(value);
     }
 
-    public static int computeFloatSizeNoTag(float value) {
+    public static int computeFloatSize(float value) {
         return 4;
     }
 
-    public static int computeSFixed32Size(int tagVar32Size, int value) {
-        return tagVar32Size + computeSFixed32SizeNoTag(value);
+    public static int computeFixed32Size(int tagVar32Size, int value) {
+        return tagVar32Size + computeFixed32Size(value);
     }
 
-    public static int computeSFixed32SizeNoTag(int value) {
+    public static int computeFixed32Size(int value) {
         return 4;
     }
 
-    public static int computeSFixed64Size(int tagVar32Size, long value) {
-        return tagVar32Size + computeSFixed64SizeNoTag(value);
+    public static int computeFixed64Size(int tagVar32Size, long value) {
+        return tagVar32Size + computeFixed64Size(value);
     }
 
-    public static int computeSFixed64SizeNoTag(long value) {
+    public static int computeFixed64Size(long value) {
         return 8;
     }
 
-    public static int computeSIntSize(int tagVar32Size, int value) {
-        return tagVar32Size + computeSIntSizeNoTag(value);
+    public static int computeSintSize(int tagVar32Size, int value) {
+        return tagVar32Size + computeSintSize(value);
     }
 
-    public static int computeSIntSizeNoTag(int value) {
-        return computeVar32Size(encodeZigZag32(value));
+    public static int computeSintSize(int value) {
+        return _computeVar32Size(encodeZigZag32(value));
     }
 
-    public static int computeSLongSize(int tagVar32Size, long value) {
-        return tagVar32Size + computeSLongSizeNoTag(value);
+    public static int computeSlongSize(int tagVar32Size, long value) {
+        return tagVar32Size + computeSlongSize(value);
     }
 
-    public static int computeSLongSizeNoTag(long value) {
-        return computeVar64Size(encodeZigZag64(value));
+    public static int computeSlongSize(long value) {
+        return _computeVar64Size(encodeZigZag64(value));
     }
 
 
     public static int computeVar32Size(int tagVar32Size, int value) {
-        return tagVar32Size + computeVar32SizeNoTag(value);
-
-    }
-
-    public static int computeVar32SizeNoTag(int value) {
-        return value >= 0 ? computeVar32Size(value) : 5;
-    }
-
-    public static int computeVar64Size(int tagVar32Size, long value) {
-        return tagVar32Size + computeVar64SizeNoTag(value);
+        return tagVar32Size + computeVar32Size(value);
 
     }
 
     public static int computeVar32Size(int value) {
+        return value >= 0 ? _computeVar32Size(value) : 5;
+    }
+
+    public static int computeVar64Size(int tagVar32Size, long value) {
+        return tagVar32Size + computeVar64Size(value);
+
+    }
+
+    private static int _computeVar32Size(int value) {
         if ((value & -128) == 0) {
             return 1;
         } else if ((value & -16384) == 0) {
@@ -452,11 +452,11 @@ public abstract class Bean {
         }
     }
 
-    public static int computeVar64SizeNoTag(long value) {
-        return value >= 0 ? computeVar64Size(value) : 10;
+    public static int computeVar64Size(long value) {
+        return value >= 0 ? _computeVar64Size(value) : 10;
     }
 
-    public static int computeVar64Size(long value) {
+    private static int _computeVar64Size(long value) {
         if ((value & -128L) == 0L) {
             return 1;
         } else if ((value & -16384L) == 0L) {
