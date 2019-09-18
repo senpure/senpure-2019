@@ -1,6 +1,5 @@
 package com.senpure.io.direct;
 
-import com.senpure.base.util.NameThreadFactory;
 import com.senpure.io.direct.handler.DirectMessageHandler;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.protocol.Constant;
@@ -8,7 +7,6 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -21,14 +19,16 @@ public class DirectMessageExecutor {
 
     protected static Logger logger = LoggerFactory.getLogger(DirectMessageExecutor.class);
     private ScheduledExecutorService service;
-
+    private int serviceRefCount = 0;
     public DirectMessageExecutor() {
-        this(Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2,
-                new NameThreadFactory("direct-executor")));
 
     }
 
     public DirectMessageExecutor(ScheduledExecutorService service) {
+        this.service = service;
+    }
+
+    public void setService(ScheduledExecutorService service) {
         this.service = service;
     }
 
@@ -61,5 +61,38 @@ public class DirectMessageExecutor {
         });
 
 
+    }
+
+    public ScheduledExecutorService getService() {
+        return service;
+    }
+
+
+
+    /**
+     * 引用计数+1
+     */
+    public void retainService() {
+        serviceRefCount++;
+    }
+
+    public void releaseService() {
+        serviceRefCount--;
+
+    }
+
+    public void releaseAndTryShutdownService() {
+        serviceRefCount--;
+        if (serviceRefCount <= 0) {
+            service.shutdown();
+        }
+    }
+
+    public void shutdownService() {
+        if (serviceRefCount <= 0) {
+            service.shutdown();
+        } else {
+            logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
+        }
     }
 }

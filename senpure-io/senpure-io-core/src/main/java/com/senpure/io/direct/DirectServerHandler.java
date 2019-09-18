@@ -36,7 +36,8 @@ public class DirectServerHandler extends SimpleChannelInboundHandler<DirectMessa
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        logger.debug("{}断开连接 userId:{} ", channel,ChannelAttributeUtil.getUserId(channel));
+        logger.debug("{}断开连接 userId:{} ", channel, ChannelAttributeUtil.getUserId(channel));
+        ClientManager.channelOffline(channel);
     }
 
 

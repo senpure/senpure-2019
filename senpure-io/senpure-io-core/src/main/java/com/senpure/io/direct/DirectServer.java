@@ -78,7 +78,7 @@ public class DirectServer {
                             if (properties.isEnableHeartCheck()) {
                                 p.addLast(new IdleStateHandler(properties.getReaderIdleTime(), 0L, 0L, TimeUnit.MILLISECONDS));
                             }
-                            // p.addLast(new GatewayAndServerServerHandler(messageExecutor));
+                             p.addLast(new DirectServerHandler(messageExecutor));
 
                         }
                     });
