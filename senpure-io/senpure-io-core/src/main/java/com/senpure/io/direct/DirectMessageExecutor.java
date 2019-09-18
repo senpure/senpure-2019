@@ -38,7 +38,7 @@ public class DirectMessageExecutor {
             ClientManager.setRequestId(requestId);
             DirectMessageHandler handler = DirectMessageHandlerUtil.getHandler(frame.getMessageId());
             if (handler == null) {
-                logger.warn("没有找到消息处理程序{} ", frame.getMessageId());
+                logger.warn("没有找到消息处理程序 {} ", frame.getMessageId());
                 SCInnerErrorMessage scInnerErrorMessage = new SCInnerErrorMessage();
                 scInnerErrorMessage.setType(Constant.ERROR_NOT_HANDLE_REQUEST);
                 scInnerErrorMessage.setMessage("服务器没有处理程序:" + frame.getMessageId());
