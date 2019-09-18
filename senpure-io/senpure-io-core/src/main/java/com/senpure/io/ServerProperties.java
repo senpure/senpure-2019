@@ -75,7 +75,7 @@ public class ServerProperties {
         /**
          * 心跳读入间隔毫秒
          */
-        private long readerIdleTime = 5000;
+        private long readerIdleTime = 10000;
 
 
         public boolean isSetReadableName() {
