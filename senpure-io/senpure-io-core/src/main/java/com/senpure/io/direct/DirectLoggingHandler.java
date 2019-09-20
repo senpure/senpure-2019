@@ -1,5 +1,6 @@
 package com.senpure.io.direct;
 
+import com.senpure.io.protocol.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.logging.LogLevel;
@@ -29,9 +30,10 @@ public class DirectLoggingHandler extends LoggingHandler {
         if (this.logger.isEnabled(this.internalLevel)) {
             if (msg instanceof DirectMessage) {
                 if (outFormat) {
-                    DirectMessage message = (DirectMessage) msg;
+                    DirectMessage frame = (DirectMessage) msg;
+                    Message message=frame.getMessage();
                     this.logger.log(this.internalLevel, "{} requestId:{} {}{}",
-                            "WRITE", message.getRequestId(), "\n", message.getMessage().toString(null));
+                            "WRITE", frame.getRequestId(), "\n", message==null?"null":frame.getMessage().toString(null));
                     //this.logger.log(this.internalLevel, this.format(ctx, ChannelAttributeUtil.getChannelPlayerStr(ctx.channel())+" WRITE", "\n"+((Message) msg).toString(null)));
                 } else {
                     this.logger.log(this.internalLevel, "{} {}",
