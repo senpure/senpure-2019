@@ -40,7 +40,7 @@ public class DirectMessageDecoder extends ByteToMessageDecoder {
             int messageId = Bean.readVar32(in);
 
             Message message = DirectMessageHandlerUtil.getEmptyMessage(messageId);
-            ConsumerMessage frame = new ConsumerMessage();
+            DirectMessage frame = new DirectMessage ();
             frame.setRequestId(requestId);
             if (message == null) {
                 int headSize = Bean.computeVar32Size(requestId) + Bean.computeVar32Size(messageId);
