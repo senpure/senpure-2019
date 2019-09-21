@@ -32,24 +32,25 @@ public class ConsumerMessageDecoder extends ByteToMessageDecoder {
             this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", packageLength, in.readableBytes());
             in.resetReaderIndex();
         } else {
+            int endIndex = in.readerIndex() + packageLength;
             int requestId = Bean.readVar32(in);
             int messageId = Bean.readVar32(in);
-            int headSize = Bean.computeVar32Size(requestId) + Bean.computeVar32Size(messageId);
             Message message = ConsumerMessageHandlerUtil.getEmptyMessage(messageId);
-            int messageLength = packageLength - headSize;
             if (message == null) {
+                int headSize = Bean.computeVar32Size(requestId) + Bean.computeVar32Size(messageId);
+                int messageLength = packageLength - headSize;
                 in.skipBytes(messageLength);
                 logger.warn("没有找到消息处理程序 messageId {}", messageId);
             } else {
                 try {
-                    message.read(in, in.readerIndex() + messageLength);
+                    message.read(in, endIndex);
                     ConsumerMessage frame = new ConsumerMessage();
                     frame.setRequestId(requestId);
                     frame.setMessage(message);
                     out.add(frame);
                 } catch (Exception e) {
                     ctx.close();
-                    logger.debug("二进制转换为消息失败 messageId {}, getValue{}", messageId, message);
+                    logger.debug("二进制转换为消息失败 messageId {}, message {}", messageId, message);
                     logger.error("error", e);
                 }
             }

@@ -142,9 +142,9 @@ function ${bean.lua.namespace}.${bean.lua.name}:write(buf)
                 buf:WriteFloat(self.${field.name}[i]);
                 <#elseif field.fieldType="double">
                 buf:WriteDouble(self.${field.name}[i]);
-                <#elseif field.fieldType="sfixed32">
+                <#elseif field.fieldType="fixed32">
                 buf:WriteSFixed32(self.${field.name}[i]);
-                <#elseif field.fieldType="sfixed64">
+                <#elseif field.fieldType="fixed64">
                 buf:WriteSFixed64(self.${field.name}[i]);
                 </#if>
             end
@@ -185,9 +185,9 @@ function ${bean.lua.namespace}.${bean.lua.name}:write(buf)
     buf:WriteFloat(${field.tag}, self.${field.name});
         <#elseif field.fieldType="double">
     buf:WriteDouble(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="sfixed32">
+        <#elseif field.fieldType="fixed32">
     buf:WriteSFixed32(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="sfixed64">
+        <#elseif field.fieldType="fixed64">
     buf:WriteSFixed64(${field.tag}, self.${field.name});
         <#elseif field.javaType="String">
     if self.${field.name} then
@@ -252,10 +252,10 @@ function ${bean.lua.namespace}.${bean.lua.name}:read(buf,endIndex)
                 <#elseif field.fieldType="double">
             local temp${field.name?cap_first} = buf:ReadDouble();
             receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeDoubleSizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="sfixed32">
+                <#elseif field.fieldType="fixed32">
             local temp${field.name?cap_first} = buf:ReadSFixed32();
             receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeSFixed32SizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="sfixed64">
+                <#elseif field.fieldType="fixed64">
             local temp${field.name?cap_first} = buf:ReadSFixed64();
             receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeSFixed64SizeNoTag(temp${field.name?cap_first});
                 </#if><#--多个选项的-->
@@ -304,9 +304,9 @@ function ${bean.lua.namespace}.${bean.lua.name}:read(buf,endIndex)
         self.${field.name} = buf:ReadFloat();
         <#elseif field.fieldType="double">
         self.${field.name} = buf:ReadDouble();
-        <#elseif field.fieldType="sfixed32">
+        <#elseif field.fieldType="fixed32">
         self.${field.name} = buf:ReadSFixed32();
-        <#elseif field.fieldType="sfixed64">
+        <#elseif field.fieldType="fixed64">
         self.${field.name} = buf:ReadSFixed64();
         <#elseif field.fieldType="String">
         self.${field.name} = buf:ReadString();
@@ -370,9 +370,9 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
                 ${field.name}DataSize = ${field.name}DataSize + buf:ComputeFloatSizeNoTag(self.${field.name}[i] );
                 <#elseif field.fieldType="double">
                 ${field.name}DataSize = ${field.name}DataSize + buf:ComputeDoubleSizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="sfixed32">
+                <#elseif field.fieldType="fixed32">
                 ${field.name}DataSize = ${field.name}DataSize + buf:ComputeSFixed32SizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="sfixed64">
+                <#elseif field.fieldType="fixed64">
                 ${field.name}DataSize = ${field.name}DataSize + buf:ComputeSFixed64SizeNoTag(self.${field.name}[i] );
                 </#if><#--多个选项的-->
             end
@@ -445,10 +445,10 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
         <#elseif field.fieldType="double">
     -- tag size 已经完成了计算 ${field.tag}
     size = size + buf:ComputeDoubleSize(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="sfixed32">
+        <#elseif field.fieldType="fixed32">
     -- tag size 已经完成了计算 ${field.tag}
     size = size + buf:ComputeSFixed32Size(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="sfixed64">
+        <#elseif field.fieldType="fixed64">
     -- tag size 已经完成了计算 ${field.tag}
     size = size + buf:ComputeSFixed64Size(${var32Size(field.tag)}, self.${field.name});
         <#elseif field.fieldType="String">

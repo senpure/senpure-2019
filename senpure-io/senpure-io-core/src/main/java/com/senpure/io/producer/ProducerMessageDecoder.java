@@ -35,16 +35,12 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
             this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", packageLength, in.readableBytes());
             in.resetReaderIndex();
         } else {
+            int endIndex = in.readerIndex() + packageLength;
             int requestId = Bean.readVar32(in);
             int messageId = Bean.readVar32(in);
             long channelToken = Bean.readVar64(in);
             long userId = Bean.readVar64(in);
-            int headSize = Bean.computeVar32Size(requestId);
-            headSize += Bean.computeVar32Size(messageId);
 
-            headSize += Bean.computeVar64Size(channelToken);
-            headSize += Bean.computeVar64Size(userId);
-            int messageLen = packageLength - headSize;
             Message message = ProducerMessageHandlerUtil.getEmptyMessage(messageId);
             Gateway2ProducerMessage frame = new Gateway2ProducerMessage();
             frame.setRequestId(requestId);
@@ -52,11 +48,17 @@ public class ProducerMessageDecoder extends ByteToMessageDecoder {
             frame.setToken(channelToken);
             frame.setUserId(userId);
             if (message == null) {
+                int headSize = Bean.computeVar32Size(requestId);
+                headSize += Bean.computeVar32Size(messageId);
+
+                headSize += Bean.computeVar64Size(channelToken);
+                headSize += Bean.computeVar64Size(userId);
+                int messageLen = packageLength - headSize;
                 in.skipBytes(messageLen);
                 logger.warn("没有找到消息处理程序{} token:{} userId:{}", channelToken, messageId, userId);
             }
             else {
-                message.read(in, in.readerIndex() + messageLen);
+                message.read(in, endIndex);
                 frame.setMessage(message);
             }
             out.add(frame);
