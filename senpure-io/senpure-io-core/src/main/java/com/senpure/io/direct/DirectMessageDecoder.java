@@ -38,10 +38,10 @@ public class DirectMessageDecoder extends ByteToMessageDecoder {
             int endIndex = readerIndex + packageLength;
             int requestId = Bean.readVar32(in);
             int messageId = Bean.readVar32(in);
-
-            Message message = DirectMessageHandlerUtil.getEmptyMessage(messageId);
             DirectMessage frame = new DirectMessage ();
             frame.setRequestId(requestId);
+            frame.setMessageId(messageId);
+            Message message = DirectMessageHandlerUtil.getEmptyMessage(messageId);
             if (message == null) {
                 int headSize = Bean.computeVar32Size(requestId) + Bean.computeVar32Size(messageId);
                 int messageLength = packageLength - headSize;

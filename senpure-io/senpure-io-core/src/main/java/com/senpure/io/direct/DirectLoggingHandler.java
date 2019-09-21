@@ -30,7 +30,7 @@ public class DirectLoggingHandler extends LoggingHandler {
             if (msg instanceof DirectMessage) {
                 if (outFormat) {
                     DirectMessage message = (DirectMessage) msg;
-                    this.logger.log(this.internalLevel, "{} requestId{} {}{}",
+                    this.logger.log(this.internalLevel, "{} requestId:{} {}{}",
                             "WRITE", message.getRequestId(), "\n", message.getMessage().toString(null));
                     //this.logger.log(this.internalLevel, this.format(ctx, ChannelAttributeUtil.getChannelPlayerStr(ctx.channel())+" WRITE", "\n"+((Message) msg).toString(null)));
                 } else {
