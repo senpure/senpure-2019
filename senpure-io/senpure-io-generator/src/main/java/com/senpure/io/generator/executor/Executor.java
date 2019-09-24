@@ -3,11 +3,11 @@ package com.senpure.io.generator.executor;
 import com.senpure.base.AppEvn;
 import com.senpure.base.util.Assert;
 import com.senpure.io.generator.habit.JavaConfig;
+import com.senpure.io.generator.habit.JavaScriptConfig;
+import com.senpure.io.generator.habit.LanguageConfig;
 import com.senpure.io.generator.habit.LuaConfig;
-import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.model.*;
 import com.senpure.io.generator.model.Enum;
-import com.senpure.io.generator.model.Event;
-import com.senpure.io.generator.model.Message;
 import com.senpure.io.generator.reader.IoProtocolReader;
 import com.senpure.io.generator.reader.IoReader;
 import com.senpure.io.generator.util.CheckUtil;
@@ -126,6 +126,19 @@ public class Executor {
         if (luaConfig != null) {
             generateLua();
 
+        }
+        for (LanguageConfig languageConfig : context.getLanguageConfigs()) {
+            LanguageExecutor languageExecutor = languageConfig.languageExecutor();
+            changeTemplateDir(languageExecutor.getTemplateDir());
+            languageExecutor.generate(cfg, context, languageConfig);
+        }
+    }
+
+    public void changeTemplateDir(String dir) {
+        try {
+            cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), dir));
+        } catch (IOException e) {
+            Assert.error(e);
         }
     }
 
@@ -304,13 +317,12 @@ public class Executor {
         List<String> paths = new ArrayList<>();
         //paths.add("hello.io");
         // paths.add("hello3.io");
-        //  paths.add("sample.io");
+        //  paths.add("fixed.io");
 
         for (String path : paths) {
             IoReader.getInstance().read(FileUtil.file("../../src/main/resources/" + path, AppEvn.getClassRootPath()));
         }
-        IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data-cshape.io"));
-        IoReader.getInstance().read(new File("E:\\IdeaProjects\\senpure-sport\\senpure-sport-bean\\src\\main\\resources\\sport-data.io"));
+        IoReader.getInstance().read(new File("E:\\Projects\\senpure-io-example\\src\\main\\resources\\example.io"));
 
         Map<String, IoProtocolReader> ioProtocolReaderMap = IoReader.getInstance().getIoProtocolReaderMap();
 
@@ -326,12 +338,17 @@ public class Executor {
         // context.setJavaEventHandlerRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
         // context.setJavaProtocolCodeRootPath(FileUtil.file("../../src/test/java").getAbsolutePath());
 
-        String path = FileUtil.file("../../src/test/java").getAbsolutePath();
+       String path = FileUtil.file("../../src/test/java").getAbsolutePath();
+        path="E:\\Projects\\senpure-io-js-support\\senpure";
         LuaConfig luaConfig = new LuaConfig();
         luaConfig.setAppendNamespace(true);
         luaConfig.setType(LuaConfig.TYPE_FILE);
         luaConfig.setLuaProtocolCodeRootPath(path);
-        context.setLuaConfig(luaConfig);
+       // context.setLuaConfig(luaConfig);
+        JavaScriptConfig javaScriptConfig = new JavaScriptConfig();
+        javaScriptConfig.setProtocolCodeRootPath(path);
+        javaScriptConfig.setGenerateRequire(true);
+        context.addLanguageConfig(javaScriptConfig);
         Executor executor = new Executor(context);
         executor.generate();
     }

@@ -1,11 +1,11 @@
 package com.senpure.io.generator.executor;
 
 import com.senpure.io.generator.habit.JavaConfig;
+import com.senpure.io.generator.habit.JavaScriptConfig;
+import com.senpure.io.generator.habit.LanguageConfig;
 import com.senpure.io.generator.habit.LuaConfig;
-import com.senpure.io.generator.model.Bean;
+import com.senpure.io.generator.model.*;
 import com.senpure.io.generator.model.Enum;
-import com.senpure.io.generator.model.Event;
-import com.senpure.io.generator.model.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,20 @@ public class ExecutorContext {
     private List<Enum> enums = new ArrayList<>(128);
 
     private String projectName;
+
+    private List<LanguageConfig> languageConfigs = new ArrayList<>();
+
     private String javaTemplateDir = "java";
     private String luaTemplateDir = "lua";
+    private String jsTemplateDir = "js";
     private JavaConfig javaConfig;
     private LuaConfig luaConfig;
 
+    private JavaScriptConfig jsConfig;
 
+    public void addLanguageConfig(LanguageConfig languageConfig) {
+        languageConfigs.add(languageConfig);
+    }
 
     public void addBean(Bean bean) {
         this.beans.add(bean);
@@ -134,5 +142,29 @@ public class ExecutorContext {
 
     public void setLuaConfig(LuaConfig luaConfig) {
         this.luaConfig = luaConfig;
+    }
+
+    public JavaScriptConfig getJsConfig() {
+        return jsConfig;
+    }
+
+    public void setJsConfig(JavaScriptConfig jsConfig) {
+        this.jsConfig = jsConfig;
+    }
+
+    public String getJsTemplateDir() {
+        return jsTemplateDir;
+    }
+
+    public void setJsTemplateDir(String jsTemplateDir) {
+        this.jsTemplateDir = jsTemplateDir;
+    }
+
+    public List<LanguageConfig> getLanguageConfigs() {
+        return languageConfigs;
+    }
+
+    public void setLanguageConfigs(List<LanguageConfig> languageConfigs) {
+        this.languageConfigs = languageConfigs;
     }
 }
