@@ -347,6 +347,7 @@ public class Executor {
        // context.setLuaConfig(luaConfig);
         JavaScriptConfig javaScriptConfig = new JavaScriptConfig();
         javaScriptConfig.setProtocolCodeRootPath(path);
+        javaScriptConfig.setDtsCodeRootPath(path);
         javaScriptConfig.setGenerateRequire(true);
         context.addLanguageConfig(javaScriptConfig);
         Executor executor = new Executor(context);

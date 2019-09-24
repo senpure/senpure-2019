@@ -48,9 +48,10 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
                 generate();
                 break;
         }
-        if (config.isGenerateRequire()&& requireBean.getFileNames().size()>0) {
+        if (config.isGenerateRequire() && requireBean.getFileNames().size() > 0) {
             generateRequire();
         }
+
 
     }
 
@@ -91,6 +92,9 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             file = new File(config.getProtocolCodeRootPath(), config.getMixFileName() + ".js");
         }
         generate(bean, template, file, true);
+        if (config.isGenerateDts()) {
+            generateDts(bean, config.getMixFileName());
+        }
     }
 
     private void generateByFile() {
@@ -146,6 +150,9 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             MixBean MixBean = entry.getValue();
             MixBean.compute();
             generate(MixBean, template, entry.getKey(), true);
+            if (config.isGenerateDts()) {
+                generateDts(MixBean, entry.getKey().getName());
+            }
         }
     }
 
@@ -184,8 +191,12 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             }
             bean.compute();
             generate(bean, template, file, true);
+            if (config.isGenerateDts()) {
+                generateDts(bean, entry.getKey());
+            }
         }
     }
+
     protected void dispatchByNamespace(Map<String, List<Bean>> namespaceMap, List<? extends Bean> beans) {
         for (Bean bean : beans) {
             List<Bean> list = namespaceMap.get(bean.getJs().getNamespace());
@@ -196,6 +207,7 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             list.add(bean);
         }
     }
+
     private void generateRequire() {
         Template template = null;
         try {
@@ -204,9 +216,18 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             Assert.error(e);
         }
         File file = new File(config.getProtocolCodeRootPath(), "require.js");
+        generate(requireBean, template, file, config.isRequireOverwrite());
+    }
 
-
-        generate(requireBean,template,file,config.isRequireOverwrite());
+    private void generateDts(MixBean mixBean, String fileName) {
+        Template template = null;
+        try {
+            template = cfg.getTemplate(config.getDtsTemplate(), "utf-8");
+        } catch (IOException e) {
+            Assert.error(e);
+        }
+        File file = new File(config.getDtsCodeRootPath(), fileName + ".d.ts");
+        generate(mixBean, template, file, config.isRequireOverwrite());
     }
 
     private class NameShort implements Comparator<Bean> {

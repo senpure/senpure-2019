@@ -15,4 +15,40 @@ public class JavaScriptConfig extends ScriptLanguageConfig {
     public LanguageExecutor languageExecutor() {
         return new JavaScriptExecutor();
     }
+
+    private String dtsTemplate = "dts.ftl";
+    private boolean generateDts = true;
+    private String dtsCodeRootPath;
+    private String dtsCodeRootChooserPath;
+    public String getDtsTemplate() {
+        return dtsTemplate;
+    }
+
+    public void setDtsTemplate(String dtsTemplate) {
+        this.dtsTemplate = dtsTemplate;
+    }
+
+    public boolean isGenerateDts() {
+        return generateDts;
+    }
+
+    public void setGenerateDts(boolean generateDts) {
+        this.generateDts = generateDts;
+    }
+
+    public String getDtsCodeRootPath() {
+        return dtsCodeRootPath;
+    }
+
+    public void setDtsCodeRootPath(String dtsCodeRootPath) {
+        this.dtsCodeRootPath = dtsCodeRootPath;
+    }
+
+    public String getDtsCodeRootChooserPath() {
+        return dtsCodeRootChooserPath;
+    }
+
+    public void setDtsCodeRootChooserPath(String dtsCodeRootChooserPath) {
+        this.dtsCodeRootChooserPath = dtsCodeRootChooserPath;
+    }
 }

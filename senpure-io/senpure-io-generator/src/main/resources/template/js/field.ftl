@@ -5,7 +5,7 @@
   *  ${bean.explain}
  */
 </#if>
-${bean.js.namespace}.${bean.js.name} = function(){
+${bean.js.namespace}.${bean.js.name} = function () {
 <#list bean.fields as field>
     <#if field.list >
     //list:<#if field.baseField>${rightPad(field.javaType,8)}<#else>${field.bean.js.namespace}.${field.bean.js.name} </#if><#if field.hasExplain>${field.explain}</#if>
@@ -63,9 +63,10 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getMessageId = function () {
 </#if>
 
 //${bean.js.namespace}.${bean.js.name}写入字节缓存
-${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf){
+${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf) {
 <#list bean.fields as field>
     <#if field.list>
+    var i;
     this.getSerializedSize();
         <#break>
     </#if>
@@ -78,14 +79,14 @@ ${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf){
     var ${field.name}_len = this.${field.name}.length;
         <#if field.baseField>
             <#if field.javaType="String">
-    for ( var i = 0; i < ${field.name}_len ;i++){
+    for ( i = 0; i < ${field.name}_len ;i++){
         buf.writeStringField(${field.tag}, this.${field.name}[i]);
     }
             <#else>
     if (${field.name}_len > 0) {
         buf.writeVar32(${field.tag});
         buf.writeVar32(this.${field.name}SerializedSize);
-        for( var i = 0; i < ${field.name}_len;i++){
+        for( i = 0; i < ${field.name}_len;i++){
             buf.write${baseFieldType2MethodName(field.fieldType)}(this.${field.name}[i]);
         }
     }
@@ -95,11 +96,11 @@ ${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf){
             <#if field.bean.enum>
         buf.writeVar32(${field.tag});
         buf.writeVar32(this.${field.name}SerializedSize);
-        for (var i = 0;i < ${field.name}_len ; i++){
+        for (i = 0;i < ${field.name}_len ; i++){
             buf.writeVar32(this.${field.name}[i]);
         }
             <#else>
-        for (var i = 0;i < ${field.name}_len ; i++){
+        for (i = 0;i < ${field.name}_len ; i++){
             buf.writeVar32(${field.tag});
             buf.writeVar32(this.${field.name}[i].getSerializedSize());
             this.${field.name}[i].write(buf);
@@ -126,7 +127,13 @@ ${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf){
 };
 
 //${bean.js.namespace}.${bean.js.name}读取字节缓存
-${bean.js.namespace}.${bean.js.name}.prototype.read = function (buf,endIndex){
+${bean.js.namespace}.${bean.js.name}.prototype.read = function (buf, endIndex) {
+<#list bean.fields as field>
+    <#if field.list>
+    var i;
+        <#break>
+    </#if>
+</#list>
     while(true){
         var tag = buf.readTag(endIndex);
         switch (tag) {
@@ -195,6 +202,12 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getSerializedSize = function (){
     }
     size = 0;
 <#list bean.fields as field>
+    <#if field.list>
+    var i;
+        <#break>
+    </#if>
+</#list>
+<#list bean.fields as field>
     <#if field.hasExplain>
     //${field.explain}
     </#if>
@@ -204,7 +217,7 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getSerializedSize = function (){
             <#if field.fieldType ="String">
     var ${field.name}_len = this.${field.name}.length;
     if (${field.name}_len > 0 ){
-        for (var i = 0;i < ${field.name}_len ; i++){
+        for (i = 0;i < ${field.name}_len ; i++){
                     //tag size 已经完成了计算 ${field.tag}
             size += ${var32Size(field.tag)} + io.computeStringSize(this.${field.name}[i] );
         }
@@ -212,7 +225,7 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getSerializedSize = function (){
             <#else><#--不是string-->
     var ${field.name}_len = this.${field.name}.length;
     var ${field.name}DataSize = 0;
-    for (var i = 0; i <  ${field.name}_len; i++ ){
+    for (i = 0; i <  ${field.name}_len; i++ ){
         ${field.name}DataSize += io.compute${baseFieldType2MethodName(field.fieldType)}Size(this.${field.name}[i] );
     }
     this.${field.name}SerializedSize = ${field.name}DataSize;
@@ -225,7 +238,7 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getSerializedSize = function (){
             <#if field.bean.enum>
     var ${field.name}_len = this.${field.name}.length;
     var ${field.name}DataSize = 0;
-    for (var i = 0;i < ${field.name}_len ; i++){
+    for (i = 0;i < ${field.name}_len ; i++){
         ${field.name}DataSize += io.computeVar32Size(this.${field.name}[i] );
     }
     this.${field.name}SerializedSize = ${field.name}DataSize;
@@ -235,8 +248,8 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getSerializedSize = function (){
     }
             <#else ><#--bean-->
     var ${field.name}_len = this.${field.name}.length;
-    for (var i = 0;i < ${field.name}_len ; i++){
-        var ${field.name}BeanSize = this.${field.name}[i].getSerializedSize()
+    for (i = 0;i < ${field.name}_len ; i++){
+        var ${field.name}BeanSize = this.${field.name}[i].getSerializedSize();
                 // tag size 已经完成了计算 ${field.tag}
         size += ${field.name}BeanSize + io.computeVar32FieldSize(${var32Size(field.tag)},${field.name}BeanSize);
     }
@@ -267,7 +280,13 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getSerializedSize = function (){
 };
 
 //${bean.js.namespace}.${bean.js.name}格式化字符串
-${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent){
+${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent) {
+<#list bean.fields as field>
+    <#if field.list>
+    var i;
+        <#break>
+    </#if>
+</#list>
     _indent = _indent == undefined ? "" : _indent;
     var _str = "";
     _str = _str + "${bean.js.name}<#if bean.type != "NA">[${bean.id?c}]</#if>" + "{";
@@ -281,7 +300,7 @@ ${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent){
         var ${field.name}_len = this.${field.name}.length;
         if (${field.name}_len > 0){
             _str = _str + "[";
-            for (var i = 0;i < ${field.name}_len;i++){
+            for (i = 0;i < ${field.name}_len;i++){
                 _str = _str + "\n";
         <#if field.baseField>
                 _str = _str + this._next_indent;
@@ -322,4 +341,51 @@ ${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent){
     _str = _str + _indent + "}";
     return _str;
 };
+
+<#list bean.fields as field>
+    <#if field.list>
+        <#if field.hasExplain&&field.explain?length gt 1>
+/**
+ * get ${field.explain}
+ * @return
+ */
+        </#if>
+${bean.js.namespace}.${bean.js.name}.prototype.get${field.name?cap_first} = function () {
+    return this.${field.name};
+ };
+        <#if field.hasExplain&&field.explain?length gt 1>
+/**
+ * set ${field.explain}
+ */
+        </#if>
+${bean.js.namespace}.${bean.js.name}.prototype.set${field.name?cap_first} = function (${field.name}) {
+    if(${field.name} == null) {
+        this.${field.name} = new Array(0);
+        return this;
+    }
+    this.${field.name} = ${field.name};
+    return this;
+};
+    <#else>
+        <#if field.hasExplain&&field.explain?length gt 1>
+/**
+ * <#if field.fieldType="boolean"> is<#else>get</#if> ${field.explain}
+ * @return
+ */
+        </#if>
+${bean.js.namespace}.${bean.js.name}.prototype.<#if field.fieldType="boolean">is<#else>get</#if>${field.name?cap_first} = function () {
+    return this.${field.name};
+};
+        <#if field.hasExplain&&field.explain?length gt 1>
+/**
+ *
+ * set ${field.explain}
+ */
+        </#if>
+${bean.js.namespace}.${bean.js.name}.prototype.set${field.name?cap_first} = function (${field.name}) {
+    this.${field.name} = ${field.name};
+    return this;
+};
+    </#if>
+</#list>
 
