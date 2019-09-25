@@ -62,7 +62,7 @@ public class BeanTest {
     public void var64Test() {
         ByteBuf buf = Unpooled.buffer(1000);
         for (long i = 0; i < 63; i++) {
-            long value = (long) Math.pow(2, i);
+            long value = 1L << i;
             long write = -value;
             System.out.println("write var64:" + write);
             Bean.writeVar64(buf, write);
@@ -130,7 +130,7 @@ public class BeanTest {
 
         ByteBuf buf = Unpooled.buffer(1000);
         for (long i = 0; i < 63; i++) {
-            long value = (long) Math.pow(2, i);
+            long value = 1L << i;
             long write = -value;
             System.out.println("write slong:" + write);
             Bean.writeSlong(buf, write);
@@ -196,7 +196,7 @@ public class BeanTest {
     public void fixed64Test() {
         ByteBuf buf = Unpooled.buffer(1000);
         for (long i = 0; i < 63; i++) {
-            long value = (long) Math.pow(2, i);
+            long value = 1L << i;
             long write = -value;
             System.out.println("write fixed64:" + write);
             Bean.writeFixed64(buf, write);

@@ -1,421 +1,45 @@
 package com.senpure.io.generator.executor;
 
-import com.senpure.base.util.Assert;
-import com.senpure.base.util.StringUtil;
+
 import com.senpure.io.generator.habit.LuaConfig;
 import com.senpure.io.generator.model.Bean;
-import com.senpure.io.generator.model.Enum;
-import com.senpure.io.generator.model.Message;
-import com.senpure.io.generator.util.LowerCamelCaseNameRule;
-import com.senpure.io.generator.util.TemplateUtil;
-import com.senpure.template.FileUtil;
-import com.senpure.template.Generator;
-import com.senpure.template.sovereignty.Sovereignty;
-import com.senpure.template.sovereignty.TemplateBean;
+import com.senpure.io.generator.model.Language;
+import com.senpure.io.generator.model.MixBean;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+public class LuaExecutor extends ScriptLanguageExecutor<LuaConfig> {
 
-/**
- * LuaExecutor
- *
- * @author senpure
- * @time 2019-08-12 11:40:31
- */
-public class LuaExecutor {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private Configuration cfg;
-    private ExecutorContext context;
+    public static final String TEMPLATE_DIR = "lua";
 
-    private LuaConfig luaConfig;
-
-    private RequireBean requireBean = new RequireBean();
-
-    public LuaExecutor(Configuration cfg, ExecutorContext context) {
-        this.cfg = cfg;
-        this.context = context;
-        this.luaConfig = context.getLuaConfig();
+    @Override
+    public Language getLanguage(Bean bean) {
+        return bean.getLua();
     }
 
-    public void changeTemplateDir2Lua() {
-        try {
-            cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), context.getLuaTemplateDir()));
-        } catch (IOException e) {
-            Assert.error(e);
-        }
+    @Override
+    public String getProtocolSuffix() {
+        return ".lua";
     }
 
-    private void checkFile(File file) {
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
+    @Override
+    public MixBean getNewMixBean() {
+        return new LuaMixBean();
     }
 
-    public void generate() {
-        changeTemplateDir2Lua();
-
-        requireBean.fileNames.clear();
-        switch (luaConfig.getType()) {
-            case LuaConfig.TYPE_MIX:
-                generateByMix();
-                break;
-            case LuaConfig.TYPE_FILE:
-                generateByFile();
-                break;
-            case LuaConfig.TYPE_NAMESPACE:
-                generateByNamespace();
-                break;
-            default:
-                generateByFile();
-                break;
-        }
-        if (luaConfig.isGenerateLuaRequire()&& requireBean.fileNames.size()>0) {
-            generateRequire();
-        }
-
+    @Override
+    public void generate(Configuration cfg, ExecutorContext context, LuaConfig config) {
+        execute(cfg,context,config);
     }
 
-    private void generate(TemplateBean bean, Template template, File file, boolean overwrite) {
-        boolean thisOverwrite = false;
-        if (file.exists()) {
-            if (!overwrite) {
-                logger.warn("文件存在不能生成 {} {}", file.getName(), file.getAbsoluteFile());
-                return;
-            } else {
-                thisOverwrite = true;
-            }
-
-        } else {
-            checkFile(file);
-        }
-        bean.setSovereignty(Sovereignty.getInstance().sovereigntyLuaComment());
-        if (thisOverwrite) {
-            logger.info("覆盖生成  {} {}", file.getName(), file.getAbsoluteFile());
-        } else {
-            logger.info("生成  {} {}", file.getName(), file.getAbsoluteFile());
-        }
-        Generator.generate(bean, template, file);
+    @Override
+    public String getTemplateDir() {
+        return TEMPLATE_DIR;
     }
 
-    public void generateByMix() {
-        Template template = null;
-        try {
-            template = cfg.getTemplate(luaConfig.getLuaProtocolTemplate(), "utf-8");
-        } catch (IOException e) {
-            Assert.error(e);
-        }
-        LuaMixBean bean = new LuaMixBean();
-        bean.setBeans(context.getBeans());
-        bean.setEnums(context.getEnums());
-        bean.getMessages().addAll(context.getMessages());
-        NameShort nameShort = new NameShort();
-        Collections.sort(bean.getEnums(), nameShort);
-        Collections.sort(bean.getBeans(), nameShort);
-        Collections.sort(bean.getMessages(), (x, y) -> {
-            int result = x.getLua().getNamespace().compareTo(y.getLua().getNamespace());
-            if (result == 0) {
-                return Integer.compare(x.getId(), y.getId());
-            }
-            return result;
-        });
-        bean.compute();
-        File file;
-        if (luaConfig.isAppendNamespace()) {
-            requireBean.fileNames.add(luaConfig.getLuaMixFileName() + "." + luaConfig.getLuaMixFileName() + ".lua");
-            file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() +
-                    File.separator + luaConfig.getLuaMixFileName() + ".lua");
-        } else {
-            requireBean.fileNames.add(luaConfig.getLuaMixFileName() + ".lua");
-            file = new File(luaConfig.getLuaProtocolCodeRootPath(), luaConfig.getLuaMixFileName() + ".lua");
-        }
-        generate(bean, template, file, true);
-    }
-
-    public void generateByFile() {
-        Template template = null;
-        try {
-            template = cfg.getTemplate(luaConfig.getLuaProtocolTemplate(), "utf-8");
-        } catch (IOException e) {
-            Assert.error(e);
-        }
-        Map<String, List<Bean>> fileMap = new HashMap<>();
-        dispatchByFile(fileMap, context.getBeans());
-        dispatchByFile(fileMap, context.getEnums());
-        dispatchByFile(fileMap, context.getMessages());
-        Map<File, LuaMixBean> luaMixBeanMap = new HashMap<>();
-        for (Map.Entry<String, List<Bean>> entry : fileMap.entrySet()) {
-            List<Bean> beans = entry.getValue();
-            if (beans.size() == 0) {
-                continue;
-            }
-            String fileName = new File(entry.getKey()).getName();
-            fileName = fileName.substring(0, fileName.length() - 3);
-            File file;
-            if (luaConfig.isAppendNamespace()) {
-                String temp = LowerCamelCaseNameRule.nameRule(beans.get(0).getLua().getNamespace());
-                requireBean.fileNames.add(temp + "." + fileName + ".lua");
-                file = new File(luaConfig.getLuaProtocolCodeRootPath(),
-                        FileUtil.fullFileEnd(temp
-                                .replace(".", File.separator)) +
-                                fileName + ".lua");
-            } else {
-                requireBean.fileNames.add(fileName + ".lua");
-                file = new File(luaConfig.getLuaProtocolCodeRootPath(), fileName + ".lua");
-            }
-            LuaMixBean bean = new LuaMixBean();
-
-            for (Bean b : beans) {
-                if (b instanceof Message) {
-                    bean.getMessages().add((Message) b);
-                } else if (b instanceof Enum) {
-                    bean.getEnums().add((Enum) b);
-                } else {
-                    bean.getBeans().add(b);
-                }
-            }
-            LuaMixBean luaMixBean = luaMixBeanMap.get(file);
-            if (luaMixBean == null) {
-                luaMixBeanMap.put(file, bean);
-            } else {
-                luaMixBean.merge(bean);
-            }
-        }
-        for (Map.Entry<File, LuaMixBean> entry : luaMixBeanMap.entrySet()) {
-            LuaMixBean luaMixBean = entry.getValue();
-            luaMixBean.compute();
-            generate(luaMixBean, template, entry.getKey(), true);
-        }
-    }
-
-    private void pick(LuaMixBean bean, Bean b) {
-        if (b instanceof Message) {
-            bean.getMessages().add((Message) b);
-        } else if (b instanceof Enum) {
-            bean.getEnums().add((Enum) b);
-        } else {
-            bean.getBeans().add(b);
-        }
-    }
-
-    public void generateByNamespace() {
-        Template template = null;
-        try {
-            template = cfg.getTemplate(luaConfig.getLuaProtocolTemplate(), "utf-8");
-        } catch (IOException e) {
-            Assert.error(e);
-        }
-        Map<String, List<Bean>> namespaceMap = new HashMap<>();
-        dispatchByNamespace(namespaceMap, context.getBeans());
-        dispatchByNamespace(namespaceMap, context.getEnums());
-        dispatchByNamespace(namespaceMap, context.getMessages());
-
-        for (Map.Entry<String, List<Bean>> entry : namespaceMap.entrySet()) {
-            File file;
-            if (luaConfig.isAppendNamespace()) {
-                String namespace = LowerCamelCaseNameRule.nameRule(entry.getKey());
-                String name = namespace;
-                int index = StringUtil.indexOf(namespace, ".", 1, true);
-                if (index > -1) {
-                    name = namespace.substring(index + 1);
-                }
-                requireBean.fileNames.add(namespace + "." + name + ".lua");
-                file = new File(luaConfig.getLuaProtocolCodeRootPath(), FileUtil.fullFileEnd(namespace.replace(".", File.separator)) + name + ".lua");
-
-            } else {
-                requireBean.fileNames.add(entry.getKey() + ".lua");
-                file = new File(luaConfig.getLuaProtocolCodeRootPath(), entry.getKey().replace(".", File.separator) + ".lua");
-            }
-            LuaMixBean bean = new LuaMixBean();
-            List<Bean> beans = entry.getValue();
-            for (Bean b : beans) {
-                pick(bean, b);
-            }
-            bean.compute();
-            generate(bean, template, file, true);
-        }
-    }
-
-    private void dispatchByNamespace(Map<String, List<Bean>> namespaceMap, List<? extends Bean> beans) {
-        for (Bean bean : beans) {
-            List<Bean> list = namespaceMap.get(bean.getLua().getNamespace());
-            if (list == null) {
-                list = new ArrayList<>();
-                namespaceMap.put(bean.getLua().getNamespace(), list);
-            }
-            list.add(bean);
-        }
-    }
-
-    private void dispatchByFile(Map<String, List<Bean>> fileMap, List<? extends Bean> beans) {
-        for (Bean bean : beans) {
-            List<Bean> list = fileMap.get(bean.getFilePath());
-            if (list == null) {
-                list = new ArrayList<>();
-                fileMap.put(bean.getFilePath(), list);
-            }
-            list.add(bean);
-        }
-    }
-
-    private void generateRequire() {
-
-        Template template = null;
-        try {
-            template = cfg.getTemplate(luaConfig.getLuaRequireTemplate(), "utf-8");
-        } catch (IOException e) {
-            Assert.error(e);
-        }
-        File file = new File(luaConfig.getLuaProtocolCodeRootPath(), "require.lua");
-
-
-        generate(requireBean,template,file,luaConfig.isLuaRequireOverwrite());
-    }
-
-    private class NameShort implements Comparator<Bean> {
-
+    public static class LuaMixBean extends MixBean {
         @Override
-        public int compare(Bean x, Bean y) {
-            return (x.getLua().getNamespace() + "." + x.getLua().getName())
-                    .compareTo((y.getLua().getNamespace() + "." + y.getLua().getName()));
+        public Language getLanguage(Bean bean) {
+            return bean.getLua();
         }
-    }
-
-    public class LuaMixBean extends TemplateBean {
-        private List<Bean> beans = new ArrayList();
-        private List<Enum> enums = new ArrayList();
-        private List<Message> messages = new ArrayList();
-
-        private int namespaceMaxLen = 0;
-        private int namespaceAndNameMaxLen = 0;
-        private int nameMaxLen = 0;
-        private int messageIdMaxLen = 0;
-        private Set<String> namespaces = new HashSet<>();
-
-        public void merge(LuaMixBean target) {
-            enums.addAll(target.enums);
-            beans.addAll(target.beans);
-            messages.addAll(target.messages);
-        }
-
-        public void compute() {
-            compute(enums);
-            compute(beans);
-            compute(messages);
-            computeMessageId(messages);
-        }
-
-        private void compute(List<? extends Bean> beans) {
-            for (Bean bean : beans) {
-                String namespace = bean.getLua().getNamespace();
-                String name = bean.getLua().getName();
-                String namespaceAndName = namespace + "." + name;
-                int nameLen = name.length();
-                nameMaxLen = nameLen > nameMaxLen ? nameLen : nameMaxLen;
-                int namespaceAndNameLen = namespaceAndName.length();
-                namespaceAndNameMaxLen = namespaceAndNameLen > namespaceAndNameMaxLen ? namespaceAndNameLen : namespaceAndNameMaxLen;
-                if (namespaces.add(bean.getLua().getNamespace())) {
-                    int namespaceLen = namespace.length();
-                    namespaceMaxLen = namespaceLen > namespaceMaxLen ? namespaceLen : namespaceMaxLen;
-                }
-            }
-        }
-
-        private void computeMessageId(List<Message> beans) {
-            for (Message bean : beans) {
-                int len = (bean.getId() + "").length();
-                messageIdMaxLen = len > messageIdMaxLen ? len : messageIdMaxLen;
-            }
-        }
-
-        public List<Bean> getBeans() {
-            return beans;
-        }
-
-        public void setBeans(List<Bean> beans) {
-            this.beans = beans;
-        }
-
-        public List<Enum> getEnums() {
-            return enums;
-        }
-
-        public void setEnums(List<Enum> enums) {
-            this.enums = enums;
-        }
-
-        public List<Message> getMessages() {
-            return messages;
-        }
-
-        public void setMessages(List<Message> messages) {
-            this.messages = messages;
-        }
-
-        public Set<String> getNamespaces() {
-            return namespaces;
-        }
-
-        public void setNamespaces(Set<String> namespaces) {
-            this.namespaces = namespaces;
-        }
-
-        public int getNamespaceAndNameMaxLen() {
-            return namespaceAndNameMaxLen;
-        }
-
-        public void setNamespaceAndNameMaxLen(int namespaceAndNameMaxLen) {
-            this.namespaceAndNameMaxLen = namespaceAndNameMaxLen;
-        }
-
-        public int getNameMaxLen() {
-            return nameMaxLen;
-        }
-
-        public void setNameMaxLen(int nameMaxLen) {
-            this.nameMaxLen = nameMaxLen;
-        }
-
-        public int getNamespaceMaxLen() {
-            return namespaceMaxLen;
-        }
-
-        public void setNamespaceMaxLen(int namespaceMaxLen) {
-            this.namespaceMaxLen = namespaceMaxLen;
-        }
-
-        public int getMessageIdMaxLen() {
-            return messageIdMaxLen;
-        }
-
-        public void setMessageIdMaxLen(int messageIdMaxLen) {
-            this.messageIdMaxLen = messageIdMaxLen;
-        }
-    }
-
-    public class RequireBean extends  TemplateBean {
-
-        List<String> fileNames = new ArrayList<>();
-
-        public List<String> getFileNames() {
-            return fileNames;
-        }
-
-        public void setFileNames(List<String> fileNames) {
-            this.fileNames = fileNames;
-        }
-    }
-
-    public static void main(String[] args) {
-
-        File file = new File("pp/fdf.txt");
-        File file2 = new File("pp/fdf.txt");
-
-        System.out.println(file == file2);
-        System.out.println(file.equals(file2));
     }
 }

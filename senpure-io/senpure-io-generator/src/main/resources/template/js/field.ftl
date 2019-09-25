@@ -62,6 +62,44 @@ ${bean.js.namespace}.${bean.js.name}.prototype.getMessageId = function () {
 };
 </#if>
 
+
+${bean.js.namespace}.${bean.js.name}.prototype.copy = function(from) {
+<#list bean.fields as field>
+    <#if field.list >
+    var i;
+        <#break >
+    </#if>
+</#list>
+<#list bean.fields as field>
+    <#if field.list >
+    this.${field.name} = new Array(0);
+        <#if field.baseField ||field.bean.enum>
+    this.${field.name} =  this.${field.name}.concat(from.get${field.name?cap_first}());
+        <#else >
+    var from${field.name?cap_first}_len = from.get${field.name?cap_first}().length;
+    for (i = 0; i < from${field.name?cap_first}_len; i++) {
+        var ${lowerCamelCase(field.bean.js.name)}${field.name?cap_first} = new ${field.bean.js.namespace}.${field.bean.js.name}();
+        ${lowerCamelCase(field.bean.js.name)}${field.name?cap_first} .copy(from.get${field.name?cap_first}()[i]);
+        this.${field.name}.push(${lowerCamelCase(field.bean.js.name)}${field.name?cap_first} );
+    }
+        </#if>
+    <#else>
+        <#if field.baseField ||field.bean.enum>
+            <#if field.fieldType="boolean">
+    this.${field.name} = from.is${field.name?cap_first}();
+            <#else >
+    this.${field.name} = from.get${field.name?cap_first}();
+            </#if>
+        <#else>
+    var temp${field.name?cap_first} = new ${field.bean.js.namespace}.${field.bean.js.name}();
+    temp${field.name?cap_first}.copy(from.get${field.name?cap_first}());
+    this.${field.name} = temp${field.name?cap_first};
+        </#if>
+    </#if>
+</#list>
+};
+
+
 //${bean.js.namespace}.${bean.js.name}写入字节缓存
 ${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf) {
 <#list bean.fields as field>
@@ -128,12 +166,6 @@ ${bean.js.namespace}.${bean.js.name}.prototype.write = function (buf) {
 
 //${bean.js.namespace}.${bean.js.name}读取字节缓存
 ${bean.js.namespace}.${bean.js.name}.prototype.read = function (buf, endIndex) {
-<#list bean.fields as field>
-    <#if field.list>
-    var i;
-        <#break>
-    </#if>
-</#list>
     while(true){
         var tag = buf.readTag(endIndex);
         switch (tag) {
@@ -168,9 +200,9 @@ ${bean.js.namespace}.${bean.js.name}.prototype.read = function (buf, endIndex) {
                     this.${field.name}.push(${field.bean.js.namespace}.${field.bean.js.name}.checkReadValue(temp${field.name?cap_first}));
                 }
                 <#else >
-                var temp${field.bean.js.namespace}${field.name?cap_first}Bean = new ${field.bean.js.namespace}.${field.bean.js.name}();
-                temp${field.bean.js.namespace}${field.name?cap_first}Bean.read(buf,buf.readVar32()+buf.getReaderIndex());
-                this.${field.name}.push(temp${field.bean.js.namespace}${field.name?cap_first}Bean);
+                var temp${field.bean.js.name}${field.name?cap_first}Bean = new ${field.bean.js.namespace}.${field.bean.js.name}();
+                temp${field.bean.js.name}${field.name?cap_first}Bean.read(buf,buf.readVar32()+buf.getReaderIndex());
+                this.${field.name}.push(temp${field.bean.js.name}${field.name?cap_first}Bean);
             </#if>
         </#if><#--bean-->
     <#else><#--不是list-->
@@ -287,7 +319,7 @@ ${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent) {
         <#break>
     </#if>
 </#list>
-    _indent = _indent == undefined ? "" : _indent;
+    _indent = _indent == null ? "" : _indent;
     var _str = "";
     _str = _str + "${bean.js.name}<#if bean.type != "NA">[${bean.id?c}]</#if>" + "{";
 <#list bean.fields as field>
@@ -378,7 +410,6 @@ ${bean.js.namespace}.${bean.js.name}.prototype.<#if field.fieldType="boolean">is
 };
         <#if field.hasExplain&&field.explain?length gt 1>
 /**
- *
  * set ${field.explain}
  */
         </#if>

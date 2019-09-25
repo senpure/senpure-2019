@@ -1,13 +1,15 @@
 package com.senpure.template;
 
+import com.senpure.base.util.Assert;
 import com.senpure.template.sovereignty.Sovereignty;
 import com.senpure.template.sovereignty.TemplateBean;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 /**
  * Generator
@@ -46,16 +48,8 @@ public class Generator {
             FileOutputStream fos = new FileOutputStream(file);
             template.process(bean, new OutputStreamWriter(fos, "utf-8"));
             fos.close();
-        } catch (FileNotFoundException e) {
-            logger.error("FileNotFoundException", e);
-        } catch (TemplateException e) {
-            logger.error("TemplateException", e);
-        } catch (UnsupportedEncodingException e) {
-            logger.error("UnsupportedEncodingException", e);
-        } catch (IOException e) {
-            logger.error("IOException", e);
         } catch (Exception e) {
-            logger.error("Exception", e);
+            Assert.error(e);
         }
     }
 

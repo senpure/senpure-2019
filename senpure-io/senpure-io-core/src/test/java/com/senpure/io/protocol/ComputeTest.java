@@ -67,7 +67,7 @@ public class ComputeTest {
        computeTest.computeLong();
 
         //System.out.println(Bean.computeVar64Size(4294967296L));
-
+        System.out.println(1L<<53);
         long value = (long) Math.pow(2, 53);
         System.out.println(value);
     }

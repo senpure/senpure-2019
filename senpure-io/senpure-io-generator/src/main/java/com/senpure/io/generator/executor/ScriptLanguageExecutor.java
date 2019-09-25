@@ -1,9 +1,8 @@
 package com.senpure.io.generator.executor;
 
-
 import com.senpure.base.util.Assert;
 import com.senpure.base.util.StringUtil;
-import com.senpure.io.generator.habit.JavaScriptConfig;
+import com.senpure.io.generator.habit.ScriptLanguageConfig;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.*;
 import com.senpure.io.generator.util.LowerCamelCaseNameRule;
@@ -15,66 +14,75 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfig> {
+/**
+ * ScriptLanguageExecutor
+ *
+ * @author senpure
+ * @time 2019-09-25 14:49:32
+ */
+public abstract class ScriptLanguageExecutor<T extends ScriptLanguageConfig> extends AbstractLanguageExecutor<T> {
 
-    public static final String TEMPLATE_DIR = "js";
     protected RequireBean requireBean = new RequireBean();
     protected Configuration cfg;
     protected ExecutorContext context;
-    protected JavaScriptConfig config;
 
-    @Override
-    public String getTemplateDir() {
-        return TEMPLATE_DIR;
-    }
+    public abstract Language getLanguage(Bean bean);
 
-    @Override
-    public void generate(Configuration cfg, ExecutorContext context, JavaScriptConfig config) {
+    public abstract String getProtocolSuffix();
+
+    public abstract MixBean getNewMixBean();
+
+    public void execute(Configuration cfg, ExecutorContext context, ScriptLanguageConfig config) {
         this.cfg = cfg;
         this.context = context;
-        this.config = config;
         requireBean.getFileNames().clear();
         switch (config.getType()) {
-            case JavaScriptConfig.TYPE_MIX:
-                generateByMix();
+            case ScriptLanguageConfig.TYPE_MIX:
+                generateByMix(config);
                 break;
-            case JavaScriptConfig.TYPE_FILE:
-                generateByFile();
+            case ScriptLanguageConfig.TYPE_FILE:
+                generateByFile(config);
                 break;
-            case JavaScriptConfig.TYPE_NAMESPACE:
-                generateByNamespace();
+            case ScriptLanguageConfig.TYPE_NAMESPACE:
+                generateByNamespace(config);
                 break;
             default:
-                generate();
+                generate(config);
                 break;
         }
         if (config.isGenerateRequire() && requireBean.getFileNames().size() > 0) {
-            generateRequire();
+            generateRequire( config);
         }
-
-
     }
 
-    private void generate() {
-        generateByFile();
+
+
+    private void generate(ScriptLanguageConfig config) {
+        generateByFile(config);
     }
 
-    private void generateByMix() {
+    private void generateByMix(ScriptLanguageConfig config) {
         Template template = null;
         try {
             template = cfg.getTemplate(config.getProtocolTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
-        MixBean bean = new JsMixBean();
+        MixBean bean = getNewMixBean();
         bean.setBeans(context.getBeans());
         bean.setEnums(context.getEnums());
         bean.setMessages(context.getMessages());
-        NameShort nameShort = new NameShort();
+        Comparator<Bean> nameShort = (x, y) -> {
+            Language xL = getLanguage(x);
+            Language yL = getLanguage(y);
+            return (xL.getNamespace() + "." + xL.getName()).compareTo(yL.getNamespace() + "." + yL.getName());
+        };
         Collections.sort(bean.getEnums(), nameShort);
         Collections.sort(bean.getBeans(), nameShort);
         Collections.sort(bean.getMessages(), (x, y) -> {
-            int result = x.getJs().getNamespace().compareTo(y.getJs().getNamespace());
+            Language xL = getLanguage(x);
+            Language yL = getLanguage(y);
+            int result = xL.getNamespace().compareTo(yL.getNamespace());
             if (result == 0) {
                 return Integer.compare(x.getId(), y.getId());
             }
@@ -84,20 +92,22 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
 
         File file;
         if (config.isAppendNamespace()) {
-            requireBean.getFileNames().add(config.getMixFileName() + "/" + config.getMixFileName() + ".js");
+            requireBean.getFileNames().add(config.getMixFileName() + "." + config.getMixFileName() + getProtocolSuffix());
             file = new File(config.getProtocolCodeRootPath(), config.getMixFileName() +
-                    File.separator + config.getMixFileName() + ".js");
+                    File.separator + config.getMixFileName() + getProtocolSuffix());
         } else {
-            requireBean.getFileNames().add(config.getMixFileName() + ".js");
-            file = new File(config.getProtocolCodeRootPath(), config.getMixFileName() + ".js");
+            requireBean.getFileNames().add(config.getMixFileName() + getProtocolSuffix());
+            file = new File(config.getProtocolCodeRootPath(), config.getMixFileName() + getProtocolSuffix());
         }
-        generate(bean, template, file, true);
-        if (config.isGenerateDts()) {
-            generateDts(bean, config.getMixFileName());
-        }
+        generateByMix(bean, template, file);
+
     }
 
-    private void generateByFile() {
+    public void generateByMix(MixBean bean, Template template, File file) {
+        generate(bean, template, file, true);
+    }
+
+    private void generateByFile(ScriptLanguageConfig config) {
         Template template = null;
         try {
             template = cfg.getTemplate(config.getProtocolTemplate(), "utf-8");
@@ -119,16 +129,16 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             File file;
             if (config.isAppendNamespace()) {
                 String temp = LowerCamelCaseNameRule.nameRule(beans.get(0).getJs().getNamespace());
-                requireBean.getFileNames().add(temp + "/" + fileName + ".");
+                requireBean.getFileNames().add(temp + "." + fileName + getProtocolSuffix());
                 file = new File(config.getProtocolCodeRootPath(),
                         FileUtil.fullFileEnd(temp
                                 .replace(".", File.separator)) +
-                                fileName + ".");
+                                fileName + getProtocolSuffix());
             } else {
-                requireBean.getFileNames().add(fileName + ".");
-                file = new File(config.getProtocolCodeRootPath(), fileName + ".");
+                requireBean.getFileNames().add(fileName + getProtocolSuffix());
+                file = new File(config.getProtocolCodeRootPath(), fileName + getProtocolSuffix());
             }
-            MixBean bean = new JsMixBean();
+            MixBean bean = getNewMixBean();
 
             for (Bean b : beans) {
                 if (b instanceof Message) {
@@ -147,16 +157,18 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
             }
         }
         for (Map.Entry<File, MixBean> entry : MixBeanMap.entrySet()) {
-            MixBean MixBean = entry.getValue();
-            MixBean.compute();
-            generate(MixBean, template, entry.getKey(), true);
-            if (config.isGenerateDts()) {
-                generateDts(MixBean, config.getMixFileName());
-            }
+            MixBean bean = entry.getValue();
+            bean.compute();
+            generateByFile(bean, template, entry.getKey());
+
         }
     }
 
-    private void generateByNamespace() {
+    public void generateByFile(MixBean bean, Template template, File file) {
+        generate(bean, template, file, true);
+    }
+
+    private void generateByNamespace(ScriptLanguageConfig config) {
         Template template = null;
         try {
             template = cfg.getTemplate(config.getProtocolTemplate(), "utf-8");
@@ -177,71 +189,51 @@ public class JavaScriptExecutor extends AbstractLanguageExecutor<JavaScriptConfi
                 if (index > -1) {
                     name = namespace.substring(index + 1);
                 }
-                requireBean.getFileNames().add(namespace + "/" + name + ".");
-                file = new File(config.getProtocolCodeRootPath(), FileUtil.fullFileEnd(namespace.replace(".", File.separator)) + name + ".");
+                requireBean.getFileNames().add(namespace + "." + name + getProtocolSuffix());
+                file = new File(config.getProtocolCodeRootPath(),
+                        FileUtil.fullFileEnd(namespace.replace(".", File.separator)) + name + getProtocolSuffix());
 
             } else {
-                requireBean.getFileNames().add(entry.getKey() + ".");
-                file = new File(config.getProtocolCodeRootPath(), entry.getKey().replace(".", File.separator) + ".");
+                requireBean.getFileNames().add(entry.getKey() + getProtocolSuffix());
+                file = new File(config.getProtocolCodeRootPath(), entry.getKey().replace(".", File.separator) + getProtocolSuffix());
             }
-            MixBean bean = new JsMixBean();
+            MixBean bean = getNewMixBean();
             List<Bean> beans = entry.getValue();
             for (Bean b : beans) {
                 pick(bean, b);
             }
             bean.compute();
-            generate(bean, template, file, true);
+            generateByNamespace(bean, template, file, entry.getKey());
+
         }
+    }
+
+    public void generateByNamespace(MixBean bean, Template template, File file, String namespace) {
+        generate(bean, template, file, true);
     }
 
     protected void dispatchByNamespace(Map<String, List<Bean>> namespaceMap, List<? extends Bean> beans) {
         for (Bean bean : beans) {
-            List<Bean> list = namespaceMap.get(bean.getJs().getNamespace());
+            Language language = getLanguage(bean);
+            List<Bean> list = namespaceMap.get(language.getNamespace());
             if (list == null) {
                 list = new ArrayList<>();
-                namespaceMap.put(bean.getJs().getNamespace(), list);
+                namespaceMap.put(language.getNamespace(), list);
             }
             list.add(bean);
         }
     }
 
-    private void generateRequire() {
+    public void generateRequire(ScriptLanguageConfig config) {
         Template template = null;
         try {
             template = cfg.getTemplate(config.getRequireTemplate(), "utf-8");
         } catch (IOException e) {
             Assert.error(e);
         }
-        File file = new File(config.getProtocolCodeRootPath(), "require.js");
+        File file = new File(config.getProtocolCodeRootPath(), "require" + getProtocolSuffix());
         generate(requireBean, template, file, config.isRequireOverwrite());
     }
 
-    private void generateDts(MixBean mixBean, String fileName) {
-        Template template = null;
-        try {
-            template = cfg.getTemplate(config.getDtsTemplate(), "utf-8");
-        } catch (IOException e) {
-            Assert.error(e);
-        }
-        File file = new File(config.getDtsCodeRootPath(), fileName + ".d.ts");
-        generate(mixBean, template, file, config.isRequireOverwrite());
-    }
 
-    private class NameShort implements Comparator<Bean> {
-
-        @Override
-        public int compare(Bean x, Bean y) {
-            return (x.getJs().getNamespace() + "." + x.getJs().getName())
-                    .compareTo((y.getJs().getNamespace() + "." + y.getJs().getName()));
-        }
-    }
-
-    public static class JsMixBean extends MixBean {
-
-
-        @Override
-        public Language getLanguage(Bean bean) {
-            return bean.getJs();
-        }
-    }
 }

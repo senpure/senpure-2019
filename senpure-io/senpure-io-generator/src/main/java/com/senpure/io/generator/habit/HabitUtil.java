@@ -82,22 +82,22 @@ public class HabitUtil {
         projectConfig.setProtocolDirectoryChooserPath(AppEvn.getClassRootPath());
         projectConfig.setProjectName("myProject");
         JavaConfig javaConfig = projectConfig.getJavaConfig();
-        javaConfig.setJavaEventHandlerCodeRootPath(AppEvn.getClassRootPath());
-        javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
-        javaConfig.setJavaProtocolCodeRootPath(AppEvn.getClassRootPath());
-        javaConfig.setJavaProtocolCodeRootChooserPath(new File(javaConfig.getJavaProtocolCodeRootPath()).getParent());
+        javaConfig.setEventHandlerCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setEventHandlerCodeRootChooserPath(new File(javaConfig.getEventHandlerCodeRootPath()).getParent());
+        javaConfig.setProtocolCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setProtocolCodeRootChooserPath(new File(javaConfig.getProtocolCodeRootPath()).getParent());
 
-        javaConfig.setJavaCSMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
-        javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
+        javaConfig.setCsMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setCsMessageHandlerCodeRootChooserPath(new File(javaConfig.getCsMessageHandlerCodeRootPath()).getParent());
 
-        javaConfig.setJavaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
-        javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).getParent());
+        javaConfig.setScMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        javaConfig.setScMessageHandlerCodeRootChooserPath(new File(javaConfig.getScMessageHandlerCodeRootPath()).getParent());
 
         LuaConfig luaConfig = projectConfig.getLuaConfig();
-        luaConfig.setLuaProtocolCodeRootPath(AppEvn.getClassRootPath());
-        luaConfig.setLuaProtocolCodeRootChooserPath(new File(luaConfig.getLuaProtocolCodeRootPath()).getParent());
-        luaConfig.setLuaSCMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
-        luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(new File(luaConfig.getLuaProtocolCodeRootPath()).getParent());
+        luaConfig.setProtocolCodeRootPath(AppEvn.getClassRootPath());
+        luaConfig.setProtocolCodeRootChooserPath(new File(luaConfig.getProtocolCodeRootPath()).getParent());
+        luaConfig.setScMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        luaConfig.setScMessageHandlerCodeRootChooserPath(new File(luaConfig.getProtocolCodeRootPath()).getParent());
     }
 
     public static void checkConfig(ProjectConfig projectConfig) {
@@ -108,26 +108,26 @@ public class HabitUtil {
             projectConfig.setProtocolDirectoryChooserPath(AppEvn.getClassRootPath());
         }
         JavaConfig javaConfig = projectConfig.getJavaConfig();
-        if (!new File(javaConfig.getJavaEventHandlerCodeRootPath()).exists()) {
-            javaConfig.setJavaEventHandlerCodeRootChooserPath(new File(javaConfig.getJavaEventHandlerCodeRootPath()).getParent());
+        if (!new File(javaConfig.getEventHandlerCodeRootPath()).exists()) {
+            javaConfig.setEventHandlerCodeRootChooserPath(new File(javaConfig.getEventHandlerCodeRootPath()).getParent());
         }
-        if (!new File(javaConfig.getJavaProtocolCodeRootPath()).exists()) {
-            javaConfig.setJavaProtocolCodeRootChooserPath(new File(javaConfig.getJavaProtocolCodeRootPath()).getParent());
+        if (!new File(javaConfig.getProtocolCodeRootPath()).exists()) {
+            javaConfig.setProtocolCodeRootChooserPath(new File(javaConfig.getProtocolCodeRootPath()).getParent());
         }
-        if (!new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).exists()) {
-            javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaCSMessageHandlerCodeRootPath()).getParent());
+        if (!new File(javaConfig.getCsMessageHandlerCodeRootPath()).exists()) {
+            javaConfig.setCsMessageHandlerCodeRootChooserPath(new File(javaConfig.getCsMessageHandlerCodeRootPath()).getParent());
         }
-        if (!new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).exists()) {
-            javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(new File(javaConfig.getJavaSCMessageHandlerCodeRootPath()).getParent());
+        if (!new File(javaConfig.getScMessageHandlerCodeRootPath()).exists()) {
+            javaConfig.setScMessageHandlerCodeRootChooserPath(new File(javaConfig.getScMessageHandlerCodeRootPath()).getParent());
         }
 
 
         LuaConfig luaConfig = projectConfig.getLuaConfig();
-        if (!new File(luaConfig.getLuaProtocolCodeRootPath()).exists()) {
-            luaConfig.setLuaProtocolCodeRootChooserPath(new File(luaConfig.getLuaProtocolCodeRootPath()).getParent());
+        if (!new File(luaConfig.getProtocolCodeRootPath()).exists()) {
+            luaConfig.setProtocolCodeRootChooserPath(new File(luaConfig.getProtocolCodeRootPath()).getParent());
         }
-        if (!new File(luaConfig.getLuaSCMessageHandlerCodeRootPath()).exists()) {
-            luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(new File(luaConfig.getLuaSCMessageHandlerCodeRootPath()).getParent());
+        if (!new File(luaConfig.getScMessageHandlerCodeRootPath()).exists()) {
+            luaConfig.setScMessageHandlerCodeRootChooserPath(new File(luaConfig.getScMessageHandlerCodeRootPath()).getParent());
         }
         //其他的 如模板路径 不用检查了
     }

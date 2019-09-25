@@ -250,13 +250,13 @@ public class MainController implements Initializable {
     }
 
     private void initTextFieldValue() {
-        textFieldJavaProtocolCodeRootPath.setText(javaConfig.getJavaProtocolCodeRootPath());
-        textFieldJavaEventHandlerCodeRootPath.setText(javaConfig.getJavaEventHandlerCodeRootPath());
-        textFieldJavaCSMessageHandlerCodeRootPath.setText(javaConfig.getJavaCSMessageHandlerCodeRootPath());
-        textFieldJavaSCMessageHandlerCodeRootPath.setText(javaConfig.getJavaSCMessageHandlerCodeRootPath());
+        textFieldJavaProtocolCodeRootPath.setText(javaConfig.getProtocolCodeRootPath());
+        textFieldJavaEventHandlerCodeRootPath.setText(javaConfig.getEventHandlerCodeRootPath());
+        textFieldJavaCSMessageHandlerCodeRootPath.setText(javaConfig.getCsMessageHandlerCodeRootPath());
+        textFieldJavaSCMessageHandlerCodeRootPath.setText(javaConfig.getScMessageHandlerCodeRootPath());
 
-        textFieldLuaProtocolCodeRootPath.setText(luaConfig.getLuaProtocolCodeRootPath());
-        textFieldLuaSCMessageHandlerCodeRootPath.setText(luaConfig.getLuaSCMessageHandlerCodeRootPath());
+        textFieldLuaProtocolCodeRootPath.setText(luaConfig.getProtocolCodeRootPath());
+        textFieldLuaSCMessageHandlerCodeRootPath.setText(luaConfig.getScMessageHandlerCodeRootPath());
 
     }
 
@@ -289,37 +289,37 @@ public class MainController implements Initializable {
             // logger.info("{} = {}",file.getName(),file.getName().toLowerCase().endsWith("eventHandler.ftl".toLowerCase()));
             if (file.getName().toLowerCase().endsWith("eventHandler.ftl".toLowerCase())) {
                 choiceJavaEventHandler.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaEventHandlerTemplate())) {
+                if (file.getName().equals(javaConfig.getEventHandlerTemplate())) {
                     choiceJavaEventHandler.getSelectionModel().select(file);
                 }
             } else if (file.getName().toLowerCase().endsWith("handler.ftl")) {
                 choiceJavaCSMessageHandler.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaCSMessageHandlerTemplate())) {
+                if (file.getName().equals(javaConfig.getCsMessageHandlerTemplate())) {
                     choiceJavaCSMessageHandler.getSelectionModel().select(file);
                 }
                 choiceJavaSCMessageHandler.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaSCMessageHandlerTemplate())) {
+                if (file.getName().equals(javaConfig.getScMessageHandlerTemplate())) {
                     choiceJavaSCMessageHandler.getSelectionModel().select(file);
                 }
             } else if (file.getName().toLowerCase().endsWith("bean.ftl")) {
                 choiceJavaBean.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaBeanTemplate())) {
+                if (file.getName().equals(javaConfig.getBeanTemplate())) {
                     choiceJavaBean.getSelectionModel().select(file);
                 }
             } else if (file.getName().toLowerCase().endsWith("message.ftl")) {
                 choiceJavaMessage.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaMessageTemplate())) {
+                if (file.getName().equals(javaConfig.getMessageTemplate())) {
                     choiceJavaMessage.getSelectionModel().select(file);
                 }
             } else if (file.getName().toLowerCase().endsWith("event.ftl")) {
                 choiceJavaEvent.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaEventTemplate())) {
+                if (file.getName().equals(javaConfig.getEventTemplate())) {
                     choiceJavaEvent.getSelectionModel().select(file);
                 }
 
             } else if (file.getName().toLowerCase().endsWith("enum.ftl")) {
                 choiceJavaEnum.getItems().add(file);
-                if (file.getName().equals(javaConfig.getJavaEnumTemplate())) {
+                if (file.getName().equals(javaConfig.getEnumTemplate())) {
                     choiceJavaEnum.getSelectionModel().select(file);
                 }
             }
@@ -333,13 +333,13 @@ public class MainController implements Initializable {
         choiceJavaEvent.setConverter(fileConverter);
         choiceJavaEventHandler.setConverter(fileConverter);
 
-        checkJavaEnum.setSelected(javaConfig.isGenerateJavaEnum());
-        checkJavaBean.setSelected(javaConfig.isGenerateJavaBean());
-        checkJavaMessage.setSelected(javaConfig.isGenerateJavaMessage());
-        checkJavaEvent.setSelected(javaConfig.isGenerateJavaEvent());
-        checkJavaCSMessageHandler.setSelected(javaConfig.isGenerateJavaCSMessageHandler());
-        checkJavaSCMessageHandler.setSelected(javaConfig.isGenerateJavaSCMessageHandler());
-        checkJavaEventHandler.setSelected(javaConfig.isGenerateJavaEventHandler());
+        checkJavaEnum.setSelected(javaConfig.isGenerateEnum());
+        checkJavaBean.setSelected(javaConfig.isGenerateBean());
+        checkJavaMessage.setSelected(javaConfig.isGenerateMessage());
+        checkJavaEvent.setSelected(javaConfig.isGenerateEvent());
+        checkJavaCSMessageHandler.setSelected(javaConfig.isGenerateCSMessageHandler());
+        checkJavaSCMessageHandler.setSelected(javaConfig.isGenerateSCMessageHandler());
+        checkJavaEventHandler.setSelected(javaConfig.isGenerateEventHandler());
 
         //覆盖操作不读取
         // checkJavaCSMessageHandlerOverwrite.setSelected(javaConfig.isJavaCSMessageHandlerOverwrite());
@@ -353,17 +353,17 @@ public class MainController implements Initializable {
         for (File file : files) {
             if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
                 choiceLuaSCMessageHandler.getItems().add(file);
-                if (file.getName().equals(luaConfig.getLuaSCMessageHandlerTemplate())) {
+                if (file.getName().equals(luaConfig.getScMessageHandlerTemplate())) {
                     choiceLuaSCMessageHandler.getSelectionModel().select(file);
                 }
             } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
                 choiceLuaRequire.getItems().add(file);
-                if (file.getName().equals(luaConfig.getLuaRequireTemplate())) {
+                if (file.getName().equals(luaConfig.getRequireTemplate())) {
                     choiceLuaRequire.getSelectionModel().select(file);
                 }
             } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
                 choiceLuaProtocol.getItems().add(file);
-                if (file.getName().equals(luaConfig.getLuaProtocolTemplate())) {
+                if (file.getName().equals(luaConfig.getProtocolTemplate())) {
                     choiceLuaProtocol.getSelectionModel().select(file);
                 }
             }
@@ -371,10 +371,10 @@ public class MainController implements Initializable {
 
         checkLuaAppendNamespace.setSelected(luaConfig.isAppendNamespace());
 
-        choiceLuaType.getItems().add(LuaConfig.TYPE_MIX);
-        choiceLuaType.getItems().add(LuaConfig.TYPE_FILE);
-        choiceLuaType.getItems().add(LuaConfig.TYPE_NAMESPACE);
-        choiceLuaType.getSelectionModel().select(luaConfig.type);
+        choiceLuaType.getItems().add(LuaConfigOld.TYPE_MIX);
+        choiceLuaType.getItems().add(LuaConfigOld.TYPE_FILE);
+        choiceLuaType.getItems().add(LuaConfigOld.TYPE_NAMESPACE);
+        choiceLuaType.getSelectionModel().select(luaConfig.getType());
 
         FileConverter fileConverter = new FileConverter();
         choiceLuaSCMessageHandler.setConverter(fileConverter);
@@ -382,9 +382,9 @@ public class MainController implements Initializable {
         choiceLuaProtocol.setConverter(fileConverter);
 
 
-        checkLuaProtocol.setSelected(luaConfig.isGenerateLuaProtocol());
-        checkLuaRequire.setSelected(luaConfig.isGenerateLuaRequire());
-        checkLuaSCMessageHandler.setSelected(luaConfig.isGenerateLuaSCMessageHandler());
+        checkLuaProtocol.setSelected(luaConfig.isGenerateProtocol());
+        checkLuaRequire.setSelected(luaConfig.isGenerateRequire());
+        checkLuaSCMessageHandler.setSelected(luaConfig.isGenerateSCMessageHandler());
 
 
     }
@@ -648,57 +648,57 @@ public class MainController implements Initializable {
     }
 
     public void choiceJavaProtocolCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaProtocolCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(javaConfig.getProtocolCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setJavaProtocolCodeRootChooserPath(file.getParent());
+            javaConfig.setProtocolCodeRootChooserPath(file.getParent());
             textFieldJavaProtocolCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
     public void choiceJavaCSMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaCSMessageHandlerCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(javaConfig.getCsMessageHandlerCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(file.getParent());
+            javaConfig.setCsMessageHandlerCodeRootChooserPath(file.getParent());
             textFieldJavaCSMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
     public void choiceJavaSCMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaSCMessageHandlerCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(javaConfig.getScMessageHandlerCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(file.getParent());
+            javaConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
             textFieldJavaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
     public void choiceJavaEventHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getJavaEventHandlerCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(javaConfig.getEventHandlerCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setJavaEventHandlerCodeRootChooserPath(file.getParent());
+            javaConfig.setEventHandlerCodeRootChooserPath(file.getParent());
             textFieldJavaEventHandlerCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
 
     public void choiceLuaProtocolCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(luaConfig.getLuaProtocolCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(luaConfig.getProtocolCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-           luaConfig.setLuaProtocolCodeRootChooserPath(file.getParent());
+           luaConfig.setProtocolCodeRootChooserPath(file.getParent());
             textFieldLuaProtocolCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
 
     public void choiceLuaSCMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(luaConfig.getLuaSCMessageHandlerCodeRootChooserPath()));
+        directoryChooser.setInitialDirectory(new File(luaConfig.getScMessageHandlerCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(file.getParent());
+            luaConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
             textFieldLuaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
         }
     }
@@ -889,20 +889,20 @@ public class MainController implements Initializable {
 
         JavaConfig javaConfig = config.getJavaConfig();
         File codeFile = new File(file, "src/main/java");
-        javaConfig.setJavaProtocolCodeRootPath(codeFile.getAbsolutePath());
-        javaConfig.setJavaProtocolCodeRootChooserPath(file.getAbsolutePath());
-        javaConfig.setJavaCSMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
-        javaConfig.setJavaCSMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
-        javaConfig.setJavaSCMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
-        javaConfig.setJavaSCMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
-        javaConfig.setJavaEventHandlerCodeRootPath(codeFile.getAbsolutePath());
-        javaConfig.setJavaEventHandlerCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setProtocolCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setProtocolCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setCsMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setCsMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setScMessageHandlerCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setScMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
+        javaConfig.setEventHandlerCodeRootPath(codeFile.getAbsolutePath());
+        javaConfig.setEventHandlerCodeRootChooserPath(file.getAbsolutePath());
 
         LuaConfig luaConfig = config.getLuaConfig();
-        luaConfig.setLuaProtocolCodeRootPath(file.getAbsolutePath());
-        luaConfig.setLuaProtocolCodeRootPath(file.getAbsolutePath());
-        luaConfig.setLuaSCMessageHandlerCodeRootPath(file.getAbsolutePath());
-        luaConfig.setLuaSCMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
+        luaConfig.setProtocolCodeRootPath(file.getAbsolutePath());
+        luaConfig.setProtocolCodeRootPath(file.getAbsolutePath());
+        luaConfig.setScMessageHandlerCodeRootPath(file.getAbsolutePath());
+        luaConfig.setScMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
     }
 
     public void clearLog() {
@@ -1040,7 +1040,7 @@ public class MainController implements Initializable {
             return;
         }
         luaConfigValue(luaConfig);
-        executorContext.setLuaConfig(luaConfig);
+        executorContext.addLanguageConfig(luaConfig);
         Executor executor = new Executor(executorContext);
         generateCode(executor);
     }
@@ -1107,30 +1107,30 @@ public class MainController implements Initializable {
     }
 
     private void javaConfigValue(JavaConfig javaConfig) {
-        javaConfig.setJavaEventHandlerCodeRootPath(textFieldJavaEventHandlerCodeRootPath.getText());
-        javaConfig.setJavaProtocolCodeRootPath(textFieldJavaProtocolCodeRootPath.getText());
-        javaConfig.setJavaCSMessageHandlerCodeRootPath(textFieldJavaCSMessageHandlerCodeRootPath.getText());
-        javaConfig.setJavaSCMessageHandlerCodeRootPath(textFieldJavaSCMessageHandlerCodeRootPath.getText());
+        javaConfig.setEventHandlerCodeRootPath(textFieldJavaEventHandlerCodeRootPath.getText());
+        javaConfig.setProtocolCodeRootPath(textFieldJavaProtocolCodeRootPath.getText());
+        javaConfig.setCsMessageHandlerCodeRootPath(textFieldJavaCSMessageHandlerCodeRootPath.getText());
+        javaConfig.setScMessageHandlerCodeRootPath(textFieldJavaSCMessageHandlerCodeRootPath.getText());
 
-        javaConfig.setJavaEnumTemplate(choiceJavaEnum.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaBeanTemplate(choiceJavaBean.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaMessageTemplate(choiceJavaMessage.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaEventTemplate(choiceJavaEvent.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaCSMessageHandlerTemplate(choiceJavaCSMessageHandler.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaSCMessageHandlerTemplate(choiceJavaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
-        javaConfig.setJavaEventHandlerTemplate(choiceJavaEventHandler.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setEnumTemplate(choiceJavaEnum.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setBeanTemplate(choiceJavaBean.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setMessageTemplate(choiceJavaMessage.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setEventTemplate(choiceJavaEvent.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setCsMessageHandlerTemplate(choiceJavaCSMessageHandler.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setScMessageHandlerTemplate(choiceJavaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
+        javaConfig.setEventHandlerTemplate(choiceJavaEventHandler.getSelectionModel().getSelectedItem().getName());
 
-        javaConfig.setJavaEventHandlerOverwrite(checkJavaEventHandlerOverwrite.isSelected());
-        javaConfig.setJavaCSMessageHandlerOverwrite(checkJavaCSMessageHandlerOverwrite.isSelected());
-        javaConfig.setJavaSCMessageHandlerOverwrite(checkJavaSCMessageHandlerOverwrite.isSelected());
+        javaConfig.setEventHandlerOverwrite(checkJavaEventHandlerOverwrite.isSelected());
+        javaConfig.setCsMessageHandlerOverwrite(checkJavaCSMessageHandlerOverwrite.isSelected());
+        javaConfig.setScMessageHandlerOverwrite(checkJavaSCMessageHandlerOverwrite.isSelected());
 
-        javaConfig.setGenerateJavaBean(checkJavaBean.isSelected());
-        javaConfig.setGenerateJavaEnum(checkJavaEnum.isSelected());
-        javaConfig.setGenerateJavaEvent(checkJavaEvent.isSelected());
-        javaConfig.setGenerateJavaMessage(checkJavaMessage.isSelected());
-        javaConfig.setGenerateJavaEventHandler(checkJavaEventHandler.isSelected());
-        javaConfig.setGenerateJavaCSMessageHandler(checkJavaCSMessageHandler.isSelected());
-        javaConfig.setGenerateJavaSCMessageHandler(checkJavaSCMessageHandler.isSelected());
+        javaConfig.setGenerateBean(checkJavaBean.isSelected());
+        javaConfig.setGenerateEnum(checkJavaEnum.isSelected());
+        javaConfig.setGenerateEvent(checkJavaEvent.isSelected());
+        javaConfig.setGenerateMessage(checkJavaMessage.isSelected());
+        javaConfig.setGenerateEventHandler(checkJavaEventHandler.isSelected());
+        javaConfig.setGenerateCSMessageHandler(checkJavaCSMessageHandler.isSelected());
+        javaConfig.setGenerateSCMessageHandler(checkJavaSCMessageHandler.isSelected());
     }
 
     private void luaConfigValue(LuaConfig luaConfig) {
@@ -1139,18 +1139,18 @@ public class MainController implements Initializable {
 
         luaConfig.setAppendNamespace(checkLuaAppendNamespace.isSelected());
 
-        luaConfig.setLuaProtocolCodeRootPath(textFieldLuaProtocolCodeRootPath.getText());
-        luaConfig.setLuaSCMessageHandlerCodeRootPath(textFieldLuaSCMessageHandlerCodeRootPath.getText());
+        luaConfig.setProtocolCodeRootPath(textFieldLuaProtocolCodeRootPath.getText());
+        luaConfig.setScMessageHandlerCodeRootPath(textFieldLuaSCMessageHandlerCodeRootPath.getText());
 
-        luaConfig.setLuaProtocolTemplate(choiceLuaProtocol.getSelectionModel().getSelectedItem().getName());
-        luaConfig.setLuaSCMessageHandlerTemplate(choiceLuaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
-        luaConfig.setLuaRequireTemplate(choiceLuaRequire.getSelectionModel().getSelectedItem().getName());
+        luaConfig.setProtocolTemplate(choiceLuaProtocol.getSelectionModel().getSelectedItem().getName());
+        luaConfig.setScMessageHandlerTemplate(choiceLuaSCMessageHandler.getSelectionModel().getSelectedItem().getName());
+        luaConfig.setRequireTemplate(choiceLuaRequire.getSelectionModel().getSelectedItem().getName());
 
-        luaConfig.setGenerateLuaProtocol(checkLuaProtocol.isSelected());
-        luaConfig.setGenerateLuaSCMessageHandler(checkLuaSCMessageHandler.isSelected());
-        luaConfig.setGenerateLuaRequire(checkLuaSCMessageHandler.isSelected());
+        luaConfig.setGenerateProtocol(checkLuaProtocol.isSelected());
+        luaConfig.setGenerateSCMessageHandler(checkLuaSCMessageHandler.isSelected());
+        luaConfig.setGenerateRequire(checkLuaSCMessageHandler.isSelected());
 
-        luaConfig.setLuaCSMessageHandlerOverwrite(checkLuaSCMessageHandlerOverwrite.isSelected());
-        luaConfig.setLuaRequireOverwrite(checkLuaRequireOverwrite.isSelected());
+        luaConfig.setScMessageHandlerOverwrite(checkLuaSCMessageHandlerOverwrite.isSelected());
+        luaConfig.setRequireOverwrite(checkLuaRequireOverwrite.isSelected());
     }
 }
