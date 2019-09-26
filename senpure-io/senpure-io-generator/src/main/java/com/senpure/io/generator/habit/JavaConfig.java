@@ -1,5 +1,6 @@
 package com.senpure.io.generator.habit;
 
+import com.senpure.io.generator.executor.JavaExecutor;
 import com.senpure.io.generator.executor.LanguageExecutor;
 
 /**
@@ -12,6 +13,6 @@ public class JavaConfig  extends AbstractLanguageConfig{
 
     @Override
     public LanguageExecutor languageExecutor() {
-        return null;
+        return new JavaExecutor();
     }
 }

@@ -371,9 +371,9 @@ public class MainController implements Initializable {
 
         checkLuaAppendNamespace.setSelected(luaConfig.isAppendNamespace());
 
-        choiceLuaType.getItems().add(LuaConfigOld.TYPE_MIX);
-        choiceLuaType.getItems().add(LuaConfigOld.TYPE_FILE);
-        choiceLuaType.getItems().add(LuaConfigOld.TYPE_NAMESPACE);
+        choiceLuaType.getItems().add(LuaConfig.TYPE_MIX);
+        choiceLuaType.getItems().add(LuaConfig.TYPE_FILE);
+        choiceLuaType.getItems().add(LuaConfig.TYPE_NAMESPACE);
         choiceLuaType.getSelectionModel().select(luaConfig.getType());
 
         FileConverter fileConverter = new FileConverter();
@@ -1029,7 +1029,7 @@ public class MainController implements Initializable {
             return;
         }
         javaConfigValue(javaConfig);
-        executorContext.setJavaConfig(javaConfig);
+        executorContext.addLanguageConfig(javaConfig);
         Executor executor = new Executor(executorContext);
         generateCode(executor);
     }

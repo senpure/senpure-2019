@@ -1,5 +1,9 @@
 package com.senpure.io.generator.habit;
 
+import com.senpure.base.AppEvn;
+
+import java.io.File;
+
 /**
  * AbstractLanguageConfig
  *
@@ -32,6 +36,52 @@ public abstract class AbstractLanguageConfig implements LanguageConfig {
     private boolean csMessageHandlerOverwrite = false;
     private boolean scMessageHandlerOverwrite = false;
     private boolean eventHandlerOverwrite = false;
+
+
+    @Override
+    public boolean hasExtraOverwrite() {
+        if (csMessageHandlerOverwrite | scMessageHandlerOverwrite | eventHandlerOverwrite) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void notAllowExtraOverwrite() {
+        csMessageHandlerOverwrite = false;
+        scMessageHandlerOverwrite = false;
+        eventHandlerOverwrite = false;
+    }
+
+    @Override
+    public void initValue() {
+        setEventHandlerCodeRootPath(AppEvn.getClassRootPath());
+        setEventHandlerCodeRootChooserPath(new File(getEventHandlerCodeRootPath()).getParent());
+        setProtocolCodeRootPath(AppEvn.getClassRootPath());
+        setProtocolCodeRootChooserPath(new File(getProtocolCodeRootPath()).getParent());
+        setCsMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        setCsMessageHandlerCodeRootChooserPath(new File(getCsMessageHandlerCodeRootPath()).getParent());
+        setScMessageHandlerCodeRootPath(AppEvn.getClassRootPath());
+        setScMessageHandlerCodeRootChooserPath(new File(getScMessageHandlerCodeRootPath()).getParent());
+    }
+
+    @Override
+    public void checkSelf() {
+       
+        if (!new File(getEventHandlerCodeRootPath()).exists()) {
+            setEventHandlerCodeRootChooserPath(new File(getEventHandlerCodeRootPath()).getParent());
+        }
+        if (!new File(getProtocolCodeRootPath()).exists()) {
+            setProtocolCodeRootChooserPath(new File(getProtocolCodeRootPath()).getParent());
+        }
+        if (!new File(getCsMessageHandlerCodeRootPath()).exists()) {
+            setCsMessageHandlerCodeRootChooserPath(new File(getCsMessageHandlerCodeRootPath()).getParent());
+        }
+        if (!new File(getScMessageHandlerCodeRootPath()).exists()) {
+            setScMessageHandlerCodeRootChooserPath(new File(getScMessageHandlerCodeRootPath()).getParent());
+        }
+
+    }
 
     public String getProtocolCodeRootPath() {
         return protocolCodeRootPath;

@@ -20,6 +20,9 @@ public class ProjectConfig {
     private int tabPaneConfigIndex=0;
     private JavaConfig javaConfig = new JavaConfig();
     private LuaConfig luaConfig = new LuaConfig();
+    private JavaScriptConfig jsConfig = new JavaScriptConfig();
+
+
     public String getProjectName() {
         return projectName;
     }
@@ -76,5 +79,13 @@ public class ProjectConfig {
 
     public void setLuaConfig(LuaConfig luaConfig) {
         this.luaConfig = luaConfig;
+    }
+
+    public JavaScriptConfig getJsConfig() {
+        return jsConfig;
+    }
+
+    public void setJsConfig(JavaScriptConfig jsConfig) {
+        this.jsConfig = jsConfig;
     }
 }

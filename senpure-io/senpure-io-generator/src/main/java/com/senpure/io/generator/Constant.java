@@ -15,29 +15,24 @@ public class Constant {
     public final static String ENTITY_TYPE_ENUM = "EM";
 
 
-    public static String JAVA_PACK_BEAN = "bean";
-    public static String JAVA_PACK_ENUM = "bean";
-    public static String JAVA_PACK_MESSAGE = "message";
-    public static String JAVA_PACK_HANDLER = "message.handler";
-    public static String JAVA_PACK_EVENT= "event";
-    public static String JAVA_PACK_EVENT_HANDLER= "event.handler";
-
-    public static String LUA_NAMESPACE_PREFIX = "Net_";
-    public static String LUA_NAMESPACE_BEAN_SUFFIX = "_Bean_";
-    public static String LUA_NAMESPACE_CS_SUFFIX = "_Req_";
-    public static String LUA_NAMESPACE_SC_SUFFIX = "_Res_";
-
-    public static String LUA_IMPL_SC_PREFIX = "Res_";
+    public final static String JAVA_PACK_BEAN = "bean";
+    public final static String JAVA_PACK_ENUM = "bean";
+    public final static String JAVA_PACK_MESSAGE = "message";
+    public final static String JAVA_PACK_HANDLER = "message.handler";
+    public final static String JAVA_PACK_EVENT = "event";
+    public final static String JAVA_PACK_EVENT_HANDLER = "event.handler";
 
 
 
-    public static String JAVA_BEAN_TEMPLATE = "bean.ftl";
-    public static String jAVA_MESSAGE_TEMPLATE = "message.ftl";
-    public static String JAVA_MESSAGE_HANDLER_TEMPLATE = "messageHandler.ftl";
+    public final static String JAVA_BEAN_TEMPLATE = "bean.ftl";
+    public final static String jAVA_MESSAGE_TEMPLATE = "message.ftl";
+    public final static String JAVA_MESSAGE_HANDLER_TEMPLATE = "messageHandler.ftl";
 
 
-    public static String JAVA_EVENT_TEMPLATE = "event.ftl";
-    public static String JAVA_ENUM_TEMPLATE = "enum.ftl";
-    public static String JAVA_EVENT_HANDLER_TEMPLATE = "eventHandler.ftl";
+    public final static String JAVA_EVENT_TEMPLATE = "event.ftl";
+    public final static String JAVA_ENUM_TEMPLATE = "enum.ftl";
+    public final static String JAVA_EVENT_HANDLER_TEMPLATE = "eventHandler.ftl";
+
+    public final static String PROTOCOL_FILE_SUFFIX = ".io";
 
 }

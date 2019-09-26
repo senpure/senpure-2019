@@ -26,13 +26,7 @@ public class ExecutorContext {
 
     private List<LanguageConfig> languageConfigs = new ArrayList<>();
 
-    private String javaTemplateDir = "java";
-    private String luaTemplateDir = "lua";
-    private String jsTemplateDir = "js";
-    private JavaConfig javaConfig;
 
-
-    private JavaScriptConfig jsConfig;
 
     public void addLanguageConfig(LanguageConfig languageConfig) {
         languageConfigs.add(languageConfig);
@@ -103,21 +97,7 @@ public class ExecutorContext {
     }
 
 
-    public String getJavaTemplateDir() {
-        return javaTemplateDir;
-    }
 
-    public void setJavaTemplateDir(String javaTemplateDir) {
-        this.javaTemplateDir = javaTemplateDir;
-    }
-
-    public JavaConfig getJavaConfig() {
-        return javaConfig;
-    }
-
-    public void setJavaConfig(JavaConfig javaConfig) {
-        this.javaConfig = javaConfig;
-    }
 
     public String getProjectName() {
         return projectName;
@@ -127,31 +107,11 @@ public class ExecutorContext {
         this.projectName = projectName;
     }
 
-    public String getLuaTemplateDir() {
-        return luaTemplateDir;
-    }
-
-    public void setLuaTemplateDir(String luaTemplateDir) {
-        this.luaTemplateDir = luaTemplateDir;
-    }
 
 
 
-    public JavaScriptConfig getJsConfig() {
-        return jsConfig;
-    }
 
-    public void setJsConfig(JavaScriptConfig jsConfig) {
-        this.jsConfig = jsConfig;
-    }
 
-    public String getJsTemplateDir() {
-        return jsTemplateDir;
-    }
-
-    public void setJsTemplateDir(String jsTemplateDir) {
-        this.jsTemplateDir = jsTemplateDir;
-    }
 
     public List<LanguageConfig> getLanguageConfigs() {
         return languageConfigs;

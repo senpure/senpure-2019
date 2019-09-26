@@ -12,4 +12,11 @@ public interface LanguageConfig {
 
     LanguageExecutor languageExecutor();
 
+    boolean hasExtraOverwrite();
+
+    void notAllowExtraOverwrite();
+
+    void initValue();
+
+    void checkSelf();
 }

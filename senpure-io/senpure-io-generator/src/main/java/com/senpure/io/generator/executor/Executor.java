@@ -5,7 +5,6 @@ import com.senpure.base.util.Assert;
 import com.senpure.io.generator.habit.JavaScriptConfig;
 import com.senpure.io.generator.habit.LanguageConfig;
 import com.senpure.io.generator.habit.LuaConfig;
-import com.senpure.io.generator.habit.LuaConfigOld;
 import com.senpure.io.generator.model.Bean;
 import com.senpure.io.generator.model.Enum;
 import com.senpure.io.generator.model.Event;
@@ -128,10 +127,7 @@ public class Executor {
 
        String path = FileUtil.file("../../src/test/java").getAbsolutePath();
         path="E:\\Projects\\senpure-io-js-support\\senpure";
-        LuaConfigOld luaConfigOld = new LuaConfigOld();
-        luaConfigOld.setAppendNamespace(true);
-        luaConfigOld.setType(LuaConfigOld.TYPE_FILE);
-        luaConfigOld.setLuaProtocolCodeRootPath(path);
+
        // context.setLuaConfig(luaConfig);
         JavaScriptConfig javaScriptConfig = new JavaScriptConfig();
         javaScriptConfig.setProtocolCodeRootPath(path);
