@@ -176,6 +176,48 @@ public class MainController implements Initializable {
     private CheckBox checkLuaAppendNamespace;
     //lua--↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+
+    //js--↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    @FXML
+    private TextField textFieldJsProtocolCodeRootPath;
+
+    @FXML
+    private TextField textFieldJsSCMessageHandlerCodeRootPath;
+
+    @FXML
+    private TextField textFieldJsDtsCodeRootPath;
+
+
+    @FXML
+    private ChoiceBox<File> choiceJsSCMessageHandler;
+    @FXML
+    private ChoiceBox<String> choiceJsType;
+    @FXML
+    private ChoiceBox<File> choiceJsRequire;
+    @FXML
+    private ChoiceBox<File> choiceJsProtocol;
+
+    @FXML
+    private ChoiceBox<File> choiceJsDts;
+
+    @FXML
+    private CheckBox checkJsRequire;
+    @FXML
+    private CheckBox checkJsProtocol;
+    @FXML
+    private CheckBox checkJsDts;
+    @FXML
+    private CheckBox checkJsSCMessageHandler;
+
+    @FXML
+    private CheckBox checkJsRequireOverwrite;
+    @FXML
+    private CheckBox checkJsSCMessageHandlerOverwrite;
+    @FXML
+    private CheckBox checkJsAppendNamespace;
+    //js--↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
     private FileChooser fileChooserIoFile;
     private DirectoryChooser directoryChooser;
     // private DirectoryChooser directoryChooserJavaBeanCodeRootPath;
@@ -186,6 +228,7 @@ public class MainController implements Initializable {
     private Habit habit;
     private JavaConfig javaConfig;
     private LuaConfig luaConfig;
+    private JavaScriptConfig jsConfig;
     private ProjectConfig config;
 
     private Set<File> protocolFiles = new HashSet<>();
@@ -217,6 +260,7 @@ public class MainController implements Initializable {
         config = HabitUtil.getUseConfig();
         javaConfig = config.getJavaConfig();
         luaConfig = config.getLuaConfig();
+        jsConfig = config.getJsConfig();
 
     }
 
@@ -258,6 +302,9 @@ public class MainController implements Initializable {
         textFieldLuaProtocolCodeRootPath.setText(luaConfig.getProtocolCodeRootPath());
         textFieldLuaSCMessageHandlerCodeRootPath.setText(luaConfig.getScMessageHandlerCodeRootPath());
 
+        textFieldJsProtocolCodeRootPath.setText(jsConfig.getProtocolCodeRootPath());
+        textFieldJsSCMessageHandlerCodeRootPath.setText(jsConfig.getScMessageHandlerCodeRootPath());
+        textFieldJsDtsCodeRootPath.setText(jsConfig.getDtsCodeRootPath());
     }
 
     private void initChooser() {
@@ -280,6 +327,7 @@ public class MainController implements Initializable {
     private void initTemplate() {
         initJavaTemplate();
         initLuaTemplate();
+        initJsTemplate();
     }
 
     private void initJavaTemplate() {
@@ -385,6 +433,55 @@ public class MainController implements Initializable {
         checkLuaProtocol.setSelected(luaConfig.isGenerateProtocol());
         checkLuaRequire.setSelected(luaConfig.isGenerateRequire());
         checkLuaSCMessageHandler.setSelected(luaConfig.isGenerateSCMessageHandler());
+
+
+    }
+
+    private void initJsTemplate() {
+        File luaFolder = new File(TemplateUtil.templateDir(), "js");
+        File[] files = luaFolder.listFiles();
+        for (File file : files) {
+            if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
+                choiceJsSCMessageHandler.getItems().add(file);
+                if (file.getName().equals(jsConfig.getScMessageHandlerTemplate())) {
+                    choiceJsSCMessageHandler.getSelectionModel().select(file);
+                }
+            } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
+                choiceJsRequire.getItems().add(file);
+                if (file.getName().equals(jsConfig.getRequireTemplate())) {
+                    choiceJsRequire.getSelectionModel().select(file);
+                }
+            } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
+                choiceJsProtocol.getItems().add(file);
+                if (file.getName().equals(jsConfig.getProtocolTemplate())) {
+                    choiceJsProtocol.getSelectionModel().select(file);
+                }
+            } else if (file.getName().toLowerCase().endsWith("dts.ftl".toLowerCase())) {
+                choiceJsDts.getItems().add(file);
+                if (file.getName().equals(jsConfig.getDtsTemplate())) {
+                    choiceJsDts.getSelectionModel().select(file);
+                }
+            }
+        }
+
+        checkJsAppendNamespace.setSelected(jsConfig.isAppendNamespace());
+
+        choiceJsType.getItems().add(jsConfig.TYPE_MIX);
+        choiceJsType.getItems().add(jsConfig.TYPE_FILE);
+        choiceJsType.getItems().add(jsConfig.TYPE_NAMESPACE);
+        choiceJsType.getSelectionModel().select(jsConfig.getType());
+
+        FileConverter fileConverter = new FileConverter();
+        choiceJsSCMessageHandler.setConverter(fileConverter);
+        choiceJsRequire.setConverter(fileConverter);
+        choiceJsProtocol.setConverter(fileConverter);
+        choiceJsDts.setConverter(fileConverter);
+
+
+        checkJsProtocol.setSelected(jsConfig.isGenerateProtocol());
+        checkJsDts.setSelected(jsConfig.isGenerateDts());
+        checkJsRequire.setSelected(jsConfig.isGenerateRequire());
+        checkJsSCMessageHandler.setSelected(jsConfig.isGenerateSCMessageHandler());
 
 
     }
@@ -688,7 +785,7 @@ public class MainController implements Initializable {
         directoryChooser.setInitialDirectory(new File(luaConfig.getProtocolCodeRootChooserPath()));
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-           luaConfig.setProtocolCodeRootChooserPath(file.getParent());
+            luaConfig.setProtocolCodeRootChooserPath(file.getParent());
             textFieldLuaProtocolCodeRootPath.setText(file.getAbsolutePath());
         }
     }
@@ -700,6 +797,33 @@ public class MainController implements Initializable {
         if (file != null) {
             luaConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
             textFieldLuaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void choiceJsProtocolCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(jsConfig.getProtocolCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            jsConfig.setProtocolCodeRootChooserPath(file.getParent());
+            textFieldJsProtocolCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void choiceJsSCMessageHandlerCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(jsConfig.getScMessageHandlerCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            jsConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
+            textFieldJsSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void choiceJsDtsCodeRootPath() {
+        directoryChooser.setInitialDirectory(new File(jsConfig.getDtsCodeRootChooserPath()));
+        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
+        if (file != null) {
+            jsConfig.setDtsCodeRootChooserPath(file.getParent());
+            textFieldJsDtsCodeRootPath.setText(file.getAbsolutePath());
         }
     }
 
@@ -903,6 +1027,15 @@ public class MainController implements Initializable {
         luaConfig.setProtocolCodeRootPath(file.getAbsolutePath());
         luaConfig.setScMessageHandlerCodeRootPath(file.getAbsolutePath());
         luaConfig.setScMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
+
+
+        JavaScriptConfig jsConfig = config.getJsConfig();
+
+        jsConfig.setProtocolCodeRootPath(file.getAbsolutePath());
+        jsConfig.setDtsCodeRootPath(new File(file, "@types").getAbsolutePath());
+        jsConfig.setProtocolCodeRootPath(file.getAbsolutePath());
+        jsConfig.setScMessageHandlerCodeRootPath(file.getAbsolutePath());
+        jsConfig.setScMessageHandlerCodeRootChooserPath(file.getAbsolutePath());
     }
 
     public void clearLog() {
@@ -1006,7 +1139,7 @@ public class MainController implements Initializable {
         return executorContext;
     }
 
-    private  void generateCode(Executor executor) {
+    private void generateCode(Executor executor) {
         try {
             executor.generate();
             logger.info("代码生成完成");
@@ -1041,6 +1174,17 @@ public class MainController implements Initializable {
         }
         luaConfigValue(luaConfig);
         executorContext.addLanguageConfig(luaConfig);
+        Executor executor = new Executor(executorContext);
+        generateCode(executor);
+    }
+
+    public void generateJsCode() {
+        ExecutorContext executorContext = executorContext();
+        if (executorContext == null) {
+            return;
+        }
+        jsConfigValue(jsConfig);
+        executorContext.addLanguageConfig(jsConfig);
         Executor executor = new Executor(executorContext);
         generateCode(executor);
     }
@@ -1104,6 +1248,7 @@ public class MainController implements Initializable {
         //lua
         luaConfigValue(luaConfig);
         //lua
+        jsConfigValue(jsConfig);
     }
 
     private void javaConfigValue(JavaConfig javaConfig) {
@@ -1152,5 +1297,30 @@ public class MainController implements Initializable {
 
         luaConfig.setScMessageHandlerOverwrite(checkLuaSCMessageHandlerOverwrite.isSelected());
         luaConfig.setRequireOverwrite(checkLuaRequireOverwrite.isSelected());
+    }
+
+    private void jsConfigValue(JavaScriptConfig jsConfig) {
+
+        jsConfig.setType(choiceJsType.getSelectionModel().getSelectedItem());
+
+        jsConfig.setAppendNamespace(checkJsAppendNamespace.isSelected());
+
+        jsConfig.setProtocolCodeRootPath(textFieldJsProtocolCodeRootPath.getText());
+        jsConfig.setDtsCodeRootPath(textFieldJsDtsCodeRootPath.getText());
+        jsConfig.setScMessageHandlerCodeRootPath(textFieldJsSCMessageHandlerCodeRootPath.getText());
+
+        jsConfig.setProtocolTemplate(choiceJsProtocol.getSelectionModel().getSelectedItem().getName());
+        jsConfig.setDtsTemplate(choiceJsDts.getSelectionModel().getSelectedItem().getName());
+        jsConfig.setScMessageHandlerTemplate(choiceJsSCMessageHandler.getSelectionModel().getSelectedItem().getName());
+        jsConfig.setRequireTemplate(choiceJsRequire.getSelectionModel().getSelectedItem().getName());
+
+
+        jsConfig.setGenerateProtocol(checkJsProtocol.isSelected());
+        jsConfig.setGenerateDts(checkJsDts.isSelected());
+        jsConfig.setGenerateSCMessageHandler(checkJsSCMessageHandler.isSelected());
+        jsConfig.setGenerateRequire(checkJsSCMessageHandler.isSelected());
+
+        jsConfig.setScMessageHandlerOverwrite(checkJsSCMessageHandlerOverwrite.isSelected());
+        jsConfig.setRequireOverwrite(checkJsRequireOverwrite.isSelected());
     }
 }

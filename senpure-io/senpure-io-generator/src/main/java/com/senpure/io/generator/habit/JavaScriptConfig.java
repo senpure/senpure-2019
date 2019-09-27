@@ -1,7 +1,10 @@
 package com.senpure.io.generator.habit;
 
+import com.senpure.base.AppEvn;
 import com.senpure.io.generator.executor.JavaScriptExecutor;
 import com.senpure.io.generator.executor.LanguageExecutor;
+
+import java.io.File;
 
 /**
  * Config
@@ -20,6 +23,14 @@ public class JavaScriptConfig extends ScriptLanguageConfig {
     private boolean generateDts = true;
     private String dtsCodeRootPath;
     private String dtsCodeRootChooserPath;
+
+    @Override
+    public void initValue() {
+        super.initValue();
+        setDtsCodeRootPath(new File(AppEvn.getClassRootPath(),"@types").getAbsolutePath());
+        setDtsCodeRootChooserPath(AppEvn.getClassRootPath());
+    }
+
     public String getDtsTemplate() {
         return dtsTemplate;
     }

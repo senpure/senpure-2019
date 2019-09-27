@@ -2,9 +2,7 @@ package com.senpure.io.generator.util;
 
 
 import com.senpure.base.AppEvn;
-import com.senpure.io.generator.Constant;
 import freemarker.template.Configuration;
-import freemarker.template.TemplateModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +34,11 @@ public class TemplateUtil {
         cfg.setSharedVariable("var32Size", new Var32Size());
         cfg.setSharedVariable("luaNameStyle", new LuaNameStyle());
         cfg.setSharedVariable("lowerCamelCase", new LowerCamelCaseNameRule());
-        try {
-            cfg.setSharedVariable("luaImplPrefix", Constant.LUA_IMPL_SC_PREFIX);
-        } catch (TemplateModelException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            cfg.setSharedVariable("luaImplPrefix", Constant.LUA_IMPL_SC_PREFIX);
+//        } catch (TemplateModelException e) {
+//            e.printStackTrace();
+//        }
     }
     public static void main(String[] args) {
 

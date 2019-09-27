@@ -1,6 +1,6 @@
-package com.senpure.io;
+package com.senpure.io.generator;
 
-import com.senpure.io.generator.Constant;
+import com.senpure.base.AppEvn;
 import com.senpure.io.generator.executor.Executor;
 import com.senpure.io.generator.executor.ExecutorContext;
 import com.senpure.io.generator.habit.*;
@@ -26,6 +26,8 @@ public class SilenceBoot {
     private static Logger logger = LoggerFactory.getLogger(SilenceBoot.class);
 
     public static void main(String[] args) {
+        AppEvn.tryMarkClassRootPath();
+        AppEvn.installAnsiConsole();
         ProjectConfig config = null;
         String useProject = System.getProperty("useProject");
         if (useProject == null) {
