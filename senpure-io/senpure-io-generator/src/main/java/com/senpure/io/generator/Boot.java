@@ -2,8 +2,6 @@ package com.senpure.io.generator;
 
 import com.senpure.base.AppEvn;
 import com.senpure.io.generator.ui.UiBoot;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -22,8 +20,7 @@ public class Boot {
         AppEvn.markClassRootPath();
         AppEvn.installAnsiConsole();
         if (Objects.equals(System.getProperty("silence"), "true")) {
-
-
+            SilenceBoot.main(args);
         } else {
             UiBoot.main(args);
         }

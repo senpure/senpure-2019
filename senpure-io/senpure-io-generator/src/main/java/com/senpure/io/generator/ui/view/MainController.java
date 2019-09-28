@@ -1293,7 +1293,7 @@ public class MainController implements Initializable {
 
         luaConfig.setGenerateProtocol(checkLuaProtocol.isSelected());
         luaConfig.setGenerateSCMessageHandler(checkLuaSCMessageHandler.isSelected());
-        luaConfig.setGenerateRequire(checkLuaSCMessageHandler.isSelected());
+        luaConfig.setGenerateRequire(checkLuaRequire.isSelected());
 
         luaConfig.setScMessageHandlerOverwrite(checkLuaSCMessageHandlerOverwrite.isSelected());
         luaConfig.setRequireOverwrite(checkLuaRequireOverwrite.isSelected());
@@ -1318,7 +1318,7 @@ public class MainController implements Initializable {
         jsConfig.setGenerateProtocol(checkJsProtocol.isSelected());
         jsConfig.setGenerateDts(checkJsDts.isSelected());
         jsConfig.setGenerateSCMessageHandler(checkJsSCMessageHandler.isSelected());
-        jsConfig.setGenerateRequire(checkJsSCMessageHandler.isSelected());
+        jsConfig.setGenerateRequire(checkJsRequire.isSelected());
 
         jsConfig.setScMessageHandlerOverwrite(checkJsSCMessageHandlerOverwrite.isSelected());
         jsConfig.setRequireOverwrite(checkJsRequireOverwrite.isSelected());
