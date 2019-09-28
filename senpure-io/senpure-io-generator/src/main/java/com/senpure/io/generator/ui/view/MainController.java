@@ -629,11 +629,11 @@ public class MainController implements Initializable {
                 error = true;
                 continue;
             }
-            if (ioProtocolReader.isHasError()) {
+            if (ioProtocolReader.isSyntaxError()) {
                 if (errorBuilder.length() > 0) {
                     errorBuilder.append("\n");
                 }
-                errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
+                errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
 
                 // logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
                 error = true;
@@ -1084,12 +1084,12 @@ public class MainController implements Initializable {
                     error = true;
                     continue;
                 }
-                if (ioProtocolReader.isHasError()) {
+                if (ioProtocolReader.isSyntaxError()) {
                     error = true;
                     if (errorBuilder.length() > 0) {
                         errorBuilder.append("\n");
                     }
-                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
+                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
 
                     // logger.error("{} 语法错误", ioProtocolReader.getFilePath());
                 }

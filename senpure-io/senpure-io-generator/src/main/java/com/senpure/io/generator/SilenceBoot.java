@@ -93,11 +93,11 @@ public class SilenceBoot {
             try {
                 IoProtocolReader ioProtocolReader = IoReader.getInstance().read(file);
                 ioProtocolReaders.add(ioProtocolReader);
-                if (ioProtocolReader.isHasError()) {
+                if (ioProtocolReader.isSyntaxError()) {
                     if (errorBuilder.length() > 0) {
                         errorBuilder.append("\n");
                     }
-                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" ").append(ioProtocolReader.getFilePath());
+                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
                     //logger.error("{} 出现语法错误", ioProtocolReader.getFilePath());
                     error = true;
                 }

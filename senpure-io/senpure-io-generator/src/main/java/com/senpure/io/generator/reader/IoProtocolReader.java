@@ -60,10 +60,13 @@ public class IoProtocolReader extends IoBaseListener {
 
     protected StringBuilder errorBuilder = new StringBuilder();
 
-    public boolean isHasError() {
-        return ioErrorListener.isHasError();
+    public boolean isSyntaxError() {
+        return ioErrorListener.isSyntaxError();
     }
 
+    public String getSyntaxErrorMessage() {
+        return ioErrorListener.getSyntaxErrorMessage();
+    }
 
     protected void checkErrorBuilder() {
         if (errorBuilder.length() > 0) {
@@ -575,7 +578,7 @@ public class IoProtocolReader extends IoBaseListener {
 
 
     protected boolean canWalk() {
-        return !isHasError();
+        return !isSyntaxError();
     }
 
 
