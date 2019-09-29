@@ -1,5 +1,7 @@
 package com.senpure.io.generator.model;
 
+import com.senpure.io.generator.Constant;
+
 /**
  * Language
  *
@@ -8,7 +10,7 @@ package com.senpure.io.generator.model;
  */
 public class Language {
 
-    protected  Bean bean;
+    protected Bean bean;
 
     private String namespace;
 
@@ -20,11 +22,15 @@ public class Language {
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
+
     public Language(Bean bean) {
         this.bean = bean;
     }
 
     public String getName() {
+        if (bean.getType().equals(Constant.ENTITY_TYPE_BEAN)) {
+            return bean.getName();
+        }
         return bean.getJavaName();
     }
 
