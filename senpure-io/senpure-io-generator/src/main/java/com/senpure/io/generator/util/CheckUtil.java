@@ -85,7 +85,7 @@ public class CheckUtil {
         }
         if (record.exists()) {
             try {
-                List<String> lines = FileUtils.readLines(record);
+                List<String> lines = FileUtils.readLines(record,"utf-8");
                 for (String line : lines) {
                     readLine(line);
                 }
