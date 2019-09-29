@@ -16,7 +16,9 @@ public class Enum extends Bean {
     public boolean isEnum() {
         return true;
     }
-
+    public String getJavaName() {
+        return getName()+"Enum";
+    }
     public String getType() {
         return Constant.ENTITY_TYPE_ENUM;
     }

@@ -611,7 +611,7 @@ public class MainController implements Initializable {
         }
 
         protocolViewClear();
-        IoReader.getInstance().getIoProtocolReaderMap().clear();
+        IoReader.getInstance().clear();
 
         List<ProtocolData> protocolDatas = new ArrayList<>();
         boolean error = false;
@@ -1066,7 +1066,7 @@ public class MainController implements Initializable {
                 logger.warn("没有选择协议文件");
                 return null;
             }
-            IoReader.getInstance().getIoProtocolReaderMap().clear();
+            IoReader.getInstance().clear();
             boolean error = false;
             StringBuilder errorBuilder = new StringBuilder();
             List<IoProtocolReader> ioProtocolReaders = new ArrayList<>();
