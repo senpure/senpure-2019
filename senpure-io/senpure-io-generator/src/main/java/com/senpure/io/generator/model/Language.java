@@ -1,7 +1,5 @@
 package com.senpure.io.generator.model;
 
-import com.senpure.io.generator.Constant;
-
 /**
  * Language
  *
@@ -28,9 +26,6 @@ public class Language {
     }
 
     public String getName() {
-        if (bean.getType().equals(Constant.ENTITY_TYPE_BEAN)) {
-            return bean.getName();
-        }
         return bean.getJavaName();
     }
 
