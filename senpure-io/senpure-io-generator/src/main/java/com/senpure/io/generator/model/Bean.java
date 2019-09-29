@@ -67,7 +67,7 @@ public class Bean extends TemplateBean {
     }
 
     public String getJavaName() {
-        return getName()+"DTO";
+        return getName();
     }
 
     public String getType() {
