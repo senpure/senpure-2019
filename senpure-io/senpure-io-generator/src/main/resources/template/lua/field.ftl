@@ -1,3 +1,4 @@
+<#include "method.ftl" >
 <#if bean.hasExplain>
 --[[
     ${bean.explain}
@@ -124,29 +125,7 @@ function ${bean.lua.namespace}.${bean.lua.name}:write(buf)
             buf:WriteVar32(${field.tag});
             buf:WriteVar32(self.${field.name}SerializedSize);
             for i = 1, ${field.name}_len do
-                <#if field.fieldType="boolean">
-                buf:WriteBoolean(self.${field.name}[i]);
-                <#elseif field.fieldType="byte">
-                buf:WriteVar32(self.${field.name}[i]);
-                <#elseif field.fieldType="short">
-                buf:WriteVar32(self.${field.name}[i]);
-                <#elseif field.fieldType="int">
-                buf:WriteVar32(self.${field.name}[i]);
-                <#elseif field.fieldType="long">
-                buf:WriteVar64(self.${field.name}[i]);
-                <#elseif field.fieldType="sint">
-                buf:WriteSInt(self.${field.name}[i]);
-                <#elseif field.fieldType="slong">
-                buf:WriteSLong(self.${field.name}[i]);
-                <#elseif field.fieldType="float">
-                buf:WriteFloat(self.${field.name}[i]);
-                <#elseif field.fieldType="double">
-                buf:WriteDouble(self.${field.name}[i]);
-                <#elseif field.fieldType="fixed32">
-                buf:WriteSFixed32(self.${field.name}[i]);
-                <#elseif field.fieldType="fixed64">
-                buf:WriteSFixed64(self.${field.name}[i]);
-                </#if>
+                buf:Write${baseFieldType2MethodName(field.fieldType)}(self.${field.name}[i]);
             end
         end
             <#else ><#--String-->
@@ -171,28 +150,14 @@ function ${bean.lua.namespace}.${bean.lua.name}:write(buf)
         </#if>
     end
     <#else ><#--不是list-->
-        <#if field.fieldType="boolean">
-    buf:WriteBoolean(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="int">
-    buf:WriteVar32(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="long">
-    buf:WriteVar64(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="sint">
-    buf:WriteSInt(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="slong">
-    buf:WriteSLong(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="float">
-    buf:WriteFloat(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="double">
-    buf:WriteDouble(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="fixed32">
-    buf:WriteSFixed32(${field.tag}, self.${field.name});
-        <#elseif field.fieldType="fixed64">
-    buf:WriteSFixed64(${field.tag}, self.${field.name});
-        <#elseif field.javaType="String">
+        <#if field.baseField>
+            <#if field.javaType="String">
     if self.${field.name} then
         buf:WriteString(${field.tag}, self.${field.name});
     end
+                <#else>
+    buf:Write${baseFieldType2MethodName(field.fieldType)}(${field.tag}, self.${field.name});
+            </#if>
         <#else>
     if self.${field.name} then
             <#if field.bean.enum>
@@ -225,44 +190,12 @@ function ${bean.lua.namespace}.${bean.lua.name}:read(buf,endIndex)
         local receive${field.name?cap_first}DataSize = 0;
         local read${field.name?cap_first}Index = 1;
         while(receive${field.name?cap_first}DataSize < ${field.name}DataSize ) do
-                <#if field.fieldType="boolean">
-            local temp${field.name?cap_first} = buf:ReadBoolean();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeBooleanSizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="byte">
-            local temp${field.name?cap_first} = buf:ReadVar32();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeVar32SizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="short">
-            local temp${field.name?cap_first} = buf:ReadVar32();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeVar32SizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="int">
-            local temp${field.name?cap_first} = buf:ReadVar32();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeVar32SizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="long">
-            local temp${field.name?cap_first} = buf:ReadVar64();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeVar64SizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="sint">
-            local temp${field.name?cap_first} = buf:ReadSInt();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeSIntSizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="slong">
-            local temp${field.name?cap_first} = buf:ReadSLong();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeSLongSizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="float">
-            local temp${field.name?cap_first} = buf:ReadFloat();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeFloatSizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="double">
-            local temp${field.name?cap_first} = buf:ReadDouble();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeDoubleSizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="fixed32">
-            local temp${field.name?cap_first} = buf:ReadSFixed32();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeSFixed32SizeNoTag(temp${field.name?cap_first});
-                <#elseif field.fieldType="fixed64">
-            local temp${field.name?cap_first} = buf:ReadSFixed64();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:ComputeSFixed64SizeNoTag(temp${field.name?cap_first});
-                </#if><#--多个选项的-->
+            local temp${field.name?cap_first} = buf:Read${baseFieldType2MethodName(field.fieldType)}();
+            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:Compute${baseFieldType2MethodName(field.fieldType)}SizeNoTag(temp${field.name?cap_first});
             self.${field.name}[read${field.name?cap_first}Index] = temp${field.name?cap_first};
             read${field.name?cap_first}Index = read${field.name?cap_first}Index + 1;
         end
-            <#else ><#--String-->
+            <#else ><#--String 打包方所不同-->
         self.${field.name} = self.${field.name} or {};
         self.read${field.name?cap_first}Index = self.read${field.name?cap_first}Index or 1;
         self.${field.name}[self.read${field.name?cap_first}Index] = buf:ReadString();
@@ -290,26 +223,8 @@ function ${bean.lua.namespace}.${bean.lua.name}:read(buf,endIndex)
             </#if>
         </#if><#--bean-->
     <#else><#--不是list-->
-        <#if field.fieldType="boolean">
-        self.${field.name} = buf:ReadBoolean();
-        <#elseif field.fieldType="int">
-        self.${field.name} = buf:ReadVar32();
-        <#elseif field.fieldType="long">
-        self.${field.name} = buf:ReadVar64();
-        <#elseif field.fieldType="sint">
-        self.${field.name} = buf:ReadSInt();
-        <#elseif field.fieldType="slong">
-        self.${field.name} = buf:ReadSLong();
-        <#elseif field.fieldType="float">
-        self.${field.name} = buf:ReadFloat();
-        <#elseif field.fieldType="double">
-        self.${field.name} = buf:ReadDouble();
-        <#elseif field.fieldType="fixed32">
-        self.${field.name} = buf:ReadSFixed32();
-        <#elseif field.fieldType="fixed64">
-        self.${field.name} = buf:ReadSFixed64();
-        <#elseif field.fieldType="String">
-        self.${field.name} = buf:ReadString();
+        <#if field.baseField>
+        self.${field.name} = buf:Read${baseFieldType2MethodName(field.fieldType)}();
         <#else>
             <#if field.bean.enum>
         self.${field.name}=${field.bean.lua.namespace}.${field.bean.lua.name}.checkReadValue(buf:ReadVar32());
@@ -356,25 +271,7 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
         local ${field.name}DataSize = 0;
         if ${field.name}_len > 0 then
             for i = 1, ${field.name}_len do
-                <#if field.fieldType="boolean">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeBooleanSizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="int">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeVar32SizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="long">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeVar64SizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="sint">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeSIntSizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="slong">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeSLongSizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="float">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeFloatSizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="double">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeDoubleSizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="fixed32">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeSFixed32SizeNoTag(self.${field.name}[i] );
-                <#elseif field.fieldType="fixed64">
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeSFixed64SizeNoTag(self.${field.name}[i] );
-                </#if><#--多个选项的-->
+                ${field.name}DataSize = ${field.name}DataSize + buf:Compute${baseFieldType2MethodName(field.fieldType)}SizeNoTag(self.${field.name}[i] );
             end
         end
         self.${field.name}SerializedSize = ${field.name}DataSize;
@@ -424,43 +321,21 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
             </#if>
         </#if><#--bean-->
     <#else><#--不是list-->
-        <#if field.fieldType="boolean">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeBooleanSize(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="int">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeVar32Size(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="long">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeVar64Size(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="sint">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeSIntSize(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="slong">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeSLongSize(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="float">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeFloatSize(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="double">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeDoubleSize(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="fixed32">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeSFixed32Size(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="fixed64">
-    -- tag size 已经完成了计算 ${field.tag}
-    size = size + buf:ComputeSFixed64Size(${var32Size(field.tag)}, self.${field.name});
-        <#elseif field.fieldType="String">
+        <#if field.baseField>
+            <#if field.javaType="String">
     if self.${field.name} then
         -- tag size 已经完成了计算 ${field.tag}
         size = size + buf:ComputeStringSize(${var32Size(field.tag)}, self.${field.name});
     end
+            <#else>
+    -- tag size 已经完成了计算 ${field.tag}
+    size = size + buf:Compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, self.${field.name});
+            </#if>
         <#else>
             <#if field.bean.enum>
     -- tag size 已经完成了计算 ${field.tag}
     size = size + buf:ComputeVar32Size(${var32Size(field.tag)}, self.${field.name});
-                <#else >
+            <#else >
     if self.${field.name} then
         local ${field.name}BeanSize = self.${field.name}:getSerializedSize(buf)
         -- tag size 已经完成了计算 ${field.tag}
@@ -542,4 +417,41 @@ function ${bean.lua.namespace}.${bean.lua.name}:toString(_indent)
     _str = _str .. _indent .. "}"
     return _str
 end
+
+<#list bean.fields as field>
+    <#if field.list>
+        <#if field.hasExplain&&field.explain?length gt 1>
+--get ${field.explain}
+        </#if>
+function ${bean.lua.namespace}.${bean.lua.name}:get${field.name?cap_first}()
+    return self.${field.name};
+end
+        <#if field.hasExplain&&field.explain?length gt 1>
+-- set ${field.explain}
+        </#if>
+function ${bean.lua.namespace}.${bean.lua.name}:set${field.name?cap_first}(${field.name})
+    if ${field.name} == nil then
+        self.${field.name} = new Array(0);
+        return self;
+    end
+    this.${field.name} = ${field.name};
+    return self;
+end
+    <#else>
+        <#if field.hasExplain&&field.explain?length gt 1>
+--<#if field.fieldType="boolean"> is<#else>get</#if> ${field.explain}
+        </#if>
+function ${bean.lua.namespace}.${bean.lua.name}:<#if field.fieldType="boolean">is<#else>get</#if>${field.name?cap_first}()
+    return self.${field.name};
+end
+        <#if field.hasExplain&&field.explain?length gt 1>
+-- set ${field.explain}
+        </#if>
+function ${bean.lua.namespace}.${bean.lua.name}:set${field.name?cap_first}(${field.name})
+    this.${field.name} = ${field.name};
+    return self;
+end
+    </#if>
+
+</#list>
 
