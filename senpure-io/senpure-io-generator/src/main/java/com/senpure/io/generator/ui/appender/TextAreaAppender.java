@@ -52,7 +52,7 @@ public class TextAreaAppender extends AbstractAppender {
                     }
 
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(20);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
