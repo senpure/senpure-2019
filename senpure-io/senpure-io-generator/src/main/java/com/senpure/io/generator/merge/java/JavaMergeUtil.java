@@ -171,8 +171,8 @@ public class JavaMergeUtil {
             for (Java8Parser.MethodDeclarationContext declarationContext : adds) {
                 byte[] bytes = readSourceBytes(dataFile, dataClassModel.getTokens(),
                         declarationContext, 2, readPosition.bytePositionInLine);
-                logger.info("\n[{}]", declarationContext.getText());
-                logger.info("\n[{}]", new String(bytes));
+               // logger.info("\n[{}]", declarationContext.getText());
+                logger.info("\n[{}]",new String(bytes,"utf-8"));
                 InsertUtil.insertBytes(rootFile, readPosition.position + addBytesLength, bytes);
                 addBytesLength += bytes.length;
             }
