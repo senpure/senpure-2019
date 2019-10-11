@@ -267,7 +267,7 @@ public class JavaMergeUtil {
         position += lineBytes.length;
         byte[] bytes = new byte[(int) (position - startPosition + 1 + endLines + endSpaces)];
         accessFile.seek(startPosition);
-        accessFile.read(bytes, 0, bytes.length - endLines);
+        accessFile.read(bytes, 0, bytes.length - endLines-endSpaces);
         for (int i = 0; i < endSpaces; i++) {
             bytes[bytes.length - 1 - i] = ' ';
         }
