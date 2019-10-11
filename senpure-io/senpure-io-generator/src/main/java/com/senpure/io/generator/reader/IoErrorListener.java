@@ -1,6 +1,5 @@
 package com.senpure.io.generator.reader;
-
-import org.antlr.v4.runtime.DiagnosticErrorListener;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.slf4j.Logger;
@@ -12,21 +11,18 @@ import org.slf4j.LoggerFactory;
  * @author senpure
  * @time 2019-06-06 17:18:55
  */
-public class IoErrorListener extends DiagnosticErrorListener {
+public class IoErrorListener extends BaseErrorListener {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String filePath;
     private StringBuilder errorBuilder = new StringBuilder();
 
     public IoErrorListener(String filePath) {
-        super(false);
+
         this.filePath = filePath;
     }
 
-    public IoErrorListener(String filePath, boolean exactOnly) {
-        super(exactOnly);
-        this.filePath = filePath;
-    }
+
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {

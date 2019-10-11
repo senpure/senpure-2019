@@ -528,7 +528,7 @@ public class IoProtocolReader extends IoBaseListener {
                         errorBuilder.append("[");
                         errorBuilder.append(field.getFieldType())
                                 .append("] Type,未定义，或未引用 ");
-                        // Assert.error(filePath + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getPosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
+                        // Assert.error(filePath + " line " + field.getTypeLocation().getLine() + ":" + field.getTypeLocation().getBytePosition() + " " + bean.getType() + bean.getName() + "." + field.getName()
                         //      + "[" + field.getFieldType() + "] Type,未定义，或未引用");
                     }
 
