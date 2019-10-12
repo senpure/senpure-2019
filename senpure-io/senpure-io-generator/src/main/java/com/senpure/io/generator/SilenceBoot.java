@@ -214,7 +214,7 @@ public class SilenceBoot {
 
     private static boolean hasSensitive(ProjectConfig config) {
 
-        if (config.getJsConfig().hasSensitive()) {
+        if (config.getJavaConfig().hasSensitive()) {
             return true;
         }
 
