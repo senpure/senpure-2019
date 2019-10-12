@@ -12,9 +12,9 @@ public interface LanguageConfig {
 
     LanguageExecutor languageExecutor();
 
-    boolean hasExtraOverwrite();
+    boolean hasSensitive();
 
-    void notAllowExtraOverwrite();
+    void notAllowSensitive();
 
     void initValue();
 

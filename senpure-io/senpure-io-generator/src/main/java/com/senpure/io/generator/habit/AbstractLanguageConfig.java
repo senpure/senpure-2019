@@ -39,7 +39,7 @@ public abstract class AbstractLanguageConfig implements LanguageConfig {
 
 
     @Override
-    public boolean hasExtraOverwrite() {
+    public boolean hasSensitive() {
         if (csMessageHandlerOverwrite | scMessageHandlerOverwrite | eventHandlerOverwrite) {
             return true;
         }
@@ -47,7 +47,7 @@ public abstract class AbstractLanguageConfig implements LanguageConfig {
     }
 
     @Override
-    public void notAllowExtraOverwrite() {
+    public void notAllowSensitive() {
         csMessageHandlerOverwrite = false;
         scMessageHandlerOverwrite = false;
         eventHandlerOverwrite = false;

@@ -45,18 +45,18 @@ public class SilenceBoot {
             }
         }
         logger.info("使用项目 {} ", config.getProjectName());
-        boolean useOverwrite = false;
-        String overwrite = System.getProperty("overwrite");
-        if (overwrite == null) {
-            if (hasExtraOverwrite(config)) {
-                logger.info("(1)静默模式要使额外覆盖设置生效请使用参数-DextraOverwrite=true");
-                logger.info("(2)静默模式要使额外覆盖设置生效请使用参数-DextraOverwrite=true");
-                logger.info("(3)静默模式要使额外覆盖设置生效请使用参数-DextraOverwrite=true");
+        boolean useSensitive = false;
+        String sensitive = System.getProperty("sensitive");
+        if (sensitive == null) {
+            if (hasSensitive(config)) {
+                logger.info("(1)静默模式要使敏感设置生效请使用参数-Dsensitive=true");
+                logger.info("(2)静默模式要使敏感设置生效请使用参数-Dsensitive=true");
+                logger.info("(3)静默模式要使敏感设置生效请使用参数-Dsensitive=true");
             }
 
         } else {
-            if (Objects.equals(overwrite, "true")) {
-                useOverwrite = true;
+            if (Objects.equals(sensitive, "true")) {
+                useSensitive = true;
             }
         }
         String fileStr = System.getProperty("protocolFile");
@@ -77,12 +77,12 @@ public class SilenceBoot {
             logger.warn("没有配置协议文件");
             return;
         }
-        if (!useOverwrite) {
-            config.getJavaConfig().notAllowExtraOverwrite();
-            config.getLuaConfig().notAllowExtraOverwrite();
-            config.getJsConfig().notAllowExtraOverwrite();
+        if (!useSensitive) {
+            config.getJavaConfig().notAllowSensitive();
+            config.getLuaConfig().notAllowSensitive();
+            config.getJsConfig().notAllowSensitive();
         } else {
-            logger.info("不使用覆盖设置");
+            logger.info("不使用额外设置");
         }
 
         IoReader.getInstance().clear();
@@ -212,16 +212,16 @@ public class SilenceBoot {
         return isTrue(generate);
     }
 
-    private static boolean hasExtraOverwrite(ProjectConfig config) {
+    private static boolean hasSensitive(ProjectConfig config) {
 
-        if (config.getJsConfig().hasExtraOverwrite()) {
+        if (config.getJsConfig().hasSensitive()) {
             return true;
         }
 
-        if (config.getLuaConfig().hasExtraOverwrite()) {
+        if (config.getLuaConfig().hasSensitive()) {
             return true;
         }
-        if (config.getJsConfig().hasExtraOverwrite()) {
+        if (config.getJsConfig().hasSensitive()) {
             return true;
         }
         return false;
