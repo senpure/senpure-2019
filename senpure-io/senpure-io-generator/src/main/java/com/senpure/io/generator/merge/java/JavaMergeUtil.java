@@ -207,18 +207,18 @@ public class JavaMergeUtil {
         return getBytePosition(accessFile, tokenPosition.line, tokenPosition.charPositionInLine);
     }
 
-    public static BytePosition getBytePosition(RandomAccessFile rootFile, int charLine, int charPositionInLine) throws IOException {
+    public static BytePosition getBytePosition(RandomAccessFile accessFile, int charLine, int charPositionInLine) throws IOException {
         int line = 1;
         long position = 0;
         // long length = dataFile.length();
-        rootFile.seek(position);
+        accessFile.seek(position);
         while (line < charLine) {
-            rootFile.readLine();
+            accessFile.readLine();
             line++;
         }
-        position = rootFile.getFilePointer();
+        position = accessFile.getFilePointer();
         //logger.info("position = {},length {}", position, dataFile.length());
-        String lineStr = rootFile.readLine();
+        String lineStr = accessFile.readLine();
         // logger.info("lineStr:{}", lineStr);
         BytePosition readPosition = new BytePosition();
 
