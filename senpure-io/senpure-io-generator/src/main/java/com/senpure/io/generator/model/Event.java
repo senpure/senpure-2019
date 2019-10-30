@@ -4,7 +4,7 @@ package com.senpure.io.generator.model;
 import com.senpure.io.generator.Constant;
 
 public class Event extends Bean {
-    private String javaHandlerPack;
+    private String javaHandlerPackage;
     private int id;
 
     public int getId() {
@@ -28,12 +28,12 @@ public class Event extends Bean {
     }
 
 
-    public String getJavaHandlerPack() {
-        return javaHandlerPack;
+    public String getJavaHandlerPackage() {
+        return javaHandlerPackage;
     }
 
-    public void setJavaHandlerPack(String javaHandlerPack) {
-        this.javaHandlerPack = javaHandlerPack;
+    public void setJavaHandlerPackage(String javaHandlerPackage) {
+        this.javaHandlerPackage = javaHandlerPackage;
     }
 
 

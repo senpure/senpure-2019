@@ -42,6 +42,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 /**
  * MainController
@@ -239,6 +242,8 @@ public class MainController implements Initializable {
     private List<Message> messages = new ArrayList<>();
 
     private boolean allChoose = true;
+    private volatile boolean usePreView = false;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -333,42 +338,44 @@ public class MainController implements Initializable {
     private void initJavaTemplate() {
         File javaFolder = new File(TemplateUtil.templateDir(), "java");
         File[] files = javaFolder.listFiles();
-        for (File file : files) {
-            // logger.info("{} = {}",file.getName(),file.getName().toLowerCase().endsWith("eventHandler.ftl".toLowerCase()));
-            if (file.getName().toLowerCase().endsWith("eventHandler.ftl".toLowerCase())) {
-                choiceJavaEventHandler.getItems().add(file);
-                if (file.getName().equals(javaConfig.getEventHandlerTemplate())) {
-                    choiceJavaEventHandler.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("handler.ftl")) {
-                choiceJavaCSMessageHandler.getItems().add(file);
-                if (file.getName().equals(javaConfig.getCsMessageHandlerTemplate())) {
-                    choiceJavaCSMessageHandler.getSelectionModel().select(file);
-                }
-                choiceJavaSCMessageHandler.getItems().add(file);
-                if (file.getName().equals(javaConfig.getScMessageHandlerTemplate())) {
-                    choiceJavaSCMessageHandler.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("bean.ftl")) {
-                choiceJavaBean.getItems().add(file);
-                if (file.getName().equals(javaConfig.getBeanTemplate())) {
-                    choiceJavaBean.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("message.ftl")) {
-                choiceJavaMessage.getItems().add(file);
-                if (file.getName().equals(javaConfig.getMessageTemplate())) {
-                    choiceJavaMessage.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("event.ftl")) {
-                choiceJavaEvent.getItems().add(file);
-                if (file.getName().equals(javaConfig.getEventTemplate())) {
-                    choiceJavaEvent.getSelectionModel().select(file);
-                }
+        if (files != null) {
+            for (File file : files) {
+                // logger.info("{} = {}",file.getName(),file.getName().toLowerCase().endsWith("eventHandler.ftl".toLowerCase()));
+                if (file.getName().toLowerCase().endsWith("eventHandler.ftl".toLowerCase())) {
+                    choiceJavaEventHandler.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getEventHandlerTemplate())) {
+                        choiceJavaEventHandler.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("handler.ftl")) {
+                    choiceJavaCSMessageHandler.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getCsMessageHandlerTemplate())) {
+                        choiceJavaCSMessageHandler.getSelectionModel().select(file);
+                    }
+                    choiceJavaSCMessageHandler.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getScMessageHandlerTemplate())) {
+                        choiceJavaSCMessageHandler.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("bean.ftl")) {
+                    choiceJavaBean.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getBeanTemplate())) {
+                        choiceJavaBean.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("message.ftl")) {
+                    choiceJavaMessage.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getMessageTemplate())) {
+                        choiceJavaMessage.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("event.ftl")) {
+                    choiceJavaEvent.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getEventTemplate())) {
+                        choiceJavaEvent.getSelectionModel().select(file);
+                    }
 
-            } else if (file.getName().toLowerCase().endsWith("enum.ftl")) {
-                choiceJavaEnum.getItems().add(file);
-                if (file.getName().equals(javaConfig.getEnumTemplate())) {
-                    choiceJavaEnum.getSelectionModel().select(file);
+                } else if (file.getName().toLowerCase().endsWith("enum.ftl")) {
+                    choiceJavaEnum.getItems().add(file);
+                    if (file.getName().equals(javaConfig.getEnumTemplate())) {
+                        choiceJavaEnum.getSelectionModel().select(file);
+                    }
                 }
             }
         }
@@ -398,25 +405,26 @@ public class MainController implements Initializable {
     private void initLuaTemplate() {
         File luaFolder = new File(TemplateUtil.templateDir(), "lua");
         File[] files = luaFolder.listFiles();
-        for (File file : files) {
-            if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
-                choiceLuaSCMessageHandler.getItems().add(file);
-                if (file.getName().equals(luaConfig.getScMessageHandlerTemplate())) {
-                    choiceLuaSCMessageHandler.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
-                choiceLuaRequire.getItems().add(file);
-                if (file.getName().equals(luaConfig.getRequireTemplate())) {
-                    choiceLuaRequire.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
-                choiceLuaProtocol.getItems().add(file);
-                if (file.getName().equals(luaConfig.getProtocolTemplate())) {
-                    choiceLuaProtocol.getSelectionModel().select(file);
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
+                    choiceLuaSCMessageHandler.getItems().add(file);
+                    if (file.getName().equals(luaConfig.getScMessageHandlerTemplate())) {
+                        choiceLuaSCMessageHandler.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
+                    choiceLuaRequire.getItems().add(file);
+                    if (file.getName().equals(luaConfig.getRequireTemplate())) {
+                        choiceLuaRequire.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
+                    choiceLuaProtocol.getItems().add(file);
+                    if (file.getName().equals(luaConfig.getProtocolTemplate())) {
+                        choiceLuaProtocol.getSelectionModel().select(file);
+                    }
                 }
             }
         }
-
         checkLuaAppendNamespace.setSelected(luaConfig.isAppendNamespace());
 
         choiceLuaType.getItems().add(LuaConfig.TYPE_MIX);
@@ -440,30 +448,31 @@ public class MainController implements Initializable {
     private void initJsTemplate() {
         File luaFolder = new File(TemplateUtil.templateDir(), "js");
         File[] files = luaFolder.listFiles();
-        for (File file : files) {
-            if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
-                choiceJsSCMessageHandler.getItems().add(file);
-                if (file.getName().equals(jsConfig.getScMessageHandlerTemplate())) {
-                    choiceJsSCMessageHandler.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
-                choiceJsRequire.getItems().add(file);
-                if (file.getName().equals(jsConfig.getRequireTemplate())) {
-                    choiceJsRequire.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
-                choiceJsProtocol.getItems().add(file);
-                if (file.getName().equals(jsConfig.getProtocolTemplate())) {
-                    choiceJsProtocol.getSelectionModel().select(file);
-                }
-            } else if (file.getName().toLowerCase().endsWith("dts.ftl".toLowerCase())) {
-                choiceJsDts.getItems().add(file);
-                if (file.getName().equals(jsConfig.getDtsTemplate())) {
-                    choiceJsDts.getSelectionModel().select(file);
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().toLowerCase().endsWith("handler.ftl".toLowerCase())) {
+                    choiceJsSCMessageHandler.getItems().add(file);
+                    if (file.getName().equals(jsConfig.getScMessageHandlerTemplate())) {
+                        choiceJsSCMessageHandler.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("require.ftl".toLowerCase())) {
+                    choiceJsRequire.getItems().add(file);
+                    if (file.getName().equals(jsConfig.getRequireTemplate())) {
+                        choiceJsRequire.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("protocol.ftl".toLowerCase())) {
+                    choiceJsProtocol.getItems().add(file);
+                    if (file.getName().equals(jsConfig.getProtocolTemplate())) {
+                        choiceJsProtocol.getSelectionModel().select(file);
+                    }
+                } else if (file.getName().toLowerCase().endsWith("dts.ftl".toLowerCase())) {
+                    choiceJsDts.getItems().add(file);
+                    if (file.getName().equals(jsConfig.getDtsTemplate())) {
+                        choiceJsDts.getSelectionModel().select(file);
+                    }
                 }
             }
         }
-
         checkJsAppendNamespace.setSelected(jsConfig.isAppendNamespace());
 
         choiceJsType.getItems().add(jsConfig.TYPE_MIX);
@@ -532,7 +541,12 @@ public class MainController implements Initializable {
 
     public void addProtocolDirectory() {
         logger.debug("增加协议文件夹");
-        directoryChooser.setInitialDirectory(new File(config.getProtocolDirectoryChooserPath()));
+        File temp = new File(config.getProtocolDirectoryChooserPath());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp);
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             config.setProtocolDirectoryChooserPath(file.getParent());
@@ -549,15 +563,16 @@ public class MainController implements Initializable {
     private int addDirectoryToView(File file) {
         int count = 0;
         File[] files = file.listFiles();
-
-        for (File f : files) {
-            if (f.isDirectory()) {
-                count += addDirectoryToView(f);
-            }
-            if (f.getName().endsWith(".io")) {
-                count++;
-                logger.debug("文件全路径:{}", f.getAbsolutePath());
-                addFileToView(f);
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    count += addDirectoryToView(f);
+                }
+                if (f.getName().endsWith(".io")) {
+                    count++;
+                    logger.debug("文件全路径:{}", f.getAbsolutePath());
+                    addFileToView(f);
+                }
             }
         }
         return count;
@@ -609,83 +624,89 @@ public class MainController implements Initializable {
             logger.warn("没有选择协议文件");
             return;
         }
-
-        protocolViewClear();
-        IoReader.getInstance().clear();
-
-        List<ProtocolData> protocolDatas = new ArrayList<>();
-        boolean error = false;
-        StringBuilder errorBuilder = new StringBuilder();
-        for (File file : protocolFiles) {
-            IoProtocolReader ioProtocolReader;
-            try {
-                ioProtocolReader = IoReader.getInstance().read(file);
-            } catch (Exception e) {
-                // logger.error(e.getMessage());
-                if (errorBuilder.length() > 0) {
-                    errorBuilder.append("\n");
-                }
-                errorBuilder.append(e.getMessage());
-                error = true;
-                continue;
-            }
-            if (ioProtocolReader.isSyntaxError()) {
-                if (errorBuilder.length() > 0) {
-                    errorBuilder.append("\n");
-                }
-                errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
-
-                // logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
-                error = true;
-                continue;
-            }
-            enums.addAll(ioProtocolReader.getEnums());
-            beans.addAll(ioProtocolReader.getBeans());
-            messages.addAll(ioProtocolReader.getMessages());
-            events.addAll(ioProtocolReader.getEvents());
-            for (Bean bean : ioProtocolReader.getEnums()) {
-                ProtocolData protocolData = new ProtocolData(bean, "enum");
-                protocolDatas.add(protocolData);
-            }
-            for (Bean bean : ioProtocolReader.getBeans()) {
-                ProtocolData protocolData = new ProtocolData(bean, "bean");
-                protocolDatas.add(protocolData);
-            }
-            for (Bean bean : ioProtocolReader.getMessages()) {
-                if (bean.getType().equals(Constant.ENTITY_TYPE_CS_MESSAGE)) {
-                    ProtocolData protocolData = new ProtocolData(bean, "csMessage");
-                    protocolDatas.add(protocolData);
-                } else {
-                    ProtocolData protocolData = new ProtocolData(bean, "scMessage");
-                    protocolDatas.add(protocolData);
-                }
-
-            }
-            for (Bean bean : ioProtocolReader.getEvents()) {
-                ProtocolData protocolData = new ProtocolData(bean, "event");
-                protocolDatas.add(protocolData);
-            }
-
-        }
-
-        if (error) {
+        logger.info("正在准备数据.....");
+        executorService.execute(() -> {
             protocolViewClear();
-            logger.error("协议错误\n{}", errorBuilder.toString());
-            //  logger.error("协议文件语法或格式不对请仔细检查修改");
-            return;
-        }
-        if (protocolDatas.size() == 0) {
-            logger.warn("没有可读消息");
-            return;
-        }
-        accordionMessage.setExpandedPane(titledPaneProtocolView);
-        for (ProtocolData protocolData : protocolDatas) {
-            if (tableViewProtocolView.getItems().contains(protocolData)) {
-                protocolData.getBean().setGenerate(false);
-            } else {
-                tableViewProtocolView.getItems().add(protocolData);
+            IoReader.getInstance().clear();
+            List<ProtocolData> protocolDatas = new ArrayList<>();
+            boolean error = false;
+            StringBuilder errorBuilder = new StringBuilder();
+            for (File file : protocolFiles) {
+                IoProtocolReader ioProtocolReader;
+                try {
+                    ioProtocolReader = IoReader.getInstance().read(file);
+                } catch (Exception e) {
+                    // logger.error(e.getMessage());
+                    if (errorBuilder.length() > 0) {
+                        errorBuilder.append("\n");
+                    }
+                    errorBuilder.append(e.getMessage());
+                    error = true;
+                    continue;
+                }
+                if (ioProtocolReader.isSyntaxError()) {
+                    if (errorBuilder.length() > 0) {
+                        errorBuilder.append("\n");
+                    }
+                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
+
+                    // logger.error("{} 出现语法错误 ", ioProtocolReader.getFilePath());
+                    error = true;
+                    continue;
+                }
+                enums.addAll(ioProtocolReader.getEnums());
+                beans.addAll(ioProtocolReader.getBeans());
+                messages.addAll(ioProtocolReader.getMessages());
+                events.addAll(ioProtocolReader.getEvents());
+                for (Bean bean : ioProtocolReader.getEnums()) {
+                    ProtocolData protocolData = new ProtocolData(bean, "enum");
+                    protocolDatas.add(protocolData);
+                }
+                for (Bean bean : ioProtocolReader.getBeans()) {
+                    ProtocolData protocolData = new ProtocolData(bean, "bean");
+                    protocolDatas.add(protocolData);
+                }
+                for (Bean bean : ioProtocolReader.getMessages()) {
+                    if (bean.getType().equals(Constant.ENTITY_TYPE_CS_MESSAGE)) {
+                        ProtocolData protocolData = new ProtocolData(bean, "csMessage");
+                        protocolDatas.add(protocolData);
+                    } else {
+                        ProtocolData protocolData = new ProtocolData(bean, "scMessage");
+                        protocolDatas.add(protocolData);
+                    }
+
+                }
+                for (Bean bean : ioProtocolReader.getEvents()) {
+                    ProtocolData protocolData = new ProtocolData(bean, "event");
+                    protocolDatas.add(protocolData);
+                }
+
             }
-        }
+
+            if (error) {
+                protocolViewClear();
+                logger.error("协议错误\n{}", errorBuilder.toString());
+                //  logger.error("协议文件语法或格式不对请仔细检查修改");
+                return;
+            }
+            if (protocolDatas.size() == 0) {
+                logger.warn("没有可读消息");
+                return;
+            }
+            else {
+                logger.info("数据准备完成!");
+            }
+            accordionMessage.setExpandedPane(titledPaneProtocolView);
+            for (ProtocolData protocolData : protocolDatas) {
+                if (tableViewProtocolView.getItems().contains(protocolData)) {
+                    protocolData.getBean().setGenerate(false);
+                } else {
+                    tableViewProtocolView.getItems().add(protocolData);
+                }
+            }
+            usePreView=true;
+        });
+
 
     }
 
@@ -744,17 +765,31 @@ public class MainController implements Initializable {
         accordionMessage.setExpandedPane(titledPaneProtocolConfig);
     }
 
-    public void choiceJavaProtocolCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getProtocolCodeRootChooserPath()));
+    private void choiceProtocolCodeRootPath(AbstractLanguageConfig config, TextField textField) {
+        File temp = new File(config.getProtocolCodeRootChooserPath());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp);
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setProtocolCodeRootChooserPath(file.getParent());
-            textFieldJavaProtocolCodeRootPath.setText(file.getAbsolutePath());
+            config.setProtocolCodeRootChooserPath(file.getParent());
+            textField.setText(file.getAbsolutePath());
         }
     }
 
+    public void choiceJavaProtocolCodeRootPath() {
+        choiceProtocolCodeRootPath(javaConfig, textFieldJavaProtocolCodeRootPath);
+    }
+
     public void choiceJavaCSMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getCsMessageHandlerCodeRootChooserPath()));
+        File temp = new File(javaConfig.getCsMessageHandlerCodeRootChooserPath());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp);
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             javaConfig.setCsMessageHandlerCodeRootChooserPath(file.getParent());
@@ -762,17 +797,31 @@ public class MainController implements Initializable {
         }
     }
 
-    public void choiceJavaSCMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getScMessageHandlerCodeRootChooserPath()));
+    private void choiceSCMessageHandlerCodeRootPath(AbstractLanguageConfig config, TextField textField) {
+        File temp = new File(config.getScMessageHandlerCodeRootChooserPath());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp);
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
-            javaConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
-            textFieldJavaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
+            config.setScMessageHandlerCodeRootChooserPath(file.getParent());
+            textField.setText(file.getAbsolutePath());
         }
     }
 
+    public void choiceJavaSCMessageHandlerCodeRootPath() {
+        choiceSCMessageHandlerCodeRootPath(javaConfig, textFieldJavaSCMessageHandlerCodeRootPath);
+    }
+
     public void choiceJavaEventHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(javaConfig.getEventHandlerCodeRootChooserPath()));
+        File temp = new File(javaConfig.getEventHandlerCodeRootChooserPath());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp);
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             javaConfig.setEventHandlerCodeRootChooserPath(file.getParent());
@@ -782,44 +831,30 @@ public class MainController implements Initializable {
 
 
     public void choiceLuaProtocolCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(luaConfig.getProtocolCodeRootChooserPath()));
-        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
-        if (file != null) {
-            luaConfig.setProtocolCodeRootChooserPath(file.getParent());
-            textFieldLuaProtocolCodeRootPath.setText(file.getAbsolutePath());
-        }
+
+        choiceProtocolCodeRootPath(luaConfig, textFieldLuaProtocolCodeRootPath);
     }
 
 
     public void choiceLuaSCMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(luaConfig.getScMessageHandlerCodeRootChooserPath()));
-        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
-        if (file != null) {
-            luaConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
-            textFieldLuaSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
-        }
+        choiceSCMessageHandlerCodeRootPath(luaConfig, textFieldLuaSCMessageHandlerCodeRootPath);
     }
 
     public void choiceJsProtocolCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(jsConfig.getProtocolCodeRootChooserPath()));
-        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
-        if (file != null) {
-            jsConfig.setProtocolCodeRootChooserPath(file.getParent());
-            textFieldJsProtocolCodeRootPath.setText(file.getAbsolutePath());
-        }
+        choiceProtocolCodeRootPath(jsConfig, textFieldJsProtocolCodeRootPath);
     }
 
     public void choiceJsSCMessageHandlerCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(jsConfig.getScMessageHandlerCodeRootChooserPath()));
-        File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
-        if (file != null) {
-            jsConfig.setScMessageHandlerCodeRootChooserPath(file.getParent());
-            textFieldJsSCMessageHandlerCodeRootPath.setText(file.getAbsolutePath());
-        }
+        choiceSCMessageHandlerCodeRootPath(jsConfig, textFieldJsSCMessageHandlerCodeRootPath);
     }
 
     public void choiceJsDtsCodeRootPath() {
-        directoryChooser.setInitialDirectory(new File(jsConfig.getDtsCodeRootChooserPath()));
+        File temp = new File(jsConfig.getDtsCodeRootChooserPath());
+        if (temp.exists()) {
+            directoryChooser.setInitialDirectory(temp);
+        } else {
+            directoryChooser.setInitialDirectory(null);
+        }
         File file = directoryChooser.showDialog(UiContext.getPrimaryStage());
         if (file != null) {
             jsConfig.setDtsCodeRootChooserPath(file.getParent());
@@ -885,7 +920,9 @@ public class MainController implements Initializable {
         projectName.getSelectionModel().select(value);
         File file = CheckUtil.getProjectNameFile(old);
         if (file.exists()) {
-            file.renameTo(CheckUtil.getProjectNameFile(value));
+            if (file.renameTo(CheckUtil.getProjectNameFile(value))) {
+                logger.warn("重命名记录文件失败");
+            }
         }
 
     }
@@ -982,7 +1019,7 @@ public class MainController implements Initializable {
                 value = config.getProjectName();
                 habit.getConfigs().remove(i);
                 remove = true;
-
+                break;
             }
         }
         if (remove) {
@@ -1059,60 +1096,73 @@ public class MainController implements Initializable {
     }
 
 
-    public ExecutorContext executorContext() {
-        ExecutorContext executorContext = null;
-        if (tableViewProtocolView.getItems().size() == 0) {
+    public void executorContext(Consumer<ExecutorContext> consumer) {
+
+        if (tableViewProtocolView.getItems().size() == 0 || !usePreView) {
             if (protocolFiles.size() == 0) {
                 logger.warn("没有选择协议文件");
-                return null;
+                return;
             }
-            IoReader.getInstance().clear();
-            boolean error = false;
-            StringBuilder errorBuilder = new StringBuilder();
-            List<IoProtocolReader> ioProtocolReaders = new ArrayList<>();
-            for (File file : protocolFiles) {
-                IoProtocolReader ioProtocolReader;
-                try {
-                    ioProtocolReader = IoReader.getInstance().read(file);
-                    ioProtocolReaders.add(ioProtocolReader);
-                } catch (Exception e) {
-                    // logger.error(e.getMessage());
-                    if (errorBuilder.length() > 0) {
-                        errorBuilder.append("\n");
+            logger.info("正在准备数据......");
+            executorService.execute(() -> {
+                ExecutorContext executorContext;
+                IoReader.getInstance().clear();
+                boolean error = false;
+                StringBuilder errorBuilder = new StringBuilder();
+                List<IoProtocolReader> ioProtocolReaders = new ArrayList<>();
+                for (File file : protocolFiles) {
+                    IoProtocolReader ioProtocolReader;
+                    try {
+                        ioProtocolReader = IoReader.getInstance().read(file);
+                        ioProtocolReaders.add(ioProtocolReader);
+                    } catch (Exception e) {
+                        // logger.error(e.getMessage());
+                        if (errorBuilder.length() > 0) {
+                            errorBuilder.append("\n");
+                        }
+                        errorBuilder.append(e.getMessage());
+                        error = true;
+                        continue;
                     }
-                    errorBuilder.append(e.getMessage());
-                    error = true;
-                    continue;
-                }
-                if (ioProtocolReader.isSyntaxError()) {
-                    error = true;
-                    if (errorBuilder.length() > 0) {
-                        errorBuilder.append("\n");
-                    }
-                    errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
+                    if (ioProtocolReader.isSyntaxError()) {
+                        error = true;
+                        if (errorBuilder.length() > 0) {
+                            errorBuilder.append("\n");
+                        }
+                        errorBuilder.append(ioProtocolReader.getFilePath()).append(" 语法错误\n").append(ioProtocolReader.getSyntaxErrorMessage());
 
-                    // logger.error("{} 语法错误", ioProtocolReader.getFilePath());
+                        // logger.error("{} 语法错误", ioProtocolReader.getFilePath());
+                    }
                 }
-            }
-            if (error) {
-                logger.error("协议错误\n{}", errorBuilder.toString());
-                return null;
-            }
-            executorContext = new ExecutorContext();
-            executorContext.setProjectName(config.getProjectName());
-            for (IoProtocolReader ioProtocolReader : ioProtocolReaders) {
-                executorContext.getEnums().addAll(ioProtocolReader.getEnums());
-                executorContext.getBeans().addAll(ioProtocolReader.getBeans());
-                executorContext.getMessages().addAll(ioProtocolReader.getMessages());
-                executorContext.getEvents().addAll(ioProtocolReader.getEvents());
-            }
+                if (error) {
+                    logger.error("协议错误\n{}", errorBuilder.toString());
+                    return;
+                }
+                executorContext = new ExecutorContext();
+                executorContext.setProjectName(config.getProjectName());
+                for (IoProtocolReader ioProtocolReader : ioProtocolReaders) {
+                    executorContext.getEnums().addAll(ioProtocolReader.getEnums());
+                    executorContext.getBeans().addAll(ioProtocolReader.getBeans());
+                    executorContext.getMessages().addAll(ioProtocolReader.getMessages());
+                    executorContext.getEvents().addAll(ioProtocolReader.getEvents());
+                }
+                logger.info("数据准备完成!");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                consumer.accept(executorContext);
+            });
+
         } else {
+            logger.info("使用预览数据......");
             if (enums.size() + beans.size() + events.size() + messages.size() == 0) {
                 logger.warn("未选择任何可生产的对象");
-                return null;
+                return;
             }
             //JavaConfig javaConfig = new JavaConfig();
-
+            ExecutorContext executorContext;
             executorContext = new ExecutorContext();
             executorContext.setProjectName(config.getProjectName());
             for (Enum anEnum : enums) {
@@ -1135,8 +1185,9 @@ public class MainController implements Initializable {
                     executorContext.getEvents().add(event);
                 }
             }
+            usePreView = false;
+            executorService.execute(() -> consumer.accept(executorContext));
         }
-        return executorContext;
     }
 
     private void generateCode(Executor executor) {
@@ -1157,36 +1208,36 @@ public class MainController implements Initializable {
     }
 
     public void generateJavaCode() {
-        ExecutorContext executorContext = executorContext();
-        if (executorContext == null) {
-            return;
-        }
-        javaConfigValue(javaConfig);
-        executorContext.addLanguageConfig(javaConfig);
-        Executor executor = new Executor(executorContext);
-        generateCode(executor);
+        executorContext(executorContext -> {
+            javaConfigValue(javaConfig);
+            executorContext.addLanguageConfig(javaConfig);
+            Executor executor = new Executor(executorContext);
+            generateCode(executor);
+        });
+
+
     }
 
     public void generateLuaCode() {
-        ExecutorContext executorContext = executorContext();
-        if (executorContext == null) {
-            return;
-        }
-        luaConfigValue(luaConfig);
-        executorContext.addLanguageConfig(luaConfig);
-        Executor executor = new Executor(executorContext);
-        generateCode(executor);
+        executorContext(executorContext -> {
+            luaConfigValue(luaConfig);
+            executorContext.addLanguageConfig(luaConfig);
+            Executor executor = new Executor(executorContext);
+            generateCode(executor);
+        });
+
+
     }
 
     public void generateJsCode() {
-        ExecutorContext executorContext = executorContext();
-        if (executorContext == null) {
-            return;
-        }
-        jsConfigValue(jsConfig);
-        executorContext.addLanguageConfig(jsConfig);
-        Executor executor = new Executor(executorContext);
-        generateCode(executor);
+        executorContext(executorContext -> {
+            jsConfigValue(jsConfig);
+            executorContext.addLanguageConfig(jsConfig);
+            Executor executor = new Executor(executorContext);
+            generateCode(executor);
+        });
+
+
     }
 
     private void animation(Node node) {

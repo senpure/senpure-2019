@@ -65,7 +65,7 @@
             writeVar32(buf, ${field.tag});
             writeVar32(buf, ${field.name}SerializedSize);
             for (int i = 0; i < ${field.name}.size(); i++) {
-                write${baseFieldType2MethodName(field.fieldType)}(buf, ${field.name}.get(i);
+                write${baseFieldType2MethodName(field.fieldType)}(buf, ${field.name}.get(i));
             }
         }
             </#if>

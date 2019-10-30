@@ -384,12 +384,12 @@ public class IoProtocolReader extends IoBaseListener {
         bean = event;
         events.add(event);
         setBeanValue();
-        event.setJavaHandlerPack(javaPackage);
+        event.setJavaHandlerPackage(javaPackage);
         if (Constant.JAVA_PACK_EVENT.trim().length() > 0) {
             event.setJavaPackage(event.getJavaPackage() + "." + Constant.JAVA_PACK_EVENT);
         }
         if (Constant.JAVA_PACK_EVENT_HANDLER.trim().length() > 0) {
-            event.setJavaHandlerPack(event.getJavaHandlerPack() + "." + Constant.JAVA_PACK_EVENT_HANDLER);
+            event.setJavaHandlerPackage(event.getJavaHandlerPackage() + "." + Constant.JAVA_PACK_EVENT_HANDLER);
         }
     }
 

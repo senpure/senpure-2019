@@ -181,7 +181,7 @@ public class JavaExecutor extends AbstractLanguageExecutor<JavaConfig> {
             Assert.error(e);
         }
         for (Event event : context.getEvents()) {
-            File file = new File(javaConfig.getEventHandlerCodeRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPack().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
+            File file = new File(javaConfig.getEventHandlerCodeRootPath(), FileUtil.fullFileEnd(event.getJavaHandlerPackage().replace(".", File.separator)) + event.getJavaHandlerName() + ".java");
             boolean cover = false;
             if (file.exists()) {
                 if (!javaConfig.isEventHandlerOverwrite()) {
