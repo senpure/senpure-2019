@@ -277,7 +277,7 @@
         </#if>
     public ${name} set${field.name?cap_first} (List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}) {
         if(${field.name} == null) {
-        this.${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
+            this.${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
             return this;
         }
         this.${field.name} = ${field.name};
