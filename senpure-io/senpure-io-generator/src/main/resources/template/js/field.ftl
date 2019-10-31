@@ -50,8 +50,10 @@ ${bean.js.namespace}.${bean.js.name} = function () {
     //缩进${bean.fieldMaxLen} + 3 = ${bean.fieldMaxLen+3} 个空格
     this._next_indent = "<#list 1..bean.fieldMaxLen+3 as i> </#list>";
 </#if>
+    <#--
     //格式化时统一字段长度
     this._filedPad = ${bean.fieldMaxLen} ;
+    -->
 };
 <#if bean.type !="NA">
 
@@ -328,7 +330,7 @@ ${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent) {
     </#if>
     _str = _str + "\n";
     <#if field.list>
-    _str = _str + _indent + rightPad("${field.name}", this._filedPad) + " = ";
+    _str = _str + _indent + "${field.name?right_pad(bean.fieldMaxLen)} = ";
         var ${field.name}_len = this.${field.name}.length;
         if (${field.name}_len > 0){
             _str = _str + "[";
@@ -351,19 +353,19 @@ ${bean.js.namespace}.${bean.js.name}.prototype.toString = function (_indent) {
             _str = _str + this._next_indent;
             _str = _str + _indent + "]";
         }else {<#-- len = 0-->
-            _str = _str + "null ";
+            _str = _str + "[]";
         }
     <#else ><#-- 不是list-->
         <#if field.baseField>
-    _str = _str + _indent + rightPad("${field.name}",this._filedPad) + " = " + this.${field.name};
+    _str = _str + _indent + "${field.name?right_pad(bean.fieldMaxLen)} = " + this.${field.name};
         <#else>
             <#if field.bean.enum>
-    _str = _str + _indent + rightPad("${field.name}",this._filedPad) + " = " + ${field.bean.js.namespace}.${field.bean.js.name}.valueToStr(this.${field.name});
+    _str = _str + _indent + "${field.name?right_pad(bean.fieldMaxLen)} = " + ${field.bean.js.namespace}.${field.bean.js.name}.valueToStr(this.${field.name});
                 <#else >
     if (this.${field.name} != null ){
-        _str = _str + _indent + rightPad("${field.name}", this._filedPad) + " = " + this.${field.name}.toString(_indent + this._next_indent);
+        _str = _str + _indent + "${field.name?right_pad(bean.fieldMaxLen)} = " + this.${field.name}.toString(_indent + this._next_indent);
     } else{
-        _str = _str + _indent + rightPad("${field.name}", this._filedPad) + " = " + "null";
+        _str = _str + _indent + "${field.name?right_pad(bean.fieldMaxLen)} = " + "null";
     }
             </#if>
         </#if>

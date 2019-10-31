@@ -56,8 +56,10 @@ ${bean.lua.namespace}.${bean.lua.name} = {
     --缩进${bean.fieldMaxLen} + 3 = ${bean.fieldMaxLen+3} 个空格
     _next_indent = "<#list 1..bean.fieldMaxLen+3 as i> </#list>";
 </#if>
+    <#--
     --格式化时统一字段长度
     _filedPad = ${bean.fieldMaxLen} ;
+    -->
 }
 
 --${bean.lua.namespace}.${bean.lua.name}构造方法
@@ -360,7 +362,7 @@ function ${bean.lua.namespace}.${bean.lua.name}:toString(_indent)
     </#if>
     _str = _str .. "\n"
     <#if field.list>
-    _str = _str .. _indent .. rightPad("${field.name}", self._filedPad) .. " = "
+    _str = _str .. _indent .. "${field.name?right_pad(bean.fieldMaxLen)}" .. " = "
     if self.${field.name} then
         local ${field.name}_len = #self.${field.name}
         if ${field.name}_len > 0 then
@@ -388,26 +390,26 @@ function ${bean.lua.namespace}.${bean.lua.name}:toString(_indent)
             _str = _str .. self._next_indent
             _str = _str .. _indent .. "]"
         else<#-- len = 0-->
-            _str = _str .. "nil "
+            _str = _str .. "[]"
         end
     else <#-- nil-->
-        _str = _str .. "nil "
+        _str = _str .. "nil"
     end
     <#else ><#-- 不是list-->
         <#if field.baseField>
             <#if field.fieldType="boolean">
-    _str = _str .. _indent .. rightPad("${field.name}", self._filedPad) .. " = " .. tostring(self.${field.name})
+    _str = _str .. _indent .. "${field.name?right_pad(bean.fieldMaxLen)} = " .. tostring(self.${field.name})
             <#else >
-    _str = _str .. _indent .. rightPad("${field.name}",self._filedPad) .. " = " .. self.${field.name}
+    _str = _str .. _indent .. "${field.name?right_pad(bean.fieldMaxLen)} = " .. self.${field.name}
             </#if>
         <#else>
             <#if field.bean.enum>
-    _str = _str .. _indent .. rightPad("${field.name}",self._filedPad) .. " = " .. ${field.bean.lua.namespace}.${field.bean.lua.name}.valueToStr(self.${field.name})
+    _str = _str .. _indent .. "${field.name?right_pad(bean.fieldMaxLen)} = " .. ${field.bean.lua.namespace}.${field.bean.lua.name}.valueToStr(self.${field.name})
                 <#else >
     if self.${field.name} then
-        _str = _str .. _indent .. rightPad("${field.name}", self._filedPad) .. " = " .. self.${field.name}:toString(_indent .. self._next_indent)
+        _str = _str .. _indent .. "${field.name?right_pad(bean.fieldMaxLen)} = " .. self.${field.name}:toString(_indent .. self._next_indent)
     else
-        _str = _str .. _indent .. rightPad("${field.name}", self._filedPad) .. " = " .. "nil"
+        _str = _str .. _indent .. "${field.name?right_pad(bean.fieldMaxLen)} = " .. "nil"
     end
             </#if>
         </#if>

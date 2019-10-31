@@ -7,7 +7,6 @@
 </#if>
 <#if fields?size gt 0>
         //最长字段长度 ${fieldMaxLen}
-        int filedPad = ${fieldMaxLen};
 </#if>
         indent = indent == null ? "" : indent;
         StringBuilder sb = new StringBuilder();
@@ -18,7 +17,7 @@
     </#if>
     <#if field.list>
         sb.append("\n");
-        sb.append(indent).append(rightPad("${field.name}", filedPad)).append(" = ");
+        sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ");
         int ${field.name}Size = ${field.name}.size();
         if (${field.name}Size > 0) {
             sb.append("[");
@@ -36,15 +35,15 @@
             sb.append(nextIndent);
             sb.append(indent).append("]");
         }else {
-            sb.append("null");
+            sb.append("[]");
         }
 
     <#else >
         sb.append("\n");
         <#if field.baseField>
-        sb.append(indent).append(rightPad("${field.name}", filedPad)).append(" = ").append(${field.name});
+        sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ").append(${field.name});
         <#else>
-        sb.append(indent).append(rightPad("${field.name}", filedPad)).append(" = ");
+        sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ");
         if (${field.name} != null){
             <#if field.bean.enum>
             sb.append(${field.name});
