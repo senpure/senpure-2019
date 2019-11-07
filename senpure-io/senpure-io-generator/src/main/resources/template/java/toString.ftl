@@ -1,9 +1,10 @@
+<#include "method.ftl">
 
     @Override
     public String toString(String indent) {
 <#if hasNextIndent>
         //${fieldMaxLen} + 3 = ${fieldMaxLen+3} 个空格
-        String nextIndent ="<#list 1..fieldMaxLen+3 as i> </#list>";
+        String nextIndent = "<#list 1..fieldMaxLen+3 as i> </#list>";
 </#if>
 <#if fields?size gt 0>
         //最长字段长度 ${fieldMaxLen}
@@ -18,26 +19,25 @@
     <#if field.list>
         sb.append("\n");
         sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ");
-        int ${field.name}Size = ${field.name}.size();
-        if (${field.name}Size > 0) {
+        <#--int ${field.name}Size = ${field.name}.size();-->
+        if (${field.name}.size() > 0) {
             sb.append("[");
-            for (int i = 0; i < ${field.name}Size; i++) {
+            for (${javaType2ListType(field.javaType)} value : ${field.name}) {
                 sb.append("\n");
         <#if field.baseField||field.bean.enum>
                 sb.append(nextIndent);
-                sb.append(indent).append(${field.name}.get(i));
+                sb.append(indent).append(value);
         <#else>
                 sb.append(nextIndent);
-                sb.append(indent).append(${field.name}.get(i).toString(indent + nextIndent));
+                sb.append(indent).append(value.toString(indent + nextIndent));
         </#if>
             }
             sb.append("\n");
             sb.append(nextIndent);
             sb.append(indent).append("]");
-        }else {
+        } else {
             sb.append("[]");
         }
-
     <#else >
         sb.append("\n");
         <#if field.baseField>

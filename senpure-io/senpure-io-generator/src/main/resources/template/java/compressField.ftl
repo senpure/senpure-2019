@@ -5,7 +5,7 @@
     //${field.explain}
 </#if>
 <#if field.list >
-    private List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
+    private List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name} = new ArrayList<>(<#if field.capacity gt 0>${field.capacity}</#if>);
 <#else>
     <#if !field.baseField&&field.bean.enum>
     private ${field.javaType} ${field.name} = ${field.bean.javaName}.${field.bean.defaultField.name};
@@ -57,15 +57,15 @@
     <#if field.list >
         <#if field.baseField>
             <#if field.javaType="String">
-        for (int i = 0; i < ${field.name}.size(); i++) {
-            writeString(buf, ${field.tag}, ${field.name}.get(i));
+        for (String value : ${field.name}) {
+            writeString(buf, ${field.tag}, value);
         }
             <#else ><#--String-->
         if (${field.name}.size() > 0) {
             writeVar32(buf, ${field.tag});
             writeVar32(buf, ${field.name}SerializedSize);
-            for (int i = 0; i < ${field.name}.size(); i++) {
-                write${baseFieldType2MethodName(field.fieldType)}(buf, ${field.name}.get(i));
+            for (${.globals[field.javaType]!field.javaType?cap_first} value : ${field.name}) {
+                write${baseFieldType2MethodName(field.fieldType)}(buf, value);
             }
         }
             </#if>
@@ -74,13 +74,13 @@
         if (${field.name}.size() > 0) {
             writeVar32(buf, ${field.tag});
             writeVar32(buf, ${field.name}SerializedSize);
-            for (int i = 0;i < ${field.name}.size(); i++) {
-                writeVar32(buf, ${field.name}.get(i).getValue());
+            for (${field.javaType} value : ${field.name}) {
+                writeVar32(buf, value.getValue());
             }
         }
             <#else>
-        for (int i = 0;i < ${field.name}.size(); i++) {
-             writeBean(buf, ${field.tag}, ${field.name}.get(i));
+        for (${field.javaType} value : ${field.name}) {
+             writeBean(buf, ${field.tag}, value);
         }
             </#if>
         </#if>
@@ -200,13 +200,13 @@
     <#if field.list>
         <#if field.baseField>
             <#if field.javaType="String">
-        for(int i = 0; i < ${field.name}.size(); i++) {
-            size += computeStringSize(${var32Size(field.tag)}, ${field.name}.get(i));
+        for(String value : ${field.name}) {
+            size += computeStringSize(${var32Size(field.tag)}, value);
         }
             <#else ><#--String-->
         int ${field.name}DataSize = 0;
-        for(int i = 0; i < ${field.name}.size(); i++) {
-            ${field.name}DataSize += compute${baseFieldType2MethodName(field.fieldType)}Size(${field.name}.get(i));
+        for(${.globals[field.javaType]!field.javaType?cap_first} value : ${field.name}) {
+            ${field.name}DataSize += compute${baseFieldType2MethodName(field.fieldType)}Size(value);
         }
         ${field.name}SerializedSize = ${field.name}DataSize;
         if (${field.name}DataSize > 0 ) {
@@ -219,8 +219,8 @@
         <#else ><#--bean-->
             <#if field.bean.enum>
         int ${field.name}DataSize = 0;
-        for (int i = 0;i < ${field.name}.size(); i++) {
-            ${field.name}DataSize += computeVar32Size(${field.name}.get(i).getValue());
+        for (${field.javaType} value : ${field.name}) {
+            ${field.name}DataSize += computeVar32Size(value.getValue());
         }
         ${field.name}SerializedSize = ${field.name}DataSize;
         if (${field.name}DataSize > 0 ) {
@@ -230,8 +230,8 @@
             size += computeVar32Size(${field.name}SerializedSize);
         }
             <#else>
-        for (int i = 0; i < ${field.name}.size(); i++) {
-            size += computeBeanSize(${var32Size(field.tag)}, ${field.name}.get(i));
+        for (${field.javaType} value : ${field.name}) {
+            size += computeBeanSize(${var32Size(field.tag)}, value);
         }
             </#if>
         </#if><#--bean-->
@@ -264,20 +264,22 @@
         <#if field.hasExplain&&field.explain?length gt 1>
      /**
       * get ${field.explain}
+      *
       * @return
       */
         </#if>
     public List<${.globals[field.javaType]!field.javaType?cap_first}> get${field.name?cap_first}() {
         return ${field.name};
     }
+
         <#if field.hasExplain&&field.explain?length gt 1>
      /**
       * set ${field.explain}
       */
         </#if>
-    public ${name} set${field.name?cap_first} (List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}) {
-        if(${field.name} == null) {
-            this.${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
+    public ${name} set${field.name?cap_first}(List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}) {
+        if (${field.name} == null) {
+            this.${field.name} = new ArrayList<>(<#if field.capacity gt 0>${field.capacity}</#if>);
             return this;
         }
         this.${field.name} = ${field.name};
@@ -287,11 +289,12 @@
     <#else>
         <#if field.hasExplain&&field.explain?length gt 1>
     /**
-     * <#if field.javaType="boolean"> is<#else>get</#if> ${field.explain}
+     * <#if field.javaType="boolean">is<#else>get</#if> ${field.explain}
+     *
      * @return
      */
         </#if>
-    public  ${field.javaType} <#if field.javaType="boolean"> is<#else>get</#if>${field.name?cap_first}() {
+    public ${field.javaType} <#if field.javaType="boolean">is<#else>get</#if>${field.name?cap_first}() {
         return ${field.name};
     }
 

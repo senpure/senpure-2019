@@ -39,9 +39,9 @@ public class ${name} extends  Event {
     public String toString() {
         return "${name}<#if type!="NA">[${id?c}]</#if>{"
 <#list fields as field>
-                +"<#if field_index gt 0>,</#if>${field.name}=" + ${field.name}
+                + "<#if field_index gt 0>,</#if>${field.name}=" + ${field.name}
 </#list>
                 + "}";
-   }
+    }
 <#include "toString.ftl">
 }

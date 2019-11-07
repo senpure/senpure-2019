@@ -5,5 +5,10 @@
     <#local temp>${baseFieldTypeMethodSpecialMap[fieldType]!fieldType}</#local>
     <#return temp?cap_first>
 </#function>
+<#assign javaType2ListTypeSpecialMap = {"int":"Integer"} />
+<#function javaType2ListType javaType>
+    <#local temp>${javaType2ListTypeSpecialMap[javaType]!javaType}</#local>
+    <#return temp?cap_first>
+</#function>
 
 
