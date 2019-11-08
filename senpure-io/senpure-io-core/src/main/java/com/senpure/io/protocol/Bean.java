@@ -353,7 +353,7 @@ public abstract class Bean {
         }
     }
 
-    public static <T> int computeEnumSize(List<T> values,Function<T,Integer> function) {
+    public static <T> int computeEnumSize(List<T> values, Function<T, Integer> function) {
         int size = 0;
         for (T value : values) {
             size += function.apply(value);
@@ -576,21 +576,31 @@ public abstract class Bean {
         return StringUtils.rightPad(str, pad);
     }
 
-    public static <T extends Bean> void append(StringBuilder sb, T value, String indent, String nextIndent) {
+    public static void append(StringBuilder sb, Bean value, String indent, String nextIndent) {
         if (value != null) {
             sb.append(value.toString(indent + nextIndent));
         } else {
             sb.append("null");
         }
     }
-    public static  void append(StringBuilder sb, Enum value,Function<Enum, String> function) {
+
+    public static void append(StringBuilder sb, Enum value) {
+        if (value != null) {
+            sb.append(value);
+        } else {
+            sb.append("null");
+        }
+    }
+
+    public static void append(StringBuilder sb, Enum value, Function<Enum, String> function) {
         if (value != null) {
             sb.append(function.apply(value));
         } else {
             sb.append("null");
         }
     }
-    public static <T> void appendList(StringBuilder sb, List<T> values, String indent, String nextIndent) {
+
+    public static <T> void appendValues(StringBuilder sb, List<T> values, String indent, String nextIndent) {
         if (values.size() > 0) {
             sb.append("[");
             for (T value : values) {
@@ -606,13 +616,14 @@ public abstract class Bean {
         }
     }
 
-    public static <T extends  Bean> void appendList(StringBuilder sb, List<T> values, String indent, String nextIndent, Function<T, String> function) {
-        if (values.size() > 0) {
+    public static void appendBeans(StringBuilder sb, List<Bean> beans, String indent, String nextIndent) {
+        if (beans.size() > 0) {
             sb.append("[");
-            for (T value : values) {
+            for (Bean value : beans) {
                 sb.append("\n");
                 sb.append(nextIndent);
-                sb.append(indent).append(function.apply(value));
+                sb.append(indent);
+                sb.append(value.toString(indent + nextIndent));
             }
             sb.append("\n");
             sb.append(nextIndent);
