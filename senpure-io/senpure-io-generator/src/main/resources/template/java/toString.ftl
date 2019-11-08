@@ -10,6 +10,14 @@
         //最长字段长度 ${fieldMaxLen}
 </#if>
         indent = indent == null ? "" : indent;
+<#list fields as field>
+    <#if field.list>
+        <#if !field.baseField&&!field.bean.enum>
+         String finalIndent = indent;
+            <#break>
+        </#if>
+    </#if>
+</#list>
         StringBuilder sb = new StringBuilder();
         sb.append("${name}")<#if type!="NA">.append("[${id?c}]")</#if>.append("{");
 <#list fields as field>
@@ -20,6 +28,7 @@
         sb.append("\n");
         sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ");
         <#--int ${field.name}Size = ${field.name}.size();-->
+        <#--
         if (${field.name}.size() > 0) {
             sb.append("[");
             for (${javaType2ListType(field.javaType)} value : ${field.name}) {
@@ -37,13 +46,19 @@
             sb.append(indent).append("]");
         } else {
             sb.append("[]");
-        }
+        }-->
+        <#if field.baseField||field.bean.enum>
+        appendList(sb,${field.name},indent,nextIndent);
+        <#else >
+        appendList(sb,${field.name},indent,nextIndent,${lowerCamelCase(field.javaType)} -> ${lowerCamelCase(field.javaType)}.toString(finalIndent +nextIndent));
+        </#if>
     <#else >
         sb.append("\n");
         <#if field.baseField>
         sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ").append(${field.name});
         <#else>
         sb.append(indent).append("${field.name?right_pad(fieldMaxLen)} = ");
+         <#--
         if (${field.name} != null){
             <#if field.bean.enum>
             sb.append(${field.name});
@@ -53,6 +68,12 @@
         } else {
             sb.append("null");
         }
+        -->
+            <#if field.bean.enum>
+        append(sb, ${field.name}, Enum::toString);
+            <#else >
+        append(sb, ${field.name}, indent, nextIndent);
+            </#if>
         </#if>
     </#if>
 </#list>

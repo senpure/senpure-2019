@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
 
 
 public abstract class Bean {
@@ -208,6 +209,7 @@ public abstract class Bean {
             return result;
         }
     }
+
     public static int readVar32(ByteBuf buf) {
         byte tmp = buf.readByte();
         if (tmp >= 0) {
@@ -351,6 +353,24 @@ public abstract class Bean {
         }
     }
 
+    public static <T> int computeEnumSize(List<T> values,Function<T,Integer> function) {
+        int size = 0;
+        for (T value : values) {
+            size += function.apply(value);
+        }
+        return size;
+    }
+
+
+    public static int computePackagedSize(int tagVar32Size, int serializedSize) {
+        if (serializedSize > 0) {
+            tagVar32Size += serializedSize;
+            tagVar32Size += computeVar32Size(serializedSize);
+            return tagVar32Size;
+        }
+        return 0;
+    }
+
     public static int computeStringSize(int tagVar32Size, String value) {
         return tagVar32Size + computeStringSize(value);
     }
@@ -360,8 +380,24 @@ public abstract class Bean {
         return _computeVar32Size(bytes.length) + bytes.length;
     }
 
+    public static int computeStringSize(int tagVar32Size, List<String> values) {
+        int size = 0;
+        for (String value : values) {
+            size += computeStringSize(tagVar32Size, value);
+        }
+        return size;
+    }
+
     public static int computeBeanSize(int tagVar32Size, Bean value) {
         return tagVar32Size + computeBeanSize(value);
+    }
+
+    public static int computeBeanSize(int tagVar32Size, List<Bean> values) {
+        int size = 0;
+        for (Bean value : values) {
+            size += computeBeanSize(tagVar32Size, value);
+        }
+        return size;
     }
 
     public static int computeBeanSize(Bean value) {
@@ -373,12 +409,20 @@ public abstract class Bean {
         return tagVar32Size + computeBooleanSize(value);
     }
 
+    public static int computeBooleanSize(List<Boolean> values) {
+        return values.size();
+    }
+
     public static int computeBooleanSize(boolean value) {
         return 1;
     }
 
     public static int computeDoubleSize(int tagVar32Size, double value) {
         return tagVar32Size + computeDoubleSize(value);
+    }
+
+    public static int computeDoubleSize(List<Double> values) {
+        return values.size() << 3;
     }
 
     public static int computeDoubleSize(double value) {
@@ -389,12 +433,20 @@ public abstract class Bean {
         return tagVar32Size + computeFloatSize(value);
     }
 
+    public static int computeFloatSize(List<Float> values) {
+        return values.size() << 2;
+    }
+
     public static int computeFloatSize(float value) {
         return 4;
     }
 
     public static int computeFixed32Size(int tagVar32Size, int value) {
         return tagVar32Size + computeFixed32Size(value);
+    }
+
+    public static int computeFixed32Size(List<Integer> values) {
+        return values.size() << 2;
     }
 
     public static int computeFixed32Size(int value) {
@@ -405,6 +457,10 @@ public abstract class Bean {
         return tagVar32Size + computeFixed64Size(value);
     }
 
+    public static int computeFixed64Size(List<Long> values) {
+        return values.size() << 3;
+    }
+
     public static int computeFixed64Size(long value) {
         return 8;
     }
@@ -413,12 +469,28 @@ public abstract class Bean {
         return tagVar32Size + computeSintSize(value);
     }
 
+    public static int computeSintSize(List<Integer> values) {
+        int size = 0;
+        for (Integer value : values) {
+            size += computeSintSize(value);
+        }
+        return size;
+    }
+
     public static int computeSintSize(int value) {
         return _computeVar32Size(encodeZigZag32(value));
     }
 
     public static int computeSlongSize(int tagVar32Size, long value) {
         return tagVar32Size + computeSlongSize(value);
+    }
+
+    public static int computeSlongSize(List<Long> values) {
+        int size = 0;
+        for (Long value : values) {
+            size += computeSlongSize(value);
+        }
+        return size;
     }
 
     public static int computeSlongSize(long value) {
@@ -431,12 +503,33 @@ public abstract class Bean {
 
     }
 
+    public static int computeVar32Size(List<Integer> values) {
+
+        int size = 0;
+        for (Integer value : values) {
+            size += computeVar32Size(value);
+        }
+        return size;
+
+
+    }
+
     public static int computeVar32Size(int value) {
         return value >= 0 ? _computeVar32Size(value) : 5;
     }
 
     public static int computeVar64Size(int tagVar32Size, long value) {
         return tagVar32Size + computeVar64Size(value);
+
+    }
+
+    public static int computeVar64Size(List<Long> values) {
+        int size = 0;
+        for (Long value : values) {
+            size += computeVar64Size(value);
+        }
+        return size;
+
 
     }
 
@@ -478,8 +571,55 @@ public abstract class Bean {
         }
     }
 
+
     public static String rightPad(String str, int pad) {
         return StringUtils.rightPad(str, pad);
+    }
+
+    public static <T extends Bean> void append(StringBuilder sb, T value, String indent, String nextIndent) {
+        if (value != null) {
+            sb.append(value.toString(indent + nextIndent));
+        } else {
+            sb.append("null");
+        }
+    }
+    public static  void append(StringBuilder sb, Enum value,Function<Enum, String> function) {
+        if (value != null) {
+            sb.append(function.apply(value));
+        } else {
+            sb.append("null");
+        }
+    }
+    public static <T> void appendList(StringBuilder sb, List<T> values, String indent, String nextIndent) {
+        if (values.size() > 0) {
+            sb.append("[");
+            for (T value : values) {
+                sb.append("\n");
+                sb.append(nextIndent);
+                sb.append(indent).append(value);
+            }
+            sb.append("\n");
+            sb.append(nextIndent);
+            sb.append(indent).append("]");
+        } else {
+            sb.append("[]");
+        }
+    }
+
+    public static <T extends  Bean> void appendList(StringBuilder sb, List<T> values, String indent, String nextIndent, Function<T, String> function) {
+        if (values.size() > 0) {
+            sb.append("[");
+            for (T value : values) {
+                sb.append("\n");
+                sb.append(nextIndent);
+                sb.append(indent).append(function.apply(value));
+            }
+            sb.append("\n");
+            sb.append(nextIndent);
+            sb.append(indent).append("]");
+        } else {
+            sb.append("[]");
+        }
     }
 
     public static void main(String[] args) {
@@ -511,5 +651,7 @@ public abstract class Bean {
         System.out.println(sb);
 
         System.out.println(names.size());
+        System.out.println(0 << 3);
+        System.out.println(1 << 3);
     }
 }

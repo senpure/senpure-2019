@@ -200,16 +200,16 @@
     <#if field.list>
         <#if field.baseField>
             <#if field.javaType="String">
-        for(String value : ${field.name}) {
+        for (String value : ${field.name}) {
             size += computeStringSize(${var32Size(field.tag)}, value);
         }
             <#else ><#--String-->
-        int ${field.name}DataSize = 0;
-        for(${.globals[field.javaType]!field.javaType?cap_first} value : ${field.name}) {
-            ${field.name}DataSize += compute${baseFieldType2MethodName(field.fieldType)}Size(value);
-        }
-        ${field.name}SerializedSize = ${field.name}DataSize;
-        if (${field.name}DataSize > 0 ) {
+        if (${field.name}.size() > 0 ) {
+            int ${field.name}DataSize = 0;
+            for (${.globals[field.javaType]!field.javaType?cap_first} value : ${field.name}) {
+                ${field.name}DataSize += compute${baseFieldType2MethodName(field.fieldType)}Size(value);
+            }
+            ${field.name}SerializedSize = ${field.name}DataSize;
             //tag size ${field.tag}
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
@@ -218,12 +218,12 @@
             </#if><#--String-->
         <#else ><#--bean-->
             <#if field.bean.enum>
-        int ${field.name}DataSize = 0;
-        for (${field.javaType} value : ${field.name}) {
-            ${field.name}DataSize += computeVar32Size(value.getValue());
-        }
-        ${field.name}SerializedSize = ${field.name}DataSize;
-        if (${field.name}DataSize > 0 ) {
+        if (${field.name}.size() > 0 ) {
+            int ${field.name}DataSize = 0;
+            for (${field.javaType} value : ${field.name}) {
+                ${field.name}DataSize += computeVar32Size(value.getValue());
+            }
+            ${field.name}SerializedSize = ${field.name}DataSize;
             //tag size ${field.tag}
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
@@ -238,20 +238,20 @@
     <#else><#--不是list-->
          <#if field.baseField>
              <#if field.javaType="String">
-         if (${field.name} != null) {
+        if (${field.name} != null) {
              size += computeStringSize(${var32Size(field.tag)}, ${field.name});
-         }
+        }
              <#else>
-         size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, ${field.name});
+        size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, ${field.name});
              </#if>
          <#else>
-         if (${field.name} != null) {
+        if (${field.name} != null) {
              <#if field.bean.enum>
-             size += computeVar32Size(${var32Size(field.tag)}, ${field.name}.getValue());
+            size += computeVar32Size(${var32Size(field.tag)}, ${field.name}.getValue());
              <#else >
-             size += computeBeanSize(${var32Size(field.tag)}, ${field.name});
+            size += computeBeanSize(${var32Size(field.tag)}, ${field.name});
              </#if>
-         }
+        }
          </#if>
     </#if>
 </#list>
