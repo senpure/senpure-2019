@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * IoReader
@@ -23,9 +24,22 @@ public class IoReader {
 
     }
 
+    private static Map<String, IoReader> readerMap = new ConcurrentHashMap<>();
+
     public static IoReader getInstance() {
         return Inner.ioReader;
     }
+
+    public static IoReader getInstance(String identity) {
+        IoReader reader = readerMap.get(identity);
+        if (reader == null) {
+            reader = new IoReader();
+            readerMap.putIfAbsent(identity, reader);
+            return readerMap.get(identity);
+        }
+        return reader;
+    }
+
 
     private volatile Map<String, IoProtocolReader> ioProtocolReaderMap = new HashMap<>();
 
@@ -57,17 +71,10 @@ public class IoReader {
         ioProtocolReaderMap.put(key, ioProtocolReader);
     }
 
-    public void checkName() {
-
-        for (IoProtocolReader value : ioProtocolReaderMap.values()) {
-
-        }
-    }
 
     public Map<String, IoProtocolReader> getIoProtocolReaderMap() {
         return ioProtocolReaderMap;
     }
-
 
     public static void main(String[] args) {
         AppEvn.markClassRootPath();
