@@ -519,7 +519,13 @@ public class MainController implements Initializable {
 
     public void addProtocolFile() {
         logger.debug("增加协议文件");
-        fileChooserIoFile.setInitialDirectory(new File(config.getProtocolFileChooserPath()));
+        File temp = new File(config.getProtocolFileChooserPath());
+        if (temp.exists()) {
+            fileChooserIoFile.setInitialDirectory(temp);
+        } else {
+            fileChooserIoFile.setInitialDirectory(null);
+        }
+
         List<File> files = fileChooserIoFile.showOpenMultipleDialog(UiContext.getPrimaryStage());
         if (files != null) {
             fileChooserIoFile.setInitialDirectory(files.get(0).getParentFile());
