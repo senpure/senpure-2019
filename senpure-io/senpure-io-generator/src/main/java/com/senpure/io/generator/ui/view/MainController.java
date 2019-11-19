@@ -39,6 +39,7 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -517,16 +518,16 @@ public class MainController implements Initializable {
         protocolViewClear();
     }
 
-    private File createFile(String path) {
+    private File checkFile(String path) {
         if (path == null) {
-            return new File(AppEvn.getClassRootPath());
+            return FileSystemView.getFileSystemView().getHomeDirectory();
         }
         return new File(path);
     }
 
     public void addProtocolFile() {
         logger.debug("增加协议文件");
-        File temp = createFile(config.getProtocolFileChooserPath());
+        File temp = checkFile(config.getProtocolFileChooserPath());
         if (temp.exists()) {
             fileChooserIoFile.setInitialDirectory(temp);
         } else {
@@ -554,7 +555,7 @@ public class MainController implements Initializable {
 
     public void addProtocolDirectory() {
         logger.debug("增加协议文件夹");
-        File temp = createFile(config.getProtocolDirectoryChooserPath());
+        File temp = checkFile(config.getProtocolDirectoryChooserPath());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp);
         } else {
@@ -778,7 +779,7 @@ public class MainController implements Initializable {
     }
 
     private void choiceProtocolCodeRootPath(AbstractLanguageConfig config, TextField textField) {
-        File temp = createFile(config.getProtocolCodeRootChooserPath());
+        File temp = checkFile(config.getProtocolCodeRootChooserPath());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp);
         } else {
@@ -796,7 +797,7 @@ public class MainController implements Initializable {
     }
 
     public void choiceJavaCSMessageHandlerCodeRootPath() {
-        File temp = createFile(javaConfig.getCsMessageHandlerCodeRootChooserPath());
+        File temp = checkFile(javaConfig.getCsMessageHandlerCodeRootChooserPath());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp);
         } else {
@@ -810,7 +811,7 @@ public class MainController implements Initializable {
     }
 
     private void choiceSCMessageHandlerCodeRootPath(AbstractLanguageConfig config, TextField textField) {
-        File temp = createFile(config.getScMessageHandlerCodeRootChooserPath());
+        File temp = checkFile(config.getScMessageHandlerCodeRootChooserPath());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp);
         } else {
@@ -828,7 +829,7 @@ public class MainController implements Initializable {
     }
 
     public void choiceJavaEventHandlerCodeRootPath() {
-        File temp = createFile(javaConfig.getEventHandlerCodeRootChooserPath());
+        File temp = checkFile(javaConfig.getEventHandlerCodeRootChooserPath());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp);
         } else {
@@ -861,7 +862,7 @@ public class MainController implements Initializable {
     }
 
     public void choiceJsDtsCodeRootPath() {
-        File temp = createFile(jsConfig.getDtsCodeRootChooserPath());
+        File temp = checkFile(jsConfig.getDtsCodeRootChooserPath());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp);
         } else {
@@ -892,7 +893,7 @@ public class MainController implements Initializable {
     }
 
     public void updateProjectNameByChose() {
-        File temp = createFile(projectName.getSelectionModel().getSelectedItem());
+        File temp = checkFile(projectName.getSelectionModel().getSelectedItem());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp.getParentFile());
         } else {
@@ -940,7 +941,7 @@ public class MainController implements Initializable {
     }
 
     public void createProjectByChose() {
-        File temp = createFile(projectName.getSelectionModel().getSelectedItem());
+        File temp = checkFile(projectName.getSelectionModel().getSelectedItem());
         if (temp.exists()) {
             directoryChooser.setInitialDirectory(temp.getParentFile());
         } else {
