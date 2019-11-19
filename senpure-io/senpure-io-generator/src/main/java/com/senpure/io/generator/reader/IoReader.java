@@ -43,18 +43,18 @@ public class IoReader {
 
     private volatile Map<String, IoProtocolReader> ioProtocolReaderMap = new HashMap<>();
 
+
     public IoProtocolReader read(File file) {
         String key = file.getAbsolutePath();
         if (key.endsWith(".io")) {
-            IoProtocolReader ioProtocolReader = ioProtocolReaderMap.get(key);
-            if (ioProtocolReader == null) {
-                ioProtocolReader = new IoProtocolReader();
-
-                ioProtocolReader.read(file, ioProtocolReaderMap);
-                ioProtocolReaderMap.putIfAbsent(key, ioProtocolReader);
+            IoProtocolReader last = ioProtocolReaderMap.get(key);
+            if (last == null) {
+                IoProtocolReader ioProtocolReader = new IoProtocolReader();
+                ioProtocolReader.read(file, this);
+                ioProtocolReaderMap.put(key, ioProtocolReader);
                 return ioProtocolReader;
             }
-            return ioProtocolReader;
+            return last;
 
         } else {
             logger.warn("{} 文件后缀格式不对,需要.io", key);

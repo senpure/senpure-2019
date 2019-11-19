@@ -52,7 +52,7 @@ public class IoProtocolReader extends IoBaseListener {
 
     private int fieldIndex = 1;
     protected IoErrorListener ioErrorListener;
-
+    private IoReader ioReader;
     protected String filePath;
     protected Map<String, IoProtocolReader> ioProtocolReaderMap;
     protected List<String> importIos = new ArrayList<>();
@@ -99,20 +99,7 @@ public class IoProtocolReader extends IoBaseListener {
 
     @Override
     public void enterImportValue(IoParser.ImportValueContext ctx) {
-        String path = ctx.getText();
-        importIos.add(path);
-        File importFile = FileUtil.file(path, new File(filePath).getParent());
-        if (importFile.exists()) {
-            String key = importFile.getAbsolutePath();
-            importKeys.add(key);
-            IoReader.getInstance().read(importFile);
-        } else {
-            //  Assert.error(filePath + " 引用文件 不存在 " + path);
-            checkErrorBuilder();
-            errorBuilder.append(filePath).append("引用文件 不存在 ").append(path);
-        }
-
-
+        importIos.add(ctx.getText());
     }
 
 
@@ -406,10 +393,26 @@ public class IoProtocolReader extends IoBaseListener {
 
     @Override
     public void exitProtocol(IoParser.ProtocolContext ctx) {
+        readImports();
         check();
         findBenAndAssignment();
         if (errorBuilder.length() > 0) {
             Assert.error("校验不合法\n" + errorBuilder.toString());
+        }
+    }
+
+    protected void readImports() {
+        for (String path : importIos) {
+            File importFile = FileUtil.file(path, new File(filePath).getParent());
+            if (importFile.exists()) {
+                String key = importFile.getAbsolutePath();
+                importKeys.add(key);
+                ioReader.read(importFile);
+            } else {
+                //  Assert.error(filePath + " 引用文件 不存在 " + path);
+                checkErrorBuilder();
+                errorBuilder.append(filePath).append("引用文件 不存在 ").append(path);
+            }
         }
     }
 
@@ -547,10 +550,11 @@ public class IoProtocolReader extends IoBaseListener {
         return finds;
     }
 
-    public void read(File file, Map<String, IoProtocolReader> ioProtocolReaderMap) {
+    public void read(File file, IoReader ioReader) {
         try {
+            this.ioReader = ioReader;
             this.filePath = file.getPath();
-            this.ioProtocolReaderMap = ioProtocolReaderMap;
+            this.ioProtocolReaderMap = ioReader.getIoProtocolReaderMap();
             this.ioErrorListener = new IoErrorListener(filePath);
             read(CharStreams.fromFileName(file.getAbsolutePath(), Charset.forName("utf-8")));
         } catch (IOException e) {
