@@ -78,6 +78,7 @@ fieldType
     |'boolean'
     |'String'
     |'string'
+    |'bytes'
     |Identifier
     ;
 fieldName:Identifier|messageHead|beanHead|eventHead;

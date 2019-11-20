@@ -5,7 +5,7 @@
     //${field.explain}
 </#if>
 <#if field.list >
-    private List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name} = new ArrayList<>(<#if field.capacity gt 0>${field.capacity}</#if>);
+    private List<${javaType2ListType(field.javaType)}> ${field.name} = new ArrayList<>(<#if field.capacity gt 0>${field.capacity}</#if>);
 <#else>
     <#if !field.baseField&&field.bean.enum>
     private ${field.javaType} ${field.name} = ${field.bean.javaName}.${field.bean.defaultField.name};
@@ -15,30 +15,43 @@
 </#if>
 </#list>
 
-    public void copy(${javaName} from) {
+    public void copy(${javaName} source) {
 <#list fields as field>
     <#if field.list >
         this.${field.name}.clear();
         <#if field.baseField ||field.bean.enum>
-        this.${field.name}.addAll(from.get${field.name?cap_first}());
-        <#else >
-        for (int i = 0; i < from.get${field.name?cap_first}().size(); i++) {
-            ${field.javaType} ${lowerCamelCase(field.javaType)} = new ${field.javaType}();
-            ${lowerCamelCase(field.javaType)}.copy(from.get${field.name?cap_first}().get(i));
-            this.${field.name}.add(${lowerCamelCase(field.javaType)});
+            <#if field.bytes>
+        copyBytes(source.get${field.name?cap_first}(),this.${field.name});
+            <#else>
+        this.${field.name}.addAll(source.get${field.name?cap_first}());
+            </#if>
+        <#else>
+        for (${field.javaType} ${lowerCamelCase(field.javaType)} : source.get${field.name?cap_first}()) {
+            ${field.javaType} temp${field.javaType} = new ${field.javaType}();
+            temp${field.javaType}.copy(${lowerCamelCase(field.javaType)});
         }
         </#if>
     <#else>
         <#if field.baseField ||field.bean.enum>
             <#if field.fieldType="boolean">
-        this.${field.name} = from.is${field.name?cap_first}();
-            <#else >
-        this.${field.name} = from.get${field.name?cap_first}();
+        this.${field.name} = source.is${field.name?cap_first}();
+            <#elseif field.bytes>
+        if (source.get${field.name?cap_first}() != null) {
+            this.${field.name} = copyBytes(source.get${field.name?cap_first}());
+        } else {
+            this.${field.name} = null;
+        }
+            <#else>
+        this.${field.name} = source.get${field.name?cap_first}();
             </#if>
         <#else>
-        ${field.javaType} temp${field.name?cap_first} = new ${field.javaType}();
-        temp${field.name?cap_first}.copy(from.get${field.name?cap_first}());
-        this.${field.name} = temp${field.name?cap_first};
+        if (source.get${field.name?cap_first}() != null) {
+            ${field.javaType} temp${field.name?cap_first} = new ${field.javaType}();
+            temp${field.name?cap_first}.copy(source.get${field.name?cap_first}());
+            this.${field.name} = temp${field.name?cap_first};
+        } else {
+            this.${field.name} = null;
+            }
         </#if>
     </#if>
     </#list>
@@ -56,17 +69,17 @@
     </#if>
     <#if field.list >
         <#if field.baseField>
-            <#if field.javaType="String">
-        for (String value : ${field.name}) {
-            writeString(buf, ${field.tag}, value);
-        }
-            <#else ><#--String-->
+            <#if field.listPacked>
         if (${field.name}.size() > 0) {
             writeVar32(buf, ${field.tag});
             writeVar32(buf, ${field.name}SerializedSize);
-            for (${.globals[field.javaType]!field.javaType?cap_first} value : ${field.name}) {
-                write${baseFieldType2MethodName(field.fieldType)}(buf, value);
+            for (${javaType2ListType(field.javaType)} value : ${field.name}) {
+             write${baseFieldType2MethodName(field.fieldType)}(buf, value);
             }
+        }
+            <#else >
+        for (${javaType2ListType(field.javaType)} value : ${field.name}) {
+            write${baseFieldType2MethodName(field.fieldType)}(buf, ${field.tag}, value);
         }
             </#if>
         <#else ><#--bean -->
@@ -86,9 +99,9 @@
         </#if>
     <#else ><#--不是list-->
         <#if field.baseField>
-            <#if field.javaType="String">
+            <#if javaTypeNullAble(field.javaType)>
         if (${field.name} != null) {
-            writeString(buf, ${field.tag}, ${field.name});
+            write${baseFieldType2MethodName(field.fieldType)}(buf, ${field.tag}, ${field.name});
         }
             <#else>
         write${baseFieldType2MethodName(field.fieldType)}(buf, ${field.tag}, ${field.name});
@@ -123,16 +136,17 @@
                 case ${field.tag}:// ${field.index} << 3 | ${field.writeType}
     <#if field.list>
         <#if field.baseField>
-            <#if field.javaType="String">
-                    ${field.name}.add(readString(buf));
-            <#else>
+            <#if field.listPacked>
                     int ${field.name}DataSize = readVar32(buf);
                     int receive${field.name?cap_first}DataSize = 0;
                     do {
                         ${field.javaType} temp${field.name?cap_first}Value = read${baseFieldType2MethodName(field.fieldType)}(buf);
                         receive${field.name?cap_first}DataSize += compute${baseFieldType2MethodName(field.fieldType)}Size(temp${field.name?cap_first}Value);
+                        ${field.name}.add(temp${field.name?cap_first}Value);
                     }
-                    while(receive${field.name?cap_first}DataSize < ${field.name}DataSize );
+                    while (receive${field.name?cap_first}DataSize < ${field.name}DataSize);
+            <#else>
+                    ${field.name}.add(read${baseFieldType2MethodName(field.fieldType)}(buf));
             </#if>
                 <#else ><#--bean-->
                     <#if field.bean.enum>
@@ -175,7 +189,7 @@
 <#list fields as field>
     <#if field.list >
         <#if field.baseField >
-            <#if field.javaType != "String" >
+            <#if field.listPacked>
     private int ${field.name}SerializedSize = 0;
             </#if>
         <#else>
@@ -199,14 +213,10 @@
     </#if>
     <#if field.list>
         <#if field.baseField>
-            <#if field.javaType="String">
-        for (String value : ${field.name}) {
-            size += computeStringSize(${var32Size(field.tag)}, value);
-        }
-            <#else ><#--String-->
+            <#if field.listPacked>
         if (${field.name}.size() > 0 ) {
             int ${field.name}DataSize = 0;
-            for (${.globals[field.javaType]!field.javaType?cap_first} value : ${field.name}) {
+            for (${javaType2ListType(field.javaType)} value : ${field.name}) {
                 ${field.name}DataSize += compute${baseFieldType2MethodName(field.fieldType)}Size(value);
             }
             ${field.name}SerializedSize = ${field.name}DataSize;
@@ -214,6 +224,10 @@
             size += ${var32Size(field.tag)};
             size += ${field.name}SerializedSize;
             size += computeVar32Size(${field.name}SerializedSize);
+        }
+            <#else ><#--String-->
+        for (${javaType2ListType(field.javaType)} value : ${field.name}) {
+            size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, value);
         }
             </#if><#--String-->
         <#else ><#--bean-->
@@ -237,9 +251,9 @@
         </#if><#--bean-->
     <#else><#--不是list-->
          <#if field.baseField>
-             <#if field.javaType="String">
+             <#if javaTypeNullAble(field.javaType)>
         if (${field.name} != null) {
-             size += computeStringSize(${var32Size(field.tag)}, ${field.name});
+             size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, ${field.name});
         }
              <#else>
         size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, ${field.name});
@@ -268,7 +282,7 @@
       * @return
       */
         </#if>
-    public List<${.globals[field.javaType]!field.javaType?cap_first}> get${field.name?cap_first}() {
+    public List<${javaType2ListType(field.javaType)}> get${field.name?cap_first}() {
         return ${field.name};
     }
 
@@ -277,7 +291,7 @@
       * set ${field.explain}
       */
         </#if>
-    public ${name} set${field.name?cap_first}(List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}) {
+    public ${name} set${field.name?cap_first}(List<${javaType2ListType(field.javaType)}> ${field.name}) {
         if (${field.name} == null) {
             this.${field.name} = new ArrayList<>(<#if field.capacity gt 0>${field.capacity}</#if>);
             return this;

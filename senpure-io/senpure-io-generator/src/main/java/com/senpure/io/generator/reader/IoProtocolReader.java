@@ -290,7 +290,11 @@ public class IoProtocolReader extends IoBaseListener {
         if (field.isBaseField()) {
             field.setWriteType(ProtocolUtil.getWriteType(field.getFieldType()));
             field.setJavaType(ProtocolUtil.getJavaType(field.getFieldType()));
-            if (field.isList() && !field.getFieldType().equals("String")) {
+            field.setListPacked(ProtocolUtil.isListPacked(field.getFieldType()));
+            if (field.getFieldType().equals(ProtocolUtil.BYTES_FIELD_TYPE)) {
+                field.setBytes(true);
+            }
+            if (field.isList()&&field.isListPacked()) {
                 field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
             }
             field.setTag(field.getIndex() << 3 | field.getWriteType());

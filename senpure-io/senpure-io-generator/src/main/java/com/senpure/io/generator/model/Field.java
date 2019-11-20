@@ -13,8 +13,10 @@ public class Field {
     private boolean list;
     private int capacity=16;
 
-
-
+    //是否是字节数据
+    private boolean bytes;
+    //list下是否打包
+    private boolean listPacked;
     //自定义对象时的信息
     private Bean bean;
 
@@ -149,6 +151,22 @@ public class Field {
 
     public void setWriteType(int writeType) {
         this.writeType = writeType;
+    }
+
+    public boolean isBytes() {
+        return bytes;
+    }
+
+    public void setBytes(boolean bytes) {
+        this.bytes = bytes;
+    }
+
+    public boolean isListPacked() {
+        return listPacked;
+    }
+
+    public void setListPacked(boolean listPacked) {
+        this.listPacked = listPacked;
     }
 
     @Override

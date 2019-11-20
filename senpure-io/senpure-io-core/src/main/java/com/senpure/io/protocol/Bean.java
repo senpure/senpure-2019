@@ -133,6 +133,16 @@ public abstract class Bean {
         buf.writeBytes(bytes);
     }
 
+    public static void writeBytes(ByteBuf buf, int tag, byte[] value) {
+        writeVar32(buf, tag);
+        writeBytes(buf, value);
+    }
+
+    public static void writeBytes(ByteBuf buf, byte[] value) {
+        writeVar32(buf, value.length);
+        buf.writeBytes(value);
+    }
+
     public static void writeVar64(ByteBuf buf, long value) {
         while (true) {
             if ((value & ~0x7F) == 0) {
@@ -267,6 +277,11 @@ public abstract class Bean {
         return new String(bytes, charset);
     }
 
+    public static byte[] readBytes(ByteBuf buf) {
+        byte[] bytes = new byte[readVar32(buf)];
+        buf.readBytes(bytes);
+        return bytes;
+    }
 
     public static boolean readBoolean(ByteBuf buf) {
         return buf.readBoolean();
@@ -362,7 +377,7 @@ public abstract class Bean {
     }
 
 
-    public static int computePackagedSize(int tagVar32Size, int serializedSize) {
+    public static int computePackedSize(int tagVar32Size, int serializedSize) {
         if (serializedSize > 0) {
             tagVar32Size += serializedSize;
             tagVar32Size += computeVar32Size(serializedSize);
@@ -386,6 +401,14 @@ public abstract class Bean {
             size += computeStringSize(tagVar32Size, value);
         }
         return size;
+    }
+
+    public static int computeBytesSize(int tagVar32Size, byte[] value) {
+        return tagVar32Size + computeBytesSize(value);
+    }
+
+    public static int computeBytesSize(byte[] value) {
+        return value.length;
     }
 
     public static int computeBeanSize(int tagVar32Size, Bean value) {
@@ -616,7 +639,7 @@ public abstract class Bean {
         }
     }
 
-    public static void appendBeans(StringBuilder sb, List<Bean> beans, String indent, String nextIndent) {
+    public static <T extends Bean> void appendBeans(StringBuilder sb, List<T> beans, String indent, String nextIndent) {
         if (beans.size() > 0) {
             sb.append("[");
             for (Bean value : beans) {
@@ -631,6 +654,23 @@ public abstract class Bean {
         } else {
             sb.append("[]");
         }
+    }
+
+    public static void copyBytes(List<byte[]> source, List<byte[]> dest) {
+        for (byte[] bytes : source) {
+            byte[] copy = new byte[bytes.length];
+            System.arraycopy(bytes, 0, copy, 0, bytes.length);
+            dest.add(copy);
+        }
+    }
+
+    public static byte[] copyBytes(byte[] source) {
+        if (source == null) {
+            return null;
+        }
+        byte[] copy = new byte[source.length];
+        System.arraycopy(source, 0, copy, 0, source.length);
+        return copy;
     }
 
     public static void main(String[] args) {

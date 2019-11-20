@@ -5,10 +5,19 @@
     <#local temp>${baseFieldTypeMethodSpecialMap[fieldType]!fieldType}</#local>
     <#return temp?cap_first>
 </#function>
-<#assign javaType2ListTypeSpecialMap = {"int":"Integer"} />
+<#assign javaType2ListTypeSpecialMap = {"int":"Integer","byte []":"byte[]"} />
 <#function javaType2ListType javaType>
-    <#local temp>${javaType2ListTypeSpecialMap[javaType]!javaType}</#local>
-    <#return temp?cap_first>
+    <#local temp>${javaType2ListTypeSpecialMap[javaType]!javaType?cap_first}</#local>
+    <#return temp>
+</#function>
+<#assign javaTypeNullAbleSpecialMap = {"String":"true","byte []":"true"} />
+<#function javaTypeNullAble javaType>
+    <#if javaTypeNullAbleSpecialMap[javaType]??>
+        <#return true>
+        <#else >
+            <#return false>
+    </#if>
+
 </#function>
 
 
