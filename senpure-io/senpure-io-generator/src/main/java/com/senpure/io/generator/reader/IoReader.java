@@ -50,8 +50,8 @@ public class IoReader {
             IoProtocolReader last = ioProtocolReaderMap.get(key);
             if (last == null) {
                 IoProtocolReader ioProtocolReader = new IoProtocolReader();
-                ioProtocolReader.read(file, this);
                 ioProtocolReaderMap.put(key, ioProtocolReader);
+                ioProtocolReader.read(file, this);
                 return ioProtocolReader;
             }
             return last;

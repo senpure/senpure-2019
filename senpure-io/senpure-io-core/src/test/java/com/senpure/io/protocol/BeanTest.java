@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 /**
  * BeanTest
@@ -292,6 +293,18 @@ public class BeanTest {
         String read = Bean.readString(buf);
         System.out.println("read string:" + read);
         Assert.assertEquals(write, read);
+    }
+
+    @Test
+    public void bytesTest() {
+        ByteBuf buf = Unpooled.buffer(200);
+
+        byte[] write=new byte[]{0,1,2,3,127,-2,-128};
+        System.out.println("write bytes:" + Arrays.toString(write));
+        Bean.writeBytes(buf, write);
+        byte[] read = Bean.readBytes(buf);
+        System.out.println("read bytes:" + Arrays.toString(read));
+        Assert.assertEquals( Arrays.toString(write), Arrays.toString(read));
     }
 
 }
