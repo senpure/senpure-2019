@@ -225,10 +225,15 @@
             size += ${field.name}SerializedSize;
             size += computeVar32Size(${field.name}SerializedSize);
         }
-            <#else ><#--String-->
+        <#--
+        this.${field.name}SerializedSize = compute${baseFieldType2MethodName(field.fieldType)}Size(${field.name});
+        //tag size ${field.tag}
+        size += computePackedSize(${var32Size(field.tag)}, ${field.name}SerializedSize);
+            <#else >
         for (${javaType2ListType(field.javaType)} value : ${field.name}) {
+            //tag size ${field.tag}
             size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, value);
-        }
+        }-->
             </#if><#--String-->
         <#else ><#--bean-->
             <#if field.bean.enum>
@@ -243,23 +248,29 @@
             size += ${field.name}SerializedSize;
             size += computeVar32Size(${field.name}SerializedSize);
         }
+        <#--this.${field.name}SerializedSize = computeEnumSize(${field.name},value -> computeVar32Size(value.getValue()));
+        //tag size ${field.tag}
+        size += computePackedSize(${var32Size(field.tag)}, ${field.name}SerializedSize);
             <#else>
         for (${field.javaType} value : ${field.name}) {
             size += computeBeanSize(${var32Size(field.tag)}, value);
-        }
+        }-->
             </#if>
         </#if><#--bean-->
     <#else><#--不是list-->
          <#if field.baseField>
              <#if javaTypeNullAble(field.javaType)>
         if (${field.name} != null) {
+             //tag size ${field.tag}
              size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, ${field.name});
         }
              <#else>
+        //tag size ${field.tag}
         size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, ${field.name});
              </#if>
          <#else>
         if (${field.name} != null) {
+             //tag size ${field.tag}
              <#if field.bean.enum>
             size += computeVar32Size(${var32Size(field.tag)}, ${field.name}.getValue());
              <#else >
@@ -299,7 +310,6 @@
         this.${field.name} = ${field.name};
         return this;
     }
-
     <#else>
         <#if field.hasExplain&&field.explain?length gt 1>
     /**
@@ -321,5 +331,8 @@
         this.${field.name} = ${field.name};
         return this;
     }
+    </#if>
+    <#if field_has_next>
+
     </#if>
 </#list>

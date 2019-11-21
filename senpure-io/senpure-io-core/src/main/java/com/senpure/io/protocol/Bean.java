@@ -673,6 +673,10 @@ public abstract class Bean {
         return copy;
     }
 
+    public static String bytesToString(byte[] value) {
+        return Arrays.toString(value);
+    }
+
     public static void main(String[] args) {
 
         Class c = Bean.class;

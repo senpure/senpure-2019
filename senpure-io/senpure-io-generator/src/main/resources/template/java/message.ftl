@@ -34,14 +34,5 @@ public class ${name} extends Message {
     public int getMessageId() {
         return ${id?c};
     }
-
-    @Override
-    public String toString() {
-        return "${name}<#if type!="NA">[${id?c}]</#if>{"
-<#list fields as field>
-                + "<#if field_index gt 0>,</#if>${field.name}=" + ${field.name}
-</#list>
-                + "}";
-    }
 <#include "toString.ftl">
 }
