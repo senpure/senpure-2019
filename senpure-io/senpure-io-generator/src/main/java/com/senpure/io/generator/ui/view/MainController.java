@@ -39,6 +39,7 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.net.URL;
@@ -988,10 +989,10 @@ public class MainController implements Initializable {
         if (result.isPresent()) {
             String projectName = result.get().trim();
             if (projectName.length() > 0) {
-                ProjectConfig projectConfig = createProject(name);
+                ProjectConfig projectConfig = createProject(projectName );
                 if (projectConfig != null) {
-                    this.projectName.getItems().add(name);
-                    this.projectName.getSelectionModel().select(name);
+                    this.projectName.getItems().add(projectName );
+                    this.projectName.getSelectionModel().select(projectName );
                 }
             } else {
                 logger.warn("请输入项目名");
@@ -1386,5 +1387,9 @@ public class MainController implements Initializable {
 
         jsConfig.setScMessageHandlerOverwrite(checkJsSCMessageHandlerOverwrite.isSelected());
         jsConfig.setRequireOverwrite(checkJsRequireOverwrite.isSelected());
+    }
+    @PreDestroy
+    public void destroy() {
+        executorService.shutdown();
     }
 }
