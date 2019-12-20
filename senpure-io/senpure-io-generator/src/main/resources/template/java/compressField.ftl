@@ -229,11 +229,12 @@
         this.${field.name}SerializedSize = compute${baseFieldType2MethodName(field.fieldType)}Size(${field.name});
         //tag size ${field.tag}
         size += computePackedSize(${var32Size(field.tag)}, ${field.name}SerializedSize);
+        -->
             <#else >
         for (${javaType2ListType(field.javaType)} value : ${field.name}) {
             //tag size ${field.tag}
             size += compute${baseFieldType2MethodName(field.fieldType)}Size(${var32Size(field.tag)}, value);
-        }-->
+        }
             </#if><#--String-->
         <#else ><#--bean-->
             <#if field.bean.enum>
@@ -251,10 +252,11 @@
         <#--this.${field.name}SerializedSize = computeEnumSize(${field.name},value -> computeVar32Size(value.getValue()));
         //tag size ${field.tag}
         size += computePackedSize(${var32Size(field.tag)}, ${field.name}SerializedSize);
+        -->
             <#else>
         for (${field.javaType} value : ${field.name}) {
             size += computeBeanSize(${var32Size(field.tag)}, value);
-        }-->
+        }
             </#if>
         </#if><#--bean-->
     <#else><#--不是list-->

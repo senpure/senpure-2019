@@ -68,9 +68,9 @@ public class ConsumerServerStarter implements ApplicationRunner {
         //io *2 logic *1 综合1.5
         double size = Runtime.getRuntime().availableProcessors() * 1.5;
         int ioSize = (int) (size * 0.6);
-        ioSize = ioSize < 1 ? 1 : ioSize;
+        ioSize = Math.max(ioSize, 1);
         int logicSize = (int) (size * 0.4);
-        logicSize = logicSize < 1 ? 1 : logicSize;
+        logicSize = Math.max(logicSize, 1);
         if (consumer.getIoWorkThreadPoolSize() < 1) {
             consumer.setIoWorkThreadPoolSize(ioSize);
         }

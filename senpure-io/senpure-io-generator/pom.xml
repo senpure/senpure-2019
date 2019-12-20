@@ -82,7 +82,7 @@
         </resources>
 
         <plugins>
-            <!--注释该插件打包为可依赖包
+            <!--注释该插件打包为可依赖包 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -99,7 +99,7 @@
                     </execution>
                 </executions>
             </plugin>
- -->
+
         </plugins>
     </build>
 </project>
