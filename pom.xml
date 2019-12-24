@@ -19,6 +19,7 @@
         <module>senpure-code-generator</module>
         <module>senpure-dispatcher-bean</module>
         <module>senpure-dispathcer</module>
+        <module>senpure-executor</module>
 
         <!--
 -->

@@ -13,10 +13,10 @@ ${bean.lua.namespace}.${bean.lua.name} = {
 <#list bean.fields as field>
     <#if field.list >
     --[Comment]
-    --list:<#if field.baseField>${rightPad(field.javaType,7)}<#else>${field.bean.lua.namespace}.${field.bean.lua.name} </#if><#if field.hasExplain>${field.explain}</#if>
+    --list:<#if field.baseField>${rightPad(field.javaType,8)}<#else>${field.bean.lua.namespace}.${field.bean.lua.name} </#if><#if field.hasExplain>${field.explain}</#if>
     <#else ><#--不是list-->
     --[Comment]
-    --类型:<#if field.baseField>${rightPad(field.javaType,7)}<#else>${field.bean.lua.namespace}.${field.bean.lua.name} </#if><#if field.hasExplain>${field.explain}</#if>
+    --类型:<#if field.baseField>${rightPad(field.javaType,8)}<#else>${field.bean.lua.namespace}.${field.bean.lua.name} </#if><#if field.hasExplain>${field.explain}</#if>
     </#if>
     <#if field.list >
     ${field.name} = nil;
@@ -193,7 +193,7 @@ function ${bean.lua.namespace}.${bean.lua.name}:read(buf,endIndex)
         local read${field.name?cap_first}Index = 1;
         while(receive${field.name?cap_first}DataSize < ${field.name}DataSize ) do
             local temp${field.name?cap_first} = buf:Read${baseFieldType2MethodName(field.fieldType)}();
-            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:Compute${baseFieldType2MethodName(field.fieldType)}SizeNoTag(temp${field.name?cap_first});
+            receive${field.name?cap_first}DataSize = receive${field.name?cap_first}DataSize + buf:Compute${baseFieldType2MethodName(field.fieldType)}Size(temp${field.name?cap_first});
             self.${field.name}[read${field.name?cap_first}Index] = temp${field.name?cap_first};
             read${field.name?cap_first}Index = read${field.name?cap_first}Index + 1;
         end
@@ -273,13 +273,13 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
         local ${field.name}DataSize = 0;
         if ${field.name}_len > 0 then
             for i = 1, ${field.name}_len do
-                ${field.name}DataSize = ${field.name}DataSize + buf:Compute${baseFieldType2MethodName(field.fieldType)}SizeNoTag(self.${field.name}[i] );
+                ${field.name}DataSize = ${field.name}DataSize + buf:Compute${baseFieldType2MethodName(field.fieldType)}Size(self.${field.name}[i] );
             end
         end
         self.${field.name}SerializedSize = ${field.name}DataSize;
         if ${field.name}DataSize > 0 then
             -- tag size 已经完成了计算 ${field.tag}
-            size = size + ${var32Size(field.tag)} + self.${field.name}SerializedSize + buf:ComputeVar32SizeNoTag(self.${field.name}SerializedSize);
+            size = size + ${var32Size(field.tag)} + self.${field.name}SerializedSize + buf:ComputeVar32Size(self.${field.name}SerializedSize);
         end
     end
             <#else ><#--String-->
@@ -288,7 +288,7 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
             if ${field.name}_len > 0 then
             for i = 1, ${field.name}_len do
                 -- tag size 已经完成了计算 ${field.tag}
-                size = size + ${var32Size(field.tag)} + buf:ComputeStringSizeNoTag(self.${field.name}[i] );
+                size = size + ${var32Size(field.tag)} + buf:ComputeStringSize(self.${field.name}[i] );
             end
         end
     end
@@ -300,13 +300,13 @@ function ${bean.lua.namespace}.${bean.lua.name}:getSerializedSize(buf)
         local ${field.name}_len = #self.${field.name}
         if ${field.name}_len > 0 then
             for i = 1, ${field.name}_len do
-                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeVar32SizeNoTag(self.${field.name}[i] );
+                ${field.name}DataSize = ${field.name}DataSize + buf:ComputeVar32Size(self.${field.name}[i] );
             end
         end
         self.${field.name}SerializedSize = ${field.name}DataSize;
         if ${field.name}DataSize > 0 then
             -- tag size 已经完成了计算 ${field.tag}
-            size = size + ${var32Size(field.tag)} + self.${field.name}SerializedSize + buf:ComputeVar32SizeNoTag(self.${field.name}SerializedSize);
+            size = size + ${var32Size(field.tag)} + self.${field.name}SerializedSize + buf:ComputeVar32Size(self.${field.name}SerializedSize);
         end
     end
                 <#else >
