@@ -2,7 +2,8 @@ package com.senpure.io.gateway;
 
 import com.senpure.base.util.Assert;
 import com.senpure.base.util.IDGenerator;
-import com.senpure.base.util.NameThreadFactory;
+import com.senpure.executor.DefaultTaskLoopGroup;
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.ChannelAttributeUtil;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.bean.HandleMessage;
@@ -13,6 +14,7 @@ import com.senpure.io.support.MessageIdReader;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +22,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 
 public class GatewayMessageExecutor {
     protected static Logger logger = LoggerFactory.getLogger(GatewayMessageExecutor.class);
-    private ScheduledExecutorService service;
+
+
+    private TaskLoopGroup service;
     private int serviceRefCount = 0;
     private int csLoginMessageId = 0;
 
@@ -54,11 +60,11 @@ public class GatewayMessageExecutor {
     private boolean init = false;
 
     public GatewayMessageExecutor() {
-        this(Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2,
-                new NameThreadFactory("gateway-executor")), new IDGenerator(0, 0));
+        this(new DefaultTaskLoopGroup(Runtime.getRuntime().availableProcessors() * 2,
+                new DefaultThreadFactory("gateway-executor")), new IDGenerator(0, 0));
     }
 
-    public GatewayMessageExecutor(ScheduledExecutorService service, IDGenerator idGenerator) {
+    public GatewayMessageExecutor(TaskLoopGroup service, IDGenerator idGenerator) {
         this.service = service;
         this.idGenerator = idGenerator;
         // init();
@@ -81,13 +87,13 @@ public class GatewayMessageExecutor {
     public void releaseAndTryShutdownService() {
         serviceRefCount--;
         if (serviceRefCount <= 0) {
-            service.shutdown();
+            service.shutdownGracefully();
         }
     }
 
     public void shutdownService() {
         if (serviceRefCount <= 0) {
-            service.shutdown();
+            service.shutdownGracefully();
         } else {
             logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
         }
@@ -107,7 +113,8 @@ public class GatewayMessageExecutor {
 
     //将客户端消息转发给具体的服务器
     public void execute(final Channel channel, final Client2GatewayMessage message) {
-        service.execute(() -> {
+        long token = ChannelAttributeUtil.getToken(channel);
+        service.get(token).execute(() -> {
             Long userId = ChannelAttributeUtil.getUserId(channel);
             if (message.getMessageId() == csLoginMessageId) {
                 prepLoginChannels.put(ChannelAttributeUtil.getToken(channel), channel);
@@ -121,7 +128,7 @@ public class GatewayMessageExecutor {
                 message.setUserId(userId);
             }
             //登录
-            message.setToken(ChannelAttributeUtil.getToken(channel));
+            message.setToken(token);
             //转发到具体的子服务器
             HandleMessageManager handleMessageManager = handleMessageManagerMap.get(message.getMessageId());
             if (handleMessageManager == null) {
@@ -157,7 +164,7 @@ public class GatewayMessageExecutor {
             m.setRequestId(requestId);
             ByteBuf buf = Unpooled.buffer(message.getSerializedSize());
             message.write(buf);
-            byte data[] = new byte[message.getSerializedSize()];
+            byte[] data = new byte[message.getSerializedSize()];
             buf.readBytes(data);
             m.setToken(token);
             m.setData(data);
@@ -188,7 +195,8 @@ public class GatewayMessageExecutor {
 
     //处理服务器发过来的消息
     public void execute(Channel channel, final Server2GatewayMessage message) {
-        service.execute(() -> {
+        long token = message.getToken();
+        service.get(token).execute(() -> {
             try {
                 SGInnerHandler handler = sgHandlerMap.get(message.getMessageId());
                 if (handler != null) {
@@ -198,9 +206,9 @@ public class GatewayMessageExecutor {
                     }
                 }
                 if (message.getUserIds().length == 0) {
-                    Channel clientChannel = tokenChannel.get(message.getToken());
+                    Channel clientChannel = tokenChannel.get(token);
                     if (clientChannel == null) {
-                        logger.warn("没有找到channel token:{}", message.getToken());
+                        logger.warn("没有找到channel token:{}", token);
                     } else {
                         clientChannel.writeAndFlush(message);
                     }
@@ -359,7 +367,7 @@ public class GatewayMessageExecutor {
             CSRegServerHandleMessageMessage returnMessage = new CSRegServerHandleMessageMessage();
             returnMessage.setSuccess(false);
             returnMessage.setMessage(e.getMessage());
-            sendMessage2Producer(channel,returnMessage);
+            sendMessage2Producer(channel, returnMessage);
             return true;
         }
         CSRegServerHandleMessageMessage returnMessage = new CSRegServerHandleMessageMessage();
@@ -367,7 +375,7 @@ public class GatewayMessageExecutor {
         if (sb.length() > 0) {
             returnMessage.setMessage(sb.toString());
         }
-        sendMessage2Producer(channel,returnMessage);
+        sendMessage2Producer(channel, returnMessage);
         return true;
     }
 
@@ -413,7 +421,7 @@ public class GatewayMessageExecutor {
         readMessage(message, server2GatewayMessage);
         WaitRelationTask waitRelationTask = waitRelationMap.get(message.getRelationToken());
         if (waitRelationTask != null) {
-            if (message.getRelationToken() == waitRelationTask.getRelationToken().longValue()) {
+            if (message.getRelationToken() == waitRelationTask.getRelationToken()) {
                 waitRelationTask.setRelationTime(System.currentTimeMillis());
                 waitRelationTask.setRelation(true);
             }
@@ -580,7 +588,7 @@ public class GatewayMessageExecutor {
     }
 
     public void destroy() {
-        service.shutdown();
+        service.shutdownGracefully();
     }
 
 
@@ -614,4 +622,7 @@ public class GatewayMessageExecutor {
     }
 
 
+    public static void main(String[] args) {
+
+    }
 }

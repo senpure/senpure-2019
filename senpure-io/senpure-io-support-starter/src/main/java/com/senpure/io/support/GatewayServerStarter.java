@@ -1,11 +1,13 @@
 package com.senpure.io.support;
 
 import com.senpure.base.util.IDGenerator;
-import com.senpure.base.util.NameThreadFactory;
+import com.senpure.executor.DefaultTaskLoopGroup;
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.gateway.GatewayAndClientServer;
 import com.senpure.io.gateway.GatewayAndServerServer;
 import com.senpure.io.gateway.GatewayMessageExecutor;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +15,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 import javax.annotation.PreDestroy;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * GatewayServerStarter
@@ -71,8 +71,8 @@ public class GatewayServerStarter implements ApplicationRunner {
 
     private void messageExecutor() {
         ServerProperties.Gateway gateway = properties.getGateway();
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
-                new NameThreadFactory(properties.getName() + "-executor"));
+        TaskLoopGroup service =new DefaultTaskLoopGroup(gateway.getExecutorThreadPoolSize(),
+                new DefaultThreadFactory(properties.getName() + "-executor"));
         messageExecutor = new GatewayMessageExecutor(service, new IDGenerator(gateway.getSnowflakeDataCenterId(), gateway.getSnowflakeWorkId()));
         messageExecutor.setCsLoginMessageId(gateway.getCsLoginMessageId());
         messageExecutor.setScLoginMessageId(gateway.getScLoginMessageId());

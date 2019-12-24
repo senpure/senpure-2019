@@ -1,5 +1,6 @@
 package com.senpure.io.consumer;
 
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.consumer.remoting.DefaultFuture;
 import com.senpure.io.consumer.remoting.DefaultResponse;
@@ -23,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class ConsumerMessageExecutor {
 
     private Logger logger = LoggerFactory.getLogger(ConsumerMessageExecutor.class);
-    private ScheduledExecutorService service;
+   private TaskLoopGroup service;
     private int serviceRefCount = 0;
     private Set<Integer> errorMessageIds = new HashSet<>();
 
@@ -33,7 +34,7 @@ public class ConsumerMessageExecutor {
     }
 
 
-    public void setService(ScheduledExecutorService service) {
+    public void setService(TaskLoopGroup service) {
         this.service = service;
     }
 

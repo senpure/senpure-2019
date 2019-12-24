@@ -1,10 +1,12 @@
 package com.senpure.io.support;
 
-import com.senpure.base.util.NameThreadFactory;
+import com.senpure.executor.DefaultTaskLoopGroup;
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.direct.DirectMessageExecutor;
 import com.senpure.io.direct.DirectServer;
 import com.senpure.io.event.EventHelper;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -12,7 +14,6 @@ import org.springframework.boot.ApplicationRunner;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -61,8 +62,8 @@ public class DirectServerStarter implements ApplicationRunner {
     }
 
     public void messageExecutor() {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(properties.getDirect().getExecutorThreadPoolSize(),
-                new NameThreadFactory(properties.getName() + "-executor"));
+        TaskLoopGroup service = new DefaultTaskLoopGroup(properties.getDirect().getExecutorThreadPoolSize(),
+                new DefaultThreadFactory(properties.getName() + "-executor"));
         messageExecutor.setService(service);
         this.service = service;
         EventHelper.setService(service);

@@ -1,12 +1,14 @@
 package com.senpure.io.support;
 
-import com.senpure.base.util.NameThreadFactory;
+import com.senpure.executor.DefaultTaskLoopGroup;
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.consumer.ConsumerMessageExecutor;
 import com.senpure.io.consumer.ConsumerServer;
 import com.senpure.io.consumer.RemoteServerChannelManager;
 import com.senpure.io.consumer.RemoteServerManager;
 import com.senpure.io.event.EventHelper;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +23,6 @@ import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -82,8 +82,8 @@ public class ConsumerServerStarter implements ApplicationRunner {
 
     private void messageExecutor() {
         ServerProperties.Consumer consumer = properties.getConsumer();
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(consumer.getExecutorThreadPoolSize(),
-                new NameThreadFactory(properties.getName() + "-executor"));
+        TaskLoopGroup service =new DefaultTaskLoopGroup(consumer.getExecutorThreadPoolSize(),
+                new DefaultThreadFactory(properties.getName() + "-executor"));
         messageExecutor.setService(service);
         EventHelper.setService(service);
     }

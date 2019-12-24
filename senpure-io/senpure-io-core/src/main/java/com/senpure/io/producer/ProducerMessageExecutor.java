@@ -1,5 +1,6 @@
 package com.senpure.io.producer;
 
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.producer.handler.ProducerMessageHandler;
 import com.senpure.io.protocol.Constant;
@@ -12,7 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class ProducerMessageExecutor {
     private Logger logger = LoggerFactory.getLogger(ProducerMessageExecutor.class);
-    private ScheduledExecutorService service;
+    private TaskLoopGroup service;
     private int serviceRefCount = 0;
     private GatewayManager gatewayManager;
 
@@ -28,7 +29,7 @@ public class ProducerMessageExecutor {
         this.gatewayManager = gatewayManager;
     }
 
-    public void setService(ScheduledExecutorService service) {
+    public void setService(TaskLoopGroup service) {
         this.service = service;
     }
 
@@ -37,8 +38,9 @@ public class ProducerMessageExecutor {
     }
 
     public void execute(Channel channel, Gateway2ProducerMessage frame) {
-        service.execute(() -> {
-            long userId = frame.getUserId();
+        long userId = frame.getUserId();
+        long id = userId > 0 ? userId : frame.getToken();
+        service.get(id).execute(() -> {
             ProducerMessageHandler handler = ProducerMessageHandlerUtil.getHandler(frame.getMessageId());
             if (handler == null) {
                 logger.warn("没有找到消息处理程序{} userId:{}", frame.getMessageId(), userId);
@@ -52,7 +54,7 @@ public class ProducerMessageExecutor {
             try {
                 GatewayManager.setRequestId(frame.getRequestId());
                 handler.execute(channel, frame.getToken(), userId, frame.getMessage());
-                //每次都会设置新的requestId 所以不用clear
+                GatewayManager.clearRequestId();
             } catch (Exception e) {
                 logger.error("执行handler[" + handler.getClass().getName() + "]逻辑出错 ", e);
                 SCInnerErrorMessage scInnerErrorMessage = new SCInnerErrorMessage();

@@ -1,5 +1,6 @@
 package com.senpure.io.direct;
 
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.direct.handler.DirectMessageHandler;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.protocol.Constant;
@@ -18,17 +19,17 @@ import java.util.concurrent.ScheduledExecutorService;
 public class DirectMessageExecutor {
 
     protected static Logger logger = LoggerFactory.getLogger(DirectMessageExecutor.class);
-    private ScheduledExecutorService service;
+    private TaskLoopGroup service;
     private int serviceRefCount = 0;
     public DirectMessageExecutor() {
 
     }
 
-    public DirectMessageExecutor(ScheduledExecutorService service) {
+    public DirectMessageExecutor(TaskLoopGroup service) {
         this.service = service;
     }
 
-    public void setService(ScheduledExecutorService service) {
+    public void setService(TaskLoopGroup service) {
         this.service = service;
     }
 
@@ -48,7 +49,6 @@ public class DirectMessageExecutor {
             }
             try {
                 handler.execute(channel, frame.getMessage());
-                //每次都会设置新的requestId 所以不用clear
             } catch (Exception e) {
                 logger.error("执行handler[" + handler.getClass().getName() + "]逻辑出错 ", e);
                 SCInnerErrorMessage scInnerErrorMessage = new SCInnerErrorMessage();

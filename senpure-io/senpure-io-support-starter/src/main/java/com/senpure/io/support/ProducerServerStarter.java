@@ -1,6 +1,7 @@
 package com.senpure.io.support;
 
-import com.senpure.base.util.NameThreadFactory;
+import com.senpure.executor.DefaultTaskLoopGroup;
+import com.senpure.executor.TaskLoopGroup;
 import com.senpure.io.ChannelAttributeUtil;
 import com.senpure.io.ServerProperties;
 import com.senpure.io.bean.HandleMessage;
@@ -11,6 +12,7 @@ import com.senpure.io.message.SCRegServerHandleMessageMessage;
 import com.senpure.io.producer.*;
 import com.senpure.io.producer.handler.ProducerAskMessageHandler;
 import com.senpure.io.producer.handler.ProducerMessageHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -92,8 +93,8 @@ public class ProducerServerStarter implements ApplicationRunner {
     }
 
     private void messageExecutor() {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(gateway.getExecutorThreadPoolSize(),
-                new NameThreadFactory(serverProperties.getName() + "-executor"));
+      TaskLoopGroup  service = new DefaultTaskLoopGroup(gateway.getExecutorThreadPoolSize(),
+                new DefaultThreadFactory(serverProperties.getName() + "-executor"));
         messageExecutor.setService(service);
         messageExecutor.setGatewayManager(gatewayManager);
         this.service = service;

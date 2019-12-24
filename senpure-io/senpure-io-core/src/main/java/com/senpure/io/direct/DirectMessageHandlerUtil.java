@@ -13,7 +13,7 @@ public class DirectMessageHandlerUtil {
 
     private static Map<Integer, DirectMessageHandler> handlerMap = new HashMap<>();
 
-    public static DirectMessageHandler getHandler(int messageId) {
+    public static  DirectMessageHandler getHandler(int messageId) {
         return handlerMap.get(messageId);
     }
 
