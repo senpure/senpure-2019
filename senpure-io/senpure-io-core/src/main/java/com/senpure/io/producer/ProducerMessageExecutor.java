@@ -25,6 +25,10 @@ public class ProducerMessageExecutor {
         return service;
     }
 
+    public TaskLoopGroup getTaskLoopGroup() {
+        return service;
+    }
+
     public void setGatewayManager(GatewayManager gatewayManager) {
         this.gatewayManager = gatewayManager;
     }
@@ -83,13 +87,13 @@ public class ProducerMessageExecutor {
     public void releaseAndTryShutdownService() {
         serviceRefCount--;
         if (serviceRefCount <= 0) {
-            service.shutdown();
+            service.shutdownGracefully();
         }
     }
 
     public void shutdownService() {
         if (serviceRefCount <= 0) {
-            service.shutdown();
+            service.shutdownGracefully();
         } else {
             logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
         }

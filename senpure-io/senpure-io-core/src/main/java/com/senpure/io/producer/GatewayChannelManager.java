@@ -117,12 +117,17 @@ public class GatewayChannelManager {
     }
 
     public void sendMessage(List<Producer2GatewayMessage> frames) {
+
+        sendMessage(frames, 100);
+    }
+
+    public void sendMessage(List<Producer2GatewayMessage> frames, int flushValue) {
         Channel channel = nextChannel();
         if (channel != null) {
             int temp = 1;
             for (Producer2GatewayMessage frame : frames) {
                 channel.write(frame);
-                if (temp % 100 == 0) {
+                if (temp % flushValue == 0) {
                     channel.flush();
                     temp = 1;
                 }
@@ -133,8 +138,6 @@ public class GatewayChannelManager {
             }
             return;
         }
-
-
     }
 
     public void sendMessage(Producer2GatewayMessage frame) {

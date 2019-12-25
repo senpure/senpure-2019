@@ -93,7 +93,7 @@ public class ProducerServerStarter implements ApplicationRunner {
     }
 
     private void messageExecutor() {
-      TaskLoopGroup  service = new DefaultTaskLoopGroup(gateway.getExecutorThreadPoolSize(),
+      TaskLoopGroup  service = new DefaultTaskLoopGroup(producer.getExecutorThreadPoolSize(),
                 new DefaultThreadFactory(serverProperties.getName() + "-executor"));
         messageExecutor.setService(service);
         messageExecutor.setGatewayManager(gatewayManager);

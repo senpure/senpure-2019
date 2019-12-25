@@ -200,6 +200,25 @@ public class GatewayManager {
         sendMessage2GatewayByToken(token, message);
     }
 
+
+    public GatewayChannelManager getGatewayChannelManager(Long userId) {
+        GatewayRelation gatewayRelation = userGatewayMap.get(userId);
+        if (gatewayRelation != null) {
+            return gatewayRelation.gatewayChannelManager;
+        } else {
+            return null;
+        }
+    }
+
+    public GatewayChannelManager getGatewayChannelManagerByToken(Long token) {
+        GatewayRelation gatewayRelation = tokenGatewayMap.get(token);
+        if (gatewayRelation != null) {
+            return gatewayRelation.gatewayChannelManager;
+        } else {
+            return null;
+        }
+    }
+
     public void sendMessage2GatewayByToken(Long token, Message message) {
         Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
         toGateway.setToken(token);
@@ -229,6 +248,33 @@ public class GatewayManager {
             logger.warn("userId {} 不存在 GatewayRelation", userId);
         }
 
+    }
+
+    /**
+     * 丢失requestId
+     *
+     * @param userId
+     * @param messages
+     */
+
+    public void sendMessage2Gateway(Long userId, List<? extends Message> messages) {
+        GatewayRelation gatewayRelation = userGatewayMap.get(userId);
+        if (gatewayRelation != null) {
+            Long[] userIds = new Long[]{userId};
+            List<Producer2GatewayMessage> frames = new ArrayList<>(messages.size());
+            for (Message message : messages) {
+                Producer2GatewayMessage toGateway = new Producer2GatewayMessage();
+                toGateway.setUserIds(userIds);
+                toGateway.setMessage(message);
+                toGateway.setMessageId(message.getMessageId());
+                toGateway.setRequestId(0);
+                frames.add(toGateway);
+            }
+
+            gatewayRelation.gatewayChannelManager.sendMessage(frames);
+        } else {
+            logger.warn("userId {} 不存在 GatewayRelation", userId);
+        }
     }
 
     public void sendMessage2Gateway(List<Long> userIds, Message message) {
