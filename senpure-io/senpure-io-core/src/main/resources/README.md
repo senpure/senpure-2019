@@ -1,14 +1,15 @@
 |参数             |说明                                       |备注 |
 |:----            |:-----                                     |:----|
 |import           |导入引用的其它io文件                       |    |
-|namespace        | 协议命名空间                              |默认com.senpure.io
-|javaPackage      | 生成java文件的包名                        |默认命名空间+.protocol
-|luaNamespace     | 生成lua文件的命名空间                     |默认命名空间最后一部分首字母大写
-|jsNamespace      | 生成js文件的命名空间                      |默认命名空间最后一部分首字母大写
-|bean             |定义一个结构体             |至少要有一个字段
-|enum             |定义一个枚举                               |至少要有两个字段
-|message          |定义一个消息                               |
-|event            |定义一个事件                               |
+|namespace        | 协议命名空间                              |默认com.senpure.io|
+|javaPackage      | 生成java文件的包名                        |默认命名空间+.protocol|
+|luaNamespace     | 生成lua文件的命名空间                     |默认命名空间最后一部分首字母大写|
+|jsNamespace      | 生成js文件的命名空间                      |默认命名空间最后一部分首字母大写|
+|bean             |定义一个结构体             |至少要有一个字段|
+|enum             |定义一个枚举                               |至少要有两个字段|
+|message          |定义一个消息                               | |
+|event            |定义一个事件                               | |
+
 ####bean message event 基础字段说明
 |参数             |说明                                       |备注 |
 |:----            |:-----                                     |:----|
