@@ -58,7 +58,6 @@ public class ProducerMessageExecutor {
             try {
                 GatewayManager.setRequestId(frame.getRequestId());
                 handler.execute(channel, frame.getToken(), userId, frame.getMessage());
-                GatewayManager.clearRequestId();
             } catch (Exception e) {
                 logger.error("执行handler[" + handler.getClass().getName() + "]逻辑出错 ", e);
                 SCInnerErrorMessage scInnerErrorMessage = new SCInnerErrorMessage();
@@ -67,6 +66,8 @@ public class ProducerMessageExecutor {
                         e.getMessage());
                 scInnerErrorMessage.setId(frame.getMessageId());
                 gatewayManager.sendMessage2GatewayByToken(frame.getToken(), scInnerErrorMessage);
+            } finally {
+                GatewayManager.clearRequestId();
             }
 
         });

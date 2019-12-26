@@ -8,12 +8,12 @@ import com.senpure.io.direct.DirectServer;
 import com.senpure.io.event.EventHelper;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -23,10 +23,10 @@ import java.util.concurrent.ScheduledExecutorService;
  * @time 2019-09-18 10:01:46
  */
 public class DirectServerStarter implements ApplicationRunner {
-    @Autowired
+    @Resource
     private ServerProperties properties;
 
-    @Autowired
+    @Resource
     private DirectMessageExecutor messageExecutor;
 
     private DirectServer directServer;

@@ -9,6 +9,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 
 public class DirectServerHandler extends SimpleChannelInboundHandler<DirectMessage> {
 
@@ -16,6 +18,8 @@ public class DirectServerHandler extends SimpleChannelInboundHandler<DirectMessa
     private DirectMessageExecutor messageExecutor;
 
     //  private SourceOffline sourceOffline;
+
+    AtomicLong id = new AtomicLong(1);
 
     public DirectServerHandler(DirectMessageExecutor messageExecutor) {
         this.messageExecutor = messageExecutor;
@@ -31,6 +35,12 @@ public class DirectServerHandler extends SimpleChannelInboundHandler<DirectMessa
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         //解决强断的错误 远程主机强迫关闭了一个现有的连接
         ctx.flush();
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        Long token = id.getAndIncrement();
+        ChannelAttributeUtil.setToken(ctx.channel(), token);
     }
 
     @Override

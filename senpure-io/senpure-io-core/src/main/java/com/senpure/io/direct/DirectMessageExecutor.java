@@ -1,6 +1,7 @@
 package com.senpure.io.direct;
 
 import com.senpure.executor.TaskLoopGroup;
+import com.senpure.io.ChannelAttributeUtil;
 import com.senpure.io.direct.handler.DirectMessageHandler;
 import com.senpure.io.message.SCInnerErrorMessage;
 import com.senpure.io.protocol.Constant;
@@ -21,6 +22,7 @@ public class DirectMessageExecutor {
     protected static Logger logger = LoggerFactory.getLogger(DirectMessageExecutor.class);
     private TaskLoopGroup service;
     private int serviceRefCount = 0;
+
     public DirectMessageExecutor() {
 
     }
@@ -34,7 +36,7 @@ public class DirectMessageExecutor {
     }
 
     public void execute(Channel channel, DirectMessage frame) {
-        service.execute(() -> {
+        service.get(ChannelAttributeUtil.getToken(channel)).execute(() -> {
             int requestId = frame.getRequestId();
             ClientManager.setRequestId(requestId);
             DirectMessageHandler handler = DirectMessageHandlerUtil.getHandler(frame.getMessageId());
@@ -68,7 +70,6 @@ public class DirectMessageExecutor {
     }
 
 
-
     /**
      * 引用计数+1
      */
@@ -84,13 +85,13 @@ public class DirectMessageExecutor {
     public void releaseAndTryShutdownService() {
         serviceRefCount--;
         if (serviceRefCount <= 0) {
-            service.shutdown();
+            service.shutdownGracefully();
         }
     }
 
     public void shutdownService() {
         if (serviceRefCount <= 0) {
-            service.shutdown();
+            service.shutdownGracefully();
         } else {
             logger.warn("server 持有引用{}，请先释放后关闭", serviceRefCount);
         }

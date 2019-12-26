@@ -23,7 +23,7 @@ public class ClientManager {
     }
 
     public static void clearRequestId() {
-        requestIdLocal.set(0);
+        requestIdLocal.remove();
     }
 
     public static int getRequestId() {

@@ -12,7 +12,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.client.ServiceInstance;
@@ -20,6 +19,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,14 +34,14 @@ import java.util.concurrent.TimeUnit;
 public class ConsumerServerStarter implements ApplicationRunner {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    @Autowired
+    @Resource
     private DiscoveryClient discoveryClient;
-    @Autowired
+    @Resource
     private ServerProperties properties;
-    @Autowired
+    @Resource
     private RemoteServerManager remoteServerManager;
 
-    @Autowired
+    @Resource
     private ConsumerMessageExecutor messageExecutor;
 
     private ServerProperties.Gateway gateway = new ServerProperties.Gateway();
