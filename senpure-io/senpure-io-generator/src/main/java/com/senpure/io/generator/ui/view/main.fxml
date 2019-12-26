@@ -27,6 +27,7 @@
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#createProjectByChose" text="文件选择" />
                                 <MenuItem mnemonicParsing="false" onAction="#createProject" text="输入名字" />
+                        <MenuItem mnemonicParsing="false" onAction="#createProjectByCopy" text="复制当前" />
                             </items>
                         </SplitMenuButton>
                     </children>

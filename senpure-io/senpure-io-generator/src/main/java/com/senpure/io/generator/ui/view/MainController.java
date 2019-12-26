@@ -331,7 +331,13 @@ public class MainController implements Initializable {
 
     }
 
+    private boolean initTemplate = false;
+
     private void initTemplate() {
+        if (initTemplate) {
+            return;
+        }
+        initTemplate = true;
         initJavaTemplate();
         initLuaTemplate();
         initJsTemplate();
@@ -477,15 +483,17 @@ public class MainController implements Initializable {
         }
         checkJsAppendNamespace.setSelected(jsConfig.isAppendNamespace());
 
-        choiceJsType.getItems().add(jsConfig.TYPE_MIX);
-        choiceJsType.getItems().add(jsConfig.TYPE_FILE);
-        choiceJsType.getItems().add(jsConfig.TYPE_NAMESPACE);
+        choiceJsType.getItems().add(ScriptLanguageConfig.TYPE_MIX);
+
+        choiceJsType.getItems().add(ScriptLanguageConfig.TYPE_FILE);
+        choiceJsType.getItems().add(ScriptLanguageConfig.TYPE_NAMESPACE);
+
         choiceJsType.getSelectionModel().select(jsConfig.getType());
 
         FileConverter fileConverter = new FileConverter();
         choiceJsSCMessageHandler.setConverter(fileConverter);
-        choiceJsRequire.setConverter(fileConverter);
         choiceJsProtocol.setConverter(fileConverter);
+        choiceJsRequire.setConverter(fileConverter);
         choiceJsDts.setConverter(fileConverter);
 
 
@@ -959,8 +967,19 @@ public class MainController implements Initializable {
         }
     }
 
-    public void createProject() {
-        String name = "myProject";
+    public void createProjectByCopy() {
+        String name = getUsableProjectName(config.getProjectName() + "-copy");
+        createProject(name, config -> {
+            baseConfigValue(config);
+            javaConfigValue(config.getJavaConfig());
+            luaConfigValue(config.getLuaConfig());
+            jsConfigValue(config.getJsConfig());
+            projectName.getItems().add(config.getProjectName());
+            projectName.getSelectionModel().select(config.getProjectName());
+        });
+    }
+
+    private String getUsableProjectName(String name) {
         int value = 0;
         boolean next = true;
         do {
@@ -980,7 +999,10 @@ public class MainController implements Initializable {
             }
 
         } while (next);
+        return name;
+    }
 
+    public void createProject(String name, Consumer<ProjectConfig> consumer) {
         TextInputDialog dialog = new TextInputDialog(name);
         dialog.setTitle("新建项目");
         dialog.setHeaderText("新建项目 ");
@@ -989,10 +1011,9 @@ public class MainController implements Initializable {
         if (result.isPresent()) {
             String projectName = result.get().trim();
             if (projectName.length() > 0) {
-                ProjectConfig projectConfig = createProject(projectName );
+                ProjectConfig projectConfig = createProject(projectName);
                 if (projectConfig != null) {
-                    this.projectName.getItems().add(projectName );
-                    this.projectName.getSelectionModel().select(projectName );
+                    consumer.accept(projectConfig);
                 }
             } else {
                 logger.warn("请输入项目名");
@@ -1001,7 +1022,14 @@ public class MainController implements Initializable {
         } else {
             logger.warn("请输入项目名");
         }
+    }
 
+    public void createProject() {
+        String name = getUsableProjectName("myProject");
+        createProject(name, config -> {
+            projectName.getItems().add(config.getProjectName());
+            projectName.getSelectionModel().select(config.getProjectName());
+        });
     }
 
     private ProjectConfig createProject(String name) {
@@ -1297,6 +1325,17 @@ public class MainController implements Initializable {
     }
 
     public void updateConfig() {
+        baseConfigValue(config);
+        //java
+        javaConfigValue(javaConfig);
+        //java
+        //lua
+        luaConfigValue(luaConfig);
+        //lua
+        jsConfigValue(jsConfig);
+    }
+
+    private void baseConfigValue(ProjectConfig config) {
         config.setTabPaneConfigIndex(tabPaneConfig.getSelectionModel().getSelectedIndex());
         List<ProtocolFile> protocolFiles = new ArrayList<>();
         for (FileData item : tableViewFileView.getItems()) {
@@ -1306,14 +1345,6 @@ public class MainController implements Initializable {
             protocolFiles.add(protocolFile);
         }
         config.setProtocolFiles(protocolFiles);
-
-        //java
-        javaConfigValue(javaConfig);
-        //java
-        //lua
-        luaConfigValue(luaConfig);
-        //lua
-        jsConfigValue(jsConfig);
     }
 
     private void javaConfigValue(JavaConfig javaConfig) {
@@ -1388,6 +1419,7 @@ public class MainController implements Initializable {
         jsConfig.setScMessageHandlerOverwrite(checkJsSCMessageHandlerOverwrite.isSelected());
         jsConfig.setRequireOverwrite(checkJsRequireOverwrite.isSelected());
     }
+
     @PreDestroy
     public void destroy() {
         executorService.shutdown();
