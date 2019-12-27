@@ -17,7 +17,7 @@ public class ProtocolUtil {
     /**
      * 不含兼容
      */
-    public static String[] standardBaseFields = {"int", "long", "sint", "slong", "fixed32", "fixed64", "float", "double", "boolean", "string", "String",  "bytes"};
+    public static String[] standardBaseFields = {"int", "long", "sint", "slong", "fixed32", "fixed64", "float", "double", "boolean", "String",  "bytes"};
 
     public static Map<String, Integer> writeType = new HashMap<>();
     public static Map<String, String> javaType = new HashMap<>();
