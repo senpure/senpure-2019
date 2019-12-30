@@ -4,6 +4,7 @@ package com.senpure.io.producer;
 import com.senpure.io.message.SCBreakUserGatewayMessage;
 import com.senpure.io.message.SCKickOffMessage;
 import com.senpure.io.protocol.Message;
+import io.netty.util.concurrent.FastThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,12 @@ import java.util.concurrent.ConcurrentMap;
 public class GatewayManager {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private final static ThreadLocal<Integer> requestIdLocal = ThreadLocal.withInitial(() -> 0);
+    private final static FastThreadLocal<Integer> requestIdLocal = new FastThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
     private ConcurrentMap<String, GatewayChannelManager> gatewayChannelMap = new ConcurrentHashMap<>();
 
     private ConcurrentMap<Long, GatewayRelation> userGatewayMap = new ConcurrentHashMap<>();

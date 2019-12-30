@@ -21,7 +21,7 @@ public class GatewayChannelManager {
 
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
 
-    private List<FailMessage> failMessages = new ArrayList<>(128);
+    private final List<FailMessage> failMessages = new ArrayList<>(128);
     private int defaultMessageRetryTimeLimit = 10000;
     private boolean connecting = false;
 
@@ -136,7 +136,6 @@ public class GatewayChannelManager {
             if (temp > 1) {
                 channel.flush();
             }
-            return;
         }
     }
 
